@@ -1,22 +1,45 @@
+// server.js
 const express = require('express');
-const cors = require('cors'); 
+const mysql = require('mysql2');
+const cors = require('cors');
+
 const app = express();
 const port = 5000;
 
-const db = require('./db');
-
+// Konfiguracja CORS
+app.use(cors());
 app.use(express.json());
-app.use(cors()); 
 
-app.get('/users', (req, res) => {
+// Utwórz połączenie z bazą danych MySQL
+const db = mysql.createConnection({
+  host: '34.116.229.68',
+  user: 'root',
+  password: 'QN|9YDTy[Tex3,04',
+  database: 'inzynierka'
+});
+
+// Połącz się z bazą danych
+db.connect(err => {
+  if (err) {
+    console.error('Błąd połączenia z bazą danych:', err);
+    return;
+  }
+  console.log('Połączono z bazą danych MySQL');
+});
+
+// Endpoint do pobierania danych użytkowników
+app.get('/api/users', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
     if (err) {
-      return res.status(500).send('Błąd bazy danych');
+      console.error('Błąd zapytania:', err);
+      res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+      return;
     }
     res.json(results);
   });
 });
 
+// Uruchom serwer
 app.listen(port, () => {
-  console.log(`Serwer działa na porcie ${port}`);
+  console.log(`Serwer działa na http://localhost:${port}`);
 });
