@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
+  
+  .row {
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .credentials {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login,
+  .passwd {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  .login:focus,
+  .passwd:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  a {
+    text-align: center;
+    text-decoration: none;
+    color: #007bff;
+    font-size: 14px;
+  }
+  
+  a:hover {
+    color: #0056b3;
+  }
+  
+  

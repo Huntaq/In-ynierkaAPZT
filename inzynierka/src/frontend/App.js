@@ -1,13 +1,18 @@
-// src/App.js
 import React from 'react';
-import UserList from './UserList';
+import Login from './Login';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Register from './Register';
+import '../css/index.css';
 
-const App = () => {
+function App() {
   return (
-    <div className="App">
-      <UserList />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
-};
+}
 
 export default App;
