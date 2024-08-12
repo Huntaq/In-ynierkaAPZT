@@ -7,7 +7,38 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
+
+    const validateName = (name) => /^[A-Za-z]{2,30}$/.test(name);
+    const validatePassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s,]{8,24}$/.test(password);
+    const validateEmail = (email) => /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(email);
+    const validateAge = (age) => /^\d{1,3}$/.test(age) && age >= 18 && age <= 99;
+    const validateGender = (gender) => /^(M|F)$/.test(gender);
+
+
+
     const handleRegister = () => {
+
+      if (!validateName(name)) {
+      alert('Invalid name');
+      return;
+    }
+    if (!validatePassword(password)) {
+      alert('Invalid password');
+      return;
+    }
+    if (!validateEmail(email)) {
+      alert('Invalid email');
+      return;
+    }
+    if (!validateAge(age)) {
+      alert('Invalid age');
+      return;
+    }
+    if (!validateGender(gender)) {
+      alert('Invalid gender');
+      return;
+    }
+
         const userData = {
         name,
         password,
