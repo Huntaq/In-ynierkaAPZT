@@ -35,10 +35,15 @@ const Login = () => {
       } else {
         setLoginError(data.error || 'Invalid login');
       }
-    } catch 
-    (error) {
+    } catch (error) {
       console.error('Error during login:', error);
       setLoginError('An error occurred. Please try again.');
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
     }
   };
 
@@ -54,7 +59,8 @@ const Login = () => {
             className='login margin-bottom'
             placeholder='username'
             value={username}
-            onChange={(e) => setUsername(e.target.value)} 
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <input
             className='passwd'
@@ -62,6 +68,7 @@ const Login = () => {
             placeholder='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
