@@ -69,7 +69,7 @@ const Register = () => {
             gender,
         };
 
-        fetch('http://localhost:5000/api/register', {
+        fetch('http://localhost:5000/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
