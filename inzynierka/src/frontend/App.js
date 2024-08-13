@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './Register';
 import UserAcc from './UserAcc';
 import '../css/index.css';
+import PrivateRoute from './PrivateRoute';
 
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/UserAcc" element={<UserAcc />} />
+        <Route path="/UserAcc" element={<PrivateRoute element={<UserAcc />} />} />
       </Routes>
     </Router>
   );

@@ -1,4 +1,4 @@
-// server.js
+
 const express = require('express');
 const cors = require('cors');
 const db = require('./config/db'); 
@@ -11,7 +11,7 @@ const port = 5000;
 app.use(cors());
 app.use(express.json());
 
-// Użycie tras
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 

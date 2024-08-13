@@ -1,5 +1,5 @@
-// Register.js
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/register.css';
 
 const Register = () => {
@@ -20,6 +20,15 @@ const Register = () => {
     const validateEmail = (email) => /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(email);
     const validateAge = (age) => /^\d{1,3}$/.test(age) && age >= 18 && age <= 99;
     const validateGender = (gender) => /^(M|F)$/.test(gender);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+        navigate('../UserAcc');
+        }
+    }, [navigate]);
 
     const handleRegister = () => {
         let isValid = true;

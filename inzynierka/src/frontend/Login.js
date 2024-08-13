@@ -8,6 +8,13 @@ const Login = () => {
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      navigate('/UserAcc');
+    }
+  }, [navigate]);
+
   const handleLogin = async () => {
     console.log('Attempting to login with username:', username);
 
@@ -22,13 +29,13 @@ const Login = () => {
 
       const data = await response.json();
       if (response.ok) {
-        console.log('Login successful');
+        localStorage.setItem('authToken', data.token);
         navigate('/UserAcc');
       } else {
-        console.log('Login failed:', data.error);
         setLoginError(data.error || 'Invalid login');
       }
-    } catch (error) {
+    } catch 
+    (error) {
       console.error('Error during login:', error);
       setLoginError('An error occurred. Please try again.');
     }
