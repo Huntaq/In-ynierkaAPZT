@@ -1,42 +1,67 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/login.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/users')
-      .then(response => response.json())
-      .then(data => {
-        setUsers(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err);
-        setLoading(false);
+  const handleLogin = async () => {
+    console.log('Attempting to login with username:', username);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
-  }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Login successful');
+        navigate('/UserAcc');
+      } else {
+        console.log('Login failed:', data.error);
+        setLoginError(data.error || 'Invalid login');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setLoginError('An error occurred. Please try again.');
+    }
+  };
 
   return (
     <div className='container'>
       <div className='row'>
-        <h2>Login</h2>
+        <h2 className='inline'>Login</h2>
+        {loginError && <p className='error inline'>{loginError}</p>}
       </div>
       <div className='row'>
         <div className='credentials'>
-          <input className='login'placeholder='login'></input>
-          <input className='passwd'placeholder='password'></input>
+          <input
+            className='login margin-bottom'
+            placeholder='username'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)} 
+          />
+          <input
+            className='passwd'
+            type='password'
+            placeholder='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
       </div>
       <div className='row'>
-      <Link to='/register'>Need account? Register now!</Link>
+        <button className='buttonLogin float-right' onClick={handleLogin}>
+          Login
+        </button>
+        <Link to='/register'>Need account? Register now!</Link>
       </div>
     </div>
   );

@@ -65,6 +65,40 @@ app.post('/api/register', async (req, res) => {
    res.status(500).json({ error: 'Server error' });
  }
 });
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  console.log('Received login data:', { username, password });
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  try {
+    db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Database query error' });
+      }
+
+      if (results.length === 0) {
+        return res.status(400).json({ error: 'Invalid username or password' });
+      }
+
+      const user = results[0];
+      const isMatch = await bcrypt.compare(password, user.password_hash);
+
+      if (isMatch) {
+        res.json({ message: 'Login successful' });
+      } else {
+        res.status(400).json({ error: 'Invalid username or password' });
+      }
+    });
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 db.connect(err => {
   if (err) {

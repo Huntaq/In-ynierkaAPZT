@@ -88,51 +88,52 @@ const Register = () => {
     return (
         <div className='container'>
             <div className='row'>
-                <h2>Register</h2>
+                <h2 className='register'>Register</h2>
             </div>
             <div className='row'>
-                <p>Name</p>
+                <p className='inline inputype'>Nickname </p>
+                {nameError && <p className='error inline'>{nameError}</p>}
                 <input
-                    className='inputRegister'
+                    className='inputRegister margin-top'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
-                {nameError && <p className='error'>{nameError}</p>}
             </div>
             <div className='row'>
-                <p>Password</p>
+                <p className='inline inputype'>Password </p>
+                {passwordError && <p className='error inline'>{passwordError}</p>}
                 <input
                     type='password'
-                    className='inputRegister'
+                    className='inputRegister margin-top'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                {passwordError && <p className='error'>{passwordError}</p>}
             </div>
             <div className='row'>
-                <p>E-mail</p>
+                <p className='inline inputype'>E-mail </p>
+                {emailError && <p className='error inline'>{emailError}</p>}
                 <input
                     type='email'
-                    className='inputRegister'
+                    className='inputRegister margin-top'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                {emailError && <p className='error'>{emailError}</p>}
             </div>
             <div className='row'>
-                <p>Age</p>
+                <p className='inline inputype'>Age </p>
+                {ageError && <p className='error inline'>{ageError}</p>}
                 <input
                     type='number'
-                    className='inputRegister'
+                    className='inputRegister margin-top'
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
                 />
-                {ageError && <p className='error'>{ageError}</p>}
             </div>
             <div className='row'>
-                <p>Gender</p>
+                <p className='inline inputype'>Gender </p>
+                {genderError && <p className='error inline'>{genderError}</p>}
                 <select
-                    className='inputRegister'
+                    className='inputRegister margin-top' 
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
                 >
@@ -140,10 +141,12 @@ const Register = () => {
                     <option value='M'>Male</option>
                     <option value='F'>Female</option>
                 </select>
-                {genderError && <p className='error'>{genderError}</p>}
             </div>
             <div className='row'>
-                <button className='btnRegister' onClick={handleRegister}>
+                <button className='button margin-top' onClick={() => window.location.href = '../'}>
+                    Go back
+                </button>
+                <button className='button margin-top float-right' onClick={handleRegister}>
                     Register
                 </button>
             </div>
