@@ -30,6 +30,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('authToken', data.token);
+        localStorage.setItem('id', data.id);
         navigate('/UserAcc');
       } else {
         setLoginError(data.error || 'Invalid login');
