@@ -16,7 +16,30 @@ const Register = () => {
     const [genderError, setGenderError] = useState('');
 
     const validateName = (name) => /^[A-Za-z]{2,30}$/.test(name);
-    const validatePassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s,]{8,24}$/.test(password);
+    const validatePassword = (password) => {
+        if (password.length < 8) {
+            return 'Password is too short. It should be at least 8 characters long.';
+        }
+        if (password.length > 24) {
+            return 'Password is too long. It should be no more than 24 characters long.';
+        }
+        if (!/[a-z]/.test(password)) {
+            return 'Password should contain at least one lowercase letter.';
+        }
+        if (!/[A-Z]/.test(password)) {
+            return 'Password should contain at least one uppercase letter.';
+        }
+        if (!/\d/.test(password)) {
+            return 'Password should contain at least one digit.';
+        }
+        if (!/[\W_]/.test(password)) {
+            return 'Password should contain at least one special character.';
+        }
+        if (/\s/.test(password)) {
+            return 'Password should not contain any whitespace characters.';
+        }
+        return '';
+    };
     const validateEmail = (email) => /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(email);
     const validateAge = (age) => /^\d{1,3}$/.test(age) && age >= 18 && age <= 99;
     const validateGender = (gender) => /^(M|F)$/.test(gender);
@@ -26,7 +49,7 @@ const Register = () => {
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (token) {
-        navigate('../UserAcc');
+            navigate('../UserAcc');
         }
     }, [navigate]);
 
@@ -40,8 +63,9 @@ const Register = () => {
             setNameError('');
         }
 
-        if (!validatePassword(password)) {
-            setPasswordError('Invalid password');
+        const passwordValidationResult = validatePassword(password);
+        if (passwordValidationResult !== '') {
+            setPasswordError(passwordValidationResult);
             isValid = false;
         } else {
             setPasswordError('');
