@@ -8,6 +8,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const [nameError, setNameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -18,25 +19,25 @@ const Register = () => {
     const validateName = (name) => /^[A-Za-z]{2,30}$/.test(name);
     const validatePassword = (password) => {
         if (password.length < 8) {
-            return 'Password is too short. It should be at least 8 characters long.';
+            return 'Password should be at least 8 characters long';
         }
         if (password.length > 24) {
-            return 'Password is too long. It should be no more than 24 characters long.';
+            return 'Password should be no more than 24 characters long';
         }
         if (!/[a-z]/.test(password)) {
-            return 'Password should contain at least one lowercase letter.';
+            return 'Password should contain at least one lowercase letter';
         }
         if (!/[A-Z]/.test(password)) {
-            return 'Password should contain at least one uppercase letter.';
+            return 'Password should contain at least one uppercase letter';
         }
         if (!/\d/.test(password)) {
-            return 'Password should contain at least one digit.';
+            return 'Password should contain at least one digit';
         }
         if (!/[\W_]/.test(password)) {
-            return 'Password should contain at least one special character.';
+            return 'Password should contain at least one special character';
         }
         if (/\s/.test(password)) {
-            return 'Password should not contain any whitespace characters.';
+            return 'Password should not contain any whitespace characters';
         }
         return '';
     };
@@ -134,13 +135,22 @@ const Register = () => {
             </div>
             <div className='row'>
                 <p className='inline inputype'>Password </p>
-                {passwordError && <p className='error inline'>{passwordError}</p>}
-                <input
-                    type='password'
-                    className='inputRegister margin-top'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                {passwordError && <p className='error1 inline'>{passwordError}</p>}
+                <div className='input-container'>
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        className='inputRegister margin-top'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                        type='button'
+                        className='show-password-button'
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? 'Hide' : 'Show'}
+                    </button>
+                </div>
             </div>
             <div className='row'>
                 <p className='inline inputype'>E-mail </p>

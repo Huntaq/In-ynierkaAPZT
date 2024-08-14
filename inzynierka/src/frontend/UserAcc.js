@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/login.css';
+import '../css/stats.css';
 
 const UserAcc = () => {
-  const [user, setUser] = useState(null); // Używamy pojedynczego obiektu, a nie tablicy
+  const [user, setUser] = useState(null);
+  const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -15,70 +16,84 @@ const UserAcc = () => {
 
       if (token && id) {
         try {
-          const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+          // Pobierz dane użytkownika
+          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
           });
 
-          if (response.ok) {
-            const data = await response.json();
-            // Assuming `data` is an array with a single user object
-            setUser(data[0]);
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            setUser(userData[0]);
+
+            // Pobierz dane tras użytkownika
+            const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+
+            if (routesResponse.ok) {
+              const routesData = await routesResponse.json();
+              setUserRoutes(routesData);
+            } else {
+              setError('Błąd podczas pobierania danych tras użytkownika');
+            }
           } else {
-            setError('Failed to fetch user data');
+            setError('Błąd podczas pobierania danych użytkownika');
           }
         } catch (err) {
-          setError('An error occurred while fetching user data');
+          setError('Wystąpił błąd podczas pobierania danych');
         }
         setLoading(false);
       } else {
-        setError('User is not authenticated');
+        setError('Użytkownik nie jest zalogowany');
         setLoading(false);
       }
     };
 
     fetchUserData();
   }, []);
-  
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('id');
     navigate('/');
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <p>Ładowanie...</p>;
+  if (error) return <p>Błąd: {error}</p>;
+
+  const formatDate = (dateString) => {
+    const options = { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' };
+    const date = new Date(dateString);
+    return date.toLocaleString('pl-PL', options);
+  };
 
   return (
-    <div>
-      {user ? (
-        <>
-          <h1>Hello {user.username}</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.age}</td>
-              </tr>
-            </tbody>
-          </table>
-        </>
-      ) : (
-        <p>No user data available</p>
-      )}
-      <button className='button' onClick={handleLogout}>Logout</button>
+    <div className='container'>
+      <div className='row'>
+        <h1 className='title inline'>Witaj {user.username}</h1>
+        <button className='button inline' onClick={handleLogout}>Wyloguj</button>
+      </div>
+      <div>
+        <p className='Header'>Your routes</p>
+      </div>
+      <div className='activities'>
+        {userRoutes.map((route, index) => (
+          <div key={index} className='activity-card'>
+            <p className='activity-date'>{formatDate(route.date)}</p>
+            <p><strong>Distance:</strong> {route.distance_km} km</p>
+            <p><strong>Kcal burnt:</strong> {route.kcal}</p>
+            <p><strong>CO2 saved:</strong> {route.CO2}</p>
+            <p><strong>Money saved:</strong> {route.money} PLN</p>
+            <p><strong>Activity duration:</strong> {route.duration}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

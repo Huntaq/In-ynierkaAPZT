@@ -108,6 +108,11 @@
     color: red;
     float: right;
 }
+.error1 {
+  color: red;
+  float: right;
+  font-size: 12px;
+}
 .inline{
   display: inline;
 }
@@ -126,4 +131,21 @@
   color: rgb(87, 87, 87);
   font-weight: bold;
   font-size: 32px;
+}
+.input-container {
+  position: relative;
+}
+
+.show-password-button {
+  font-size: 10px;
+  color: white;
+  position: absolute;
+  right: 10px;
+  top: 63%;
+  transform: translateY(-50%);
+  background: #007bff;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 3px;
+  border: 1px solid rgb(61, 106, 255);
 }
