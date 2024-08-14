@@ -21,6 +21,7 @@
     font-weight: bold;
     color: black;
     font-size: 24px;
+    margin-bottom: 10px;
 }
   .inline{
     display: inline;
@@ -101,7 +102,14 @@
   -moz-transition: box-shadow 0.2s ease-in;
   transition: box-shadow 0.2s ease-in;
 }
+.margin-right{
+  margin-right:5px;
+}
+.margin-left{
+  margin-left:5px;
+}
 .activity-card {
+    text-align: center;
     position: relative;
     color: white;
     background-color: #007bff;
@@ -114,8 +122,8 @@
     padding: 15px;
     width: 300px;
     -webkit-transition: all 0.2s ease-in;
-  -moz-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
 }
 .activity-card:hover{
     background: rgb(101, 106, 255);
@@ -179,4 +187,10 @@
     justify-content: center;
     width: 100%;
     max-width: 1200px;
+}
+.background{
+  background-color: rgb(226, 226, 211);
+  padding: 50px;
+  border-radius: 7px;
+  border: 2px solid gray;
 }

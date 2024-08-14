@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/stats.css';
+import Distance from './Components/Distance';
+import RecentDistance from './Components/RecentDistance';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -72,17 +74,52 @@ const UserAcc = () => {
     const date = new Date(dateString);
     return date.toLocaleString('pl-PL', options);
   };
+  
+  const totalDistance = userRoutes.reduce((acc, route) => acc + route.distance_km, 0);
+  const totalKcal = userRoutes.reduce((acc, route) => acc + route.kcal, 0);
+  const totalCO2 = userRoutes.reduce((acc, route) => acc + route.CO2, 0);
+  const totalMoney = userRoutes.reduce((acc, route) => acc + route.money, 0);
+  const formattedDistance = totalDistance.toFixed(2);
+  const formattedtotalKcal = totalKcal.toFixed(2);
+  const formattedtotalCO2 = totalCO2.toFixed(2);
+  const formattedtotalMoney = totalMoney.toFixed(2);
+
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 30);
+  
+  const recentRoutes = userRoutes.filter(route => new Date(route.date) >= threeDaysAgo);
+  const recentDistance = recentRoutes.reduce((acc, route) => acc + route.distance_km, 0);
+  const recentKcal = recentRoutes.reduce((acc, route) => acc + route.kcal, 0);
+  const recentCO2 = recentRoutes.reduce((acc, route) => acc + route.CO2, 0);
+  const recentMoney = recentRoutes.reduce((acc, route) => acc + route.money, 0);
+
+  const formattedRecentDistance = recentDistance.toFixed(2);
+  const formattedRecentKcal = recentKcal.toFixed(2);
+  const formattedRecentCO2 = recentCO2.toFixed(2);
+  const formattedRecentMoney = recentMoney.toFixed(2);
 
   return (
     <div className='container'>
       <div className='row'>
-        <h1 className='title inline'>Witaj {user.username}</h1>
-        <button className='button inline' onClick={handleLogout}>Wyloguj</button>
+        <h1 className='title inline margin-left'>Witaj {user.username}</h1>
+        <button className='button inline margin-right' onClick={handleLogout}>Wyloguj</button>
       </div>
       <div>
-        <p className='Header'>Your routes</p>
+        <p className='Header'>Your activities</p>
       </div>
-      <div className='activities'>
+      <div className='activities background'>
+      <Distance totalDistance={formattedDistance}
+      totalKcal={formattedtotalKcal}
+      totalCO2={formattedtotalCO2}
+          totalMoney={formattedtotalMoney}
+           />
+      
+      <RecentDistance 
+          recentDistance={formattedRecentDistance} 
+          recentKcal={formattedRecentKcal} 
+          recentCO2={formattedRecentCO2} 
+          recentMoney={formattedRecentMoney}
+        />
         {userRoutes.map((route, index) => (
           <div key={index} className='activity-card'>
             <p className='activity-date'>{formatDate(route.date)}</p>

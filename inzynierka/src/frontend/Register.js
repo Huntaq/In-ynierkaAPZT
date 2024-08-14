@@ -186,10 +186,10 @@ const Register = () => {
                 </select>
             </div>
             <div className='row'>
-                <button className='button margin-top' onClick={() => window.location.href = '../'}>
+                <button className='button margin-top inline' onClick={() => window.location.href = '../'}>
                     Go back
                 </button>
-                <button className='button margin-top float-right' onClick={handleRegister}>
+                <button className='button margin-top float-right inline' onClick={handleRegister}>
                     Register
                 </button>
             </div>
