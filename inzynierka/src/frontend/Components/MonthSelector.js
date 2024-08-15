@@ -40,7 +40,7 @@ const MonthSelector = ({ onMonthChange, onTransportChange }) => {
   };
 
   useEffect(() => {
-    onTransportChange(transportMode); // initial transport mode
+    onTransportChange(transportMode);
   },[onTransportChange, transportMode]);
 
   return (

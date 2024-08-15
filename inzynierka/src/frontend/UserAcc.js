@@ -78,14 +78,11 @@ const UserAcc = () => {
     return date.toLocaleString('pl-PL', options);
   };
   
+  
   const totalDistance = userRoutes.reduce((acc, route) => acc + route.distance_km, 0);
   const totalKcal = userRoutes.reduce((acc, route) => acc + route.kcal, 0);
   const totalCO2 = userRoutes.reduce((acc, route) => acc + route.CO2, 0);
   const totalMoney = userRoutes.reduce((acc, route) => acc + route.money, 0);
-  const formattedDistance = totalDistance.toFixed(2);
-  const formattedtotalKcal = totalKcal.toFixed(2);
-  const formattedtotalCO2 = totalCO2.toFixed(2);
-  const formattedtotalMoney = totalMoney.toFixed(2);
 
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 30);
@@ -107,7 +104,7 @@ const UserAcc = () => {
   const sortedUserRoutes = [...userRoutes].sort((a, b) => new Date(b.date) - new Date(a.date));
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <div className='row'>
       <button className="button inline margin-left" onClick={toggleSidebar}>☰</button>
         <h1 className='title inline margin-left'>Witaj {user.username}</h1>
@@ -118,11 +115,12 @@ const UserAcc = () => {
       <div className='row'>
       <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
         <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
-        <Distance totalDistance={formattedDistance}
-        totalKcal={formattedtotalKcal}
-        totalCO2={formattedtotalCO2}
-            totalMoney={formattedtotalMoney}
-            />
+        <Distance 
+            totalDistance={totalDistance.toFixed(2)}
+            totalKcal={totalKcal.toFixed(2)}
+            totalCO2={totalCO2.toFixed(2)}
+            totalMoney={totalMoney.toFixed(2)}
+          />
         
         <RecentDistance 
             recentDistance={formattedRecentDistance} 

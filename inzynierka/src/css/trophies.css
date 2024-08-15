@@ -1,0 +1,23 @@
+.trophies-container {
+    text-align: center;
+  }
+  
+  .trophy {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    width: 300px;
+    background-color: #f8f8f8;
+  }
+  .trophy h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  .trophy p {
+    margin: 5px 0 0;
+    color: #666;
+  }
+  

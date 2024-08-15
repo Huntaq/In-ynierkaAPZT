@@ -20,6 +20,10 @@ body.dark {
     justify-content: flex-start;
     height: 100vh;
 }
+.T{
+  text-align: center;
+    font-size: 14px !important;
+}
 .row {
     display: flex;
     flex-wrap: wrap;

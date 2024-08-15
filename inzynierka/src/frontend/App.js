@@ -6,17 +6,22 @@ import UserAcc from './UserAcc';
 import '../css/index.css';
 import PrivateRoute from './PrivateRoute';
 import Activities from './Activites';
+import Trophies from './Trophies';
+import { UserProvider } from './Components/UserContext';
 
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/UserAcc" element={<PrivateRoute element={<UserAcc />} />} />
-        <Route path="/Activities" element={<PrivateRoute element={<Activities />} />} />
-      </Routes>
+      <UserProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/UserAcc" element={<PrivateRoute element={<UserAcc />} />} />
+          <Route path="/Activities" element={<PrivateRoute element={<Activities />} />} />
+          <Route path="/Trophies" element={<PrivateRoute element={<Trophies />} />} />
+        </Routes>
+      </UserProvider>
     </Router>
   );
 }
