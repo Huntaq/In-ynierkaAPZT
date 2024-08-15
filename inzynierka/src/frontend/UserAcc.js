@@ -103,7 +103,7 @@ const UserAcc = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
+  const sortedUserRoutes = [...userRoutes].sort((a, b) => new Date(b.date) - new Date(a.date));
   return (
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
@@ -112,32 +112,36 @@ const UserAcc = () => {
         <h1 className='title inline margin-left'>Witaj {user.username}</h1>
         {/* <button className='button inline margin-right' onClick={handleLogout}>Wyloguj</button> */}
       </div>
-      <div>
-        <p className='Header'>Your activities</p>
-      </div>
-      <div className='activities background'>
-      <Distance totalDistance={formattedDistance}
-      totalKcal={formattedtotalKcal}
-      totalCO2={formattedtotalCO2}
-          totalMoney={formattedtotalMoney}
-           />
-      
-      <RecentDistance 
-          recentDistance={formattedRecentDistance} 
-          recentKcal={formattedRecentKcal} 
-          recentCO2={formattedRecentCO2} 
-          recentMoney={formattedRecentMoney}
-        />
-        {userRoutes.map((route, index) => (
-          <div key={index} className='activity-card'>
-            <p className='activity-date'>{formatDate(route.date)}</p>
-            <p><strong>Distance:</strong> {route.distance_km} km</p>
-            <p><strong>Kcal burnt:</strong> {route.kcal}</p>
-            <p><strong>CO2 saved:</strong> {route.CO2}</p>
-            <p><strong>Money saved:</strong> {route.money} PLN</p>
-            <p><strong>Activity duration:</strong> {route.duration}</p>
-          </div>
-        ))}
+      <div className='row'>
+        <div className='activities background'>
+        <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
+        <Distance totalDistance={formattedDistance}
+        totalKcal={formattedtotalKcal}
+        totalCO2={formattedtotalCO2}
+            totalMoney={formattedtotalMoney}
+            />
+        
+        <RecentDistance 
+            recentDistance={formattedRecentDistance} 
+            recentKcal={formattedRecentKcal} 
+            recentCO2={formattedRecentCO2} 
+            recentMoney={formattedRecentMoney}
+          />
+        </div>
+        <div className='activities background'>
+          <div className='row textAcc'><p className='textStyleActivity'>Your activities</p></div>
+          {sortedUserRoutes.map((route, index) => (
+            <div key={index} className='activity-card'>
+              <p className='activity-date'>{formatDate(route.date)}</p>
+              <p><strong>Distance:</strong> {route.distance_km} km</p>
+              <p><strong>Kcal burnt:</strong> {route.kcal}</p>
+              <p><strong>CO2 saved:</strong> {route.CO2}</p>
+              <p><strong>Money saved:</strong> {route.money} PLN</p>
+              <p><strong>Activity duration:</strong> {route.duration}</p>
+            </div>
+          ))}
+        </div>
+        
       </div>
     </div>
   );
