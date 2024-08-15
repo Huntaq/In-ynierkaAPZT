@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import '../css/stats.css';
 import Distance from './Components/Distance';
 import RecentDistance from './Components/RecentDistance';
+import Sidebar from './Components/Sidebar';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -60,11 +62,11 @@ const UserAcc = () => {
     fetchUserData();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('id');
-    navigate('/');
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem('authToken');
+  //   localStorage.removeItem('id');
+  //   navigate('/');
+  // };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -98,11 +100,17 @@ const UserAcc = () => {
   const formattedRecentCO2 = recentCO2.toFixed(2);
   const formattedRecentMoney = recentMoney.toFixed(2);
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className='container'>
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <div className='row'>
+      <button className="button inline margin-left" onClick={toggleSidebar}>☰</button>
         <h1 className='title inline margin-left'>Witaj {user.username}</h1>
-        <button className='button inline margin-right' onClick={handleLogout}>Wyloguj</button>
+        {/* <button className='button inline margin-right' onClick={handleLogout}>Wyloguj</button> */}
       </div>
       <div>
         <p className='Header'>Your activities</p>

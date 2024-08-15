@@ -48,12 +48,12 @@ const Login = () => {
   };
 
   return (
-    <div className='container'>
-      <div className='row'>
+    <div className='container1'>
+      <div className='row1'>
         <h2 className='inline'>Login</h2>
         {loginError && <p className='error inline'>{loginError}</p>}
       </div>
-      <div className='row'>
+      <div className='row1'>
         <div className='credentials'>
           <input
             className='login margin-bottom'
@@ -72,7 +72,7 @@ const Login = () => {
           />
         </div>
       </div>
-      <div className='row'>
+      <div className='row1'>
         <button className='buttonLogin float-right' onClick={handleLogin}>
           Login
         </button>
