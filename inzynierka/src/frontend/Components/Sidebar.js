@@ -16,6 +16,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <ul>
           <li><a href="./UserAcc">Home</a></li>
           <li><a href="#profile">Profile</a></li>
+          <li><a href="./Activities">Activities</a></li>
           <li><a href="#trophies">Trophies</a></li>
           <li><a href="#settings">Settings</a></li>
           <li className="logout"onClick={handleLogout}><a href=".">Logout</a></li>

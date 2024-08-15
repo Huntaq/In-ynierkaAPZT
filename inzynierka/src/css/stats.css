@@ -1,10 +1,24 @@
+body.light {
+  color: #000000;
+  background-color: white;
+}
+
+body.dark {
+  color: #ffffff;
+  background-color: gray;
+}
+.background.light{
+  background-color: white;
+}
+.background.dark{
+  background-color: purple;
+}
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     height: 100vh;
-    background-color: #f4f4f4;
 }
 .row {
     display: flex;
@@ -197,7 +211,6 @@
 .background{
   height: 300px;
   width: 45%;
-  background-color: white;
   padding: 10px;
   border-radius: 7px;
   border: 2px solid gray;
@@ -225,4 +238,42 @@
 }
 .background::-webkit-scrollbar-thumb:hover {
   background-color: #0056b3;
+}
+.transport-selector {
+  position: relative;
+  border-radius: 7px;
+    border: 1px solid rgb(61, 106, 255);
+    font-size: 14px;
+  margin-left: 20px;
+  font-size: 16px;
+  padding: 5px;
+}
+
+.backgroundChart{
+  align-content: center;
+  margin: auto;
+  height: 400px;
+  width: 45%;
+  background-color: white;
+  padding: 45px;
+  border-radius: 7px;
+  border: 2px solid gray;
+}
+.monthSelector{
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+.transportSelector{
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 17px;
+}
+.monthSelector button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
 }

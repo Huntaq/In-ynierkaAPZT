@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import '../css/stats.css';
 import Distance from './Components/Distance';
 import RecentDistance from './Components/RecentDistance';
 import Sidebar from './Components/Sidebar';
+
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -20,7 +20,6 @@ const UserAcc = () => {
 
       if (token && id) {
         try {
-          // Pobierz dane użytkownika
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
@@ -32,7 +31,6 @@ const UserAcc = () => {
             const userData = await userResponse.json();
             setUser(userData[0]);
 
-            // Pobierz dane tras użytkownika
             const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
               method: 'GET',
               headers: {
@@ -62,11 +60,14 @@ const UserAcc = () => {
     fetchUserData();
   }, []);
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem('authToken');
-  //   localStorage.removeItem('id');
-  //   navigate('/');
-  // };
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -110,10 +111,12 @@ const UserAcc = () => {
       <div className='row'>
       <button className="button inline margin-left" onClick={toggleSidebar}>☰</button>
         <h1 className='title inline margin-left'>Witaj {user.username}</h1>
-        {/* <button className='button inline margin-right' onClick={handleLogout}>Wyloguj</button> */}
+        <button className='button inline margin-right' onClick={toggleTheme}>
+          {theme === 'light' ? '🌙' : '☀️'}
+        </button>
       </div>
       <div className='row'>
-        <div className='activities background'>
+      <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
         <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
         <Distance totalDistance={formattedDistance}
         totalKcal={formattedtotalKcal}
@@ -128,7 +131,7 @@ const UserAcc = () => {
             recentMoney={formattedRecentMoney}
           />
         </div>
-        <div className='activities background'>
+        <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
           <div className='row textAcc'><p className='textStyleActivity'>Your activities</p></div>
           {sortedUserRoutes.map((route, index) => (
             <div key={index} className='activity-card'>
@@ -141,7 +144,6 @@ const UserAcc = () => {
             </div>
           ))}
         </div>
-        
       </div>
     </div>
   );

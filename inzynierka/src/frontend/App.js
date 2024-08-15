@@ -5,6 +5,7 @@ import Register from './Register';
 import UserAcc from './UserAcc';
 import '../css/index.css';
 import PrivateRoute from './PrivateRoute';
+import Activities from './Activites';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/UserAcc" element={<PrivateRoute element={<UserAcc />} />} />
+        <Route path="/Activities" element={<PrivateRoute element={<Activities />} />} />
       </Routes>
     </Router>
   );
