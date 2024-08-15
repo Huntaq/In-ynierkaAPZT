@@ -19,6 +19,24 @@ body.dark {
     align-items: center;
     justify-content: flex-start;
     height: 100vh;
+    min-height: 100vh;
+}
+.user-icon {
+  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+  background-color: rgb(61, 106, 255); /* Kolor tła dla ikony */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+.user-info {
+  display: flex;
+  align-items: center;
 }
 .T{
   text-align: center;
@@ -54,7 +72,7 @@ body.dark {
     display: inline;
   }
   .title {
-    font-size: 32px;
+    font-size: 20px;
     font-weight: bold;
 }
   .button {
@@ -135,6 +153,9 @@ body.dark {
 .margin-left{
   margin-left:5px;
 }
+.margin-left1{
+  margin-left:7px;
+}
 .activity-card {
   display: grid;
     text-align: center;
@@ -213,17 +234,19 @@ body.dark {
     justify-content: center;
 }
 .background{
-  height: 300px;
+  height: 310px;
   width: 45%;
   padding: 10px;
   border-radius: 7px;
   border: 2px solid gray;
   overflow-y: auto;
+  margin: auto;
 }
 @media (max-width: 700px) {
   .background {
     width: 90%;
     margin: auto;
+    margin-bottom: 15px;
   }
 }
 .background::-webkit-scrollbar {
@@ -262,6 +285,11 @@ body.dark {
   padding: 45px;
   border-radius: 7px;
   border: 2px solid gray;
+}
+@media (max-width: 1100px) {
+  .backgroundChart {
+    width: 80%;
+  }
 }
 .monthSelector{
   font-size: 20px;

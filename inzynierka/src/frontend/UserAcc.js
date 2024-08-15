@@ -3,7 +3,8 @@ import '../css/stats.css';
 import Distance from './Components/Distance';
 import RecentDistance from './Components/RecentDistance';
 import Sidebar from './Components/Sidebar';
-
+import Header from './Components/Header';
+import Footer from './Components/Footer';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -105,13 +106,12 @@ const UserAcc = () => {
   return (
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <div className='row'>
-      <button className="button inline margin-left" onClick={toggleSidebar}>☰</button>
-        <h1 className='title inline margin-left'>Witaj {user.username}</h1>
-        <button className='button inline margin-right' onClick={toggleTheme}>
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button>
-      </div>
+  <Header 
+    user={user} 
+    theme={theme} 
+    toggleTheme={toggleTheme} 
+    toggleSidebar={toggleSidebar} 
+  />
       <div className='row'>
       <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
         <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
@@ -143,6 +143,7 @@ const UserAcc = () => {
           ))}
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };
