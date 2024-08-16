@@ -11,6 +11,7 @@ const Profile = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,6 +30,7 @@ const Profile = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            setProfilePicture(userData[0].profilePicture);
 
             const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
               method: 'GET',
@@ -36,7 +38,7 @@ const Profile = () => {
                 'Authorization': `Bearer ${token}`,
               },
             });
-
+            
             if (routesResponse.ok) {
               const routesData = await routesResponse.json();
               setUserRoutes(routesData);
@@ -61,15 +63,41 @@ const Profile = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
+
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     localStorage.setItem('theme', theme);
   };
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setProfilePicture(file);
+    } else {
+      alert("Proszę przesłać prawidłowy plik graficzny.");
+    }
+  };
+
+  const handleProfilePictureUpload = async (event) => {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('file', profilePicture);
+    formData.append('userId', user.id);
+
+    const response = await fetch('http://localhost:5000/api/profilePicture', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    setUser(prevUser => ({ ...prevUser, profilePicture: data.url }));
+  };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -83,7 +111,10 @@ const Profile = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      
+      <form onSubmit={handleProfilePictureUpload}>
+        <input type="file" onChange={handleFileChange} />
+        <button type="submit">Zaktualizuj zdjęcie profilowe</button>
+      </form>
       <Footer/>
     </div>
   );
