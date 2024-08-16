@@ -3,8 +3,12 @@ import Chart from './Components/Chart';
 import MonthSelector from './Components/MonthSelector';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
+import Modal from 'react-modal';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
+import 'react-calendar/dist/Calendar.css';
+
+Modal.setAppElement('#root');
 
 const Activities = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -12,10 +16,14 @@ const Activities = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [transportMode, setTransportMode] = useState(1);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dailyActivities, setDailyActivities] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -62,6 +70,18 @@ const Activities = () => {
 
     fetchUserData();
   }, []);
+  useEffect(() => {
+    const activities = userRoutes.filter(route => {
+      const routeDate = new Date(route.date);
+      return (
+        routeDate.getDate() === selectedDate.getDate() &&
+        routeDate.getMonth() === selectedDate.getMonth() &&
+        routeDate.getFullYear() === selectedDate.getFullYear() &&
+        route.transport_mode_id === transportMode
+      );
+    });
+    setDailyActivities(activities);
+  }, [selectedDate, userRoutes, transportMode]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -75,10 +95,16 @@ const Activities = () => {
   const handleTransportChange = (selectedMode) => {
     setTransportMode(selectedMode);
   };
-
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
     localStorage.setItem('theme', theme);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   if (loading) return <p>Ładowanie...</p>;
@@ -93,13 +119,34 @@ const Activities = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      <div className='row'>
+      <div className="row">
         <div className='activities backgroundChart'>
           <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
           <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
         </div>
       </div>
       <Footer/>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Daily Activities"
+        className="modal"
+        overlayClassName="modal-overlay"
+      >
+        <h2>Aktywności z dnia {selectedDate.toLocaleDateString()}</h2>
+        {dailyActivities.length > 0 ? (
+          <ul>
+            {dailyActivities.map((activity, index) => (
+              <li key={index}>
+                {activity.distance_km} km - {activity.duration} - CO2: {activity.CO2} kg - kcal: {activity.kcal}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Brak aktywności na ten dzień.</p>
+        )}
+        <button className='button' onClick={closeModal}>Zamknij</button>
+      </Modal>
     </div>
   );
 };

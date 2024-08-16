@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import '../css/trophies.css';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
+import Modal from 'react-modal';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
-const Trophies = () => {
+Modal.setAppElement('#root');
+
+const Calendar1 = () => {
   const [userRoutes, setUserRoutes] = useState([]);
-  const [runningDistance, setRunningDistance] = useState(0);
-  const [cyclingDistance, setCyclingDistance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [transportMode, setTransportMode] = useState(1);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dailyActivities, setDailyActivities] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -22,7 +29,6 @@ const Trophies = () => {
 
       if (token && id) {
         try {
-          // Pobieranie danych użytkownika
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
@@ -34,7 +40,6 @@ const Trophies = () => {
             const userData = await userResponse.json();
             setUser(userData[0]);
 
-            // Pobieranie tras użytkownika
             const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
               method: 'GET',
               headers: {
@@ -45,16 +50,6 @@ const Trophies = () => {
             if (routesResponse.ok) {
               const routesData = await routesResponse.json();
               setUserRoutes(routesData);
-
-              const runningDistance = routesData
-                .filter(route => route.transport_mode_id === 1)
-                .reduce((acc, route) => acc + route.distance_km, 0);
-              const cyclingDistance = routesData
-                .filter(route => route.transport_mode_id === 2)
-                .reduce((acc, route) => acc + route.distance_km, 0);
-
-              setRunningDistance(runningDistance);
-              setCyclingDistance(cyclingDistance);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
             }
@@ -72,24 +67,39 @@ const Trophies = () => {
 
     fetchUserData();
   }, []);
+  useEffect(() => {
+    const activities = userRoutes.filter(route => {
+      const routeDate = new Date(route.date);
+      return (
+        routeDate.getDate() === selectedDate.getDate() &&
+        routeDate.getMonth() === selectedDate.getMonth() &&
+        routeDate.getFullYear() === selectedDate.getFullYear() &&
+        route.transport_mode_id === transportMode
+      );
+    });
+    setDailyActivities(activities);
+  }, [selectedDate, userRoutes, transportMode]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
+
   const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
     localStorage.setItem('theme', theme);
   };
-
-  const hasRunningTrophy = runningDistance >= 100;
-  const hasCyclingTrophy = cyclingDistance >= 100;
-
-  const runningProgress = !hasRunningTrophy ? (100 - runningDistance).toFixed(2) : 0;
-  const cyclingProgress = !hasCyclingTrophy ? (100 - cyclingDistance).toFixed(2) : 0;
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -103,36 +113,51 @@ const Trophies = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      <h2>Your Trophies</h2>
-      <div className="trophies-container">
-        <div className="trophy-list">
-          {hasRunningTrophy ? (
-            <div className="trophy">
-              <h3>🏅 First 100 km Running</h3>
-              <p>Congratulations! You've run your first 100 km!</p>
-            </div>
-          ) : (
-            <div className="trophy">
-              <h3>🏅 First 100 km Running</h3>
-              <p>You are {runningProgress} km away from your first 100 km running trophy.</p>
-            </div>
-          )}
-          {hasCyclingTrophy ? (
-            <div className="trophy">
-              <h3>🚴‍♂️ First 100 km Cycling</h3>
-              <p>Great job! You've cycled your first 100 km!</p>
-            </div>
-          ) : (
-            <div className="trophy">
-              <h3>🚴‍♂️ First 100 km Cycling</h3>
-              <p>You are {cyclingProgress} km away from your first 100 km cycling trophy.</p>
-            </div>
-          )}
-        </div>
+      <div className="row">
+        <div className='backgroundCalendar'>
+        <Calendar
+        onChange={handleDateChange}
+        value={selectedDate}
+        tileClassName={({ date, view }) => {
+          if (userRoutes.some(route => {
+            const routeDate = new Date(route.date);
+            return (
+              routeDate.getDate() === date.getDate() &&
+              routeDate.getMonth() === date.getMonth() &&
+              routeDate.getFullYear() === date.getFullYear()
+            );
+          })) {
+            return 'react-calendar__tile--highlighted';
+          }
+          return null;
+        }}
+      />
+      </div>
       </div>
       <Footer/>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Daily Activities"
+        className="modal"
+        overlayClassName="modal-overlay"
+      >
+        <h2>Aktywności z dnia {selectedDate.toLocaleDateString()}</h2>
+        {dailyActivities.length > 0 ? (
+          <ul>
+            {dailyActivities.map((activity, index) => (
+              <ul key={index}>
+                {activity.distance_km} km - {activity.duration} - CO2: {activity.CO2} kg - kcal: {activity.kcal}
+              </ul>
+            ))}
+          </ul>
+        ) : (
+          <p></p>
+        )}
+        <button className='button' onClick={closeModal}>Zamknij</button>
+      </Modal>
     </div>
   );
 };
 
-export default Trophies;
+export default Calendar1;

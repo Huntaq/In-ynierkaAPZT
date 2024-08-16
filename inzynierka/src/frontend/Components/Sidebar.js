@@ -8,6 +8,21 @@ const Sidebar = ({ isOpen, toggleSidebar, userRoutes }) => {
     const goToTrophies = () => {
         navigate('/Trophies', { state: { userRoutes } });
     };
+    const goToHome = () => {
+        navigate('/UserAcc', { state: { userRoutes } });
+    };
+    const goToCalendar = () => {
+        navigate('/Calendar', { state: { userRoutes } });
+    };
+    const goToProfile = () => {
+        navigate('/Profile', { state: { userRoutes } });
+    };
+    const goToSettings = () => {
+        navigate('/Settings', { state: { userRoutes } });
+    };
+    const goToActivities = () => {
+        navigate('/Activities', { state: { userRoutes } });
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -20,11 +35,12 @@ const Sidebar = ({ isOpen, toggleSidebar, userRoutes }) => {
             <button className="close-btn" onClick={toggleSidebar}>X</button>
             <nav>
                 <ul>
-                    <li><a href="./UserAcc">Home</a></li>
-                    <li><a href="#profile">Profile</a></li>
-                    <li><a href="./Activities">Activities</a></li>
+                    <li className='T' onClick={goToHome}>Home</li>
+                    <li className='T' onClick={goToProfile}>Profile</li>
+                    <li className='T' onClick={goToActivities}>Activities</li>
                     <li className='T' onClick={goToTrophies}>Trophies</li>
-                    <li><a href="#settings">Settings</a></li>
+                    <li className='T' onClick={goToCalendar}>Calendar</li>
+                    <li className='T' onClick={goToSettings}>Settings</li>
                     <li className="logout" onClick={handleLogout}><a href=".">Logout</a></li>
                 </ul>
             </nav>
