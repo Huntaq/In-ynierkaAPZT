@@ -26,11 +26,11 @@ router.post('/', upload.single('file'), async (req, res) => {
 
   blobStream.on('finish', async () => {
     try {
-      await blob.makePublic();
+      blob.makePublic();
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 
       const updateQuery = `UPDATE users SET profilePicture = ? WHERE id = ?`;
-      await db.query(updateQuery, [publicUrl, userId]);
+      db.query(updateQuery, [publicUrl, userId]);
 
       res.status(200).send({ url: publicUrl });
     } catch (error) {

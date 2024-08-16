@@ -111,10 +111,36 @@ const Profile = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      <form onSubmit={handleProfilePictureUpload}>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">Zaktualizuj zdjęcie profilowe</button>
-      </form>
+      <div className='row'>
+        <div className='backgroundCalendar'>
+        <form onSubmit={handleProfilePictureUpload}>
+  <input
+    type="file"
+    id="fileInput"
+    onChange={handleFileChange}
+    style={{ 
+      opacity: 0,
+      position: 'absolute',
+      zIndex: -1,
+    }} 
+  />
+  <button
+    className='button displayProfile'
+    type="button"
+    onClick={() => document.getElementById('fileInput').click()}
+  >
+    Wybierz plik
+  </button>
+  <button
+    className='button displayProfile'
+    type="submit"
+    disabled={!profilePicture} // Wyłączenie przycisku, jeśli nie ma pliku
+  >
+    Zaktualizuj zdjęcie profilowe
+  </button>
+</form>
+        </div>
+      </div>
       <Footer/>
     </div>
   );
