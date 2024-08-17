@@ -37,12 +37,22 @@ body.dark {
 }
 .displayProfile{
   display: inline-flex;
+  margin: 10px 10px 10px 10px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
 }
+.profilePreview {
+  margin-top: 10px;
+  width: 100px; 
+  height: 100px;
+  object-fit: cover; 
+  border-radius: 50%; 
+  border: 2px solid rgb(61, 106, 255);
+}
+
 .T{
   text-align: center;
     font-size: 14px !important;
@@ -391,12 +401,6 @@ body.dark {
 .react-calendar__tile--now {
   background-color: rgba(61, 106, 255, 0.1);
 }
-
-.react-calendar__tile--active {
-  background-color: rgb(61, 106, 255);
-  color: white;
-}
-
 .react-calendar__tile--active:hover {
   background-color: rgb(101, 106, 255);
 }
@@ -405,13 +409,17 @@ body.dark {
   background-color: rgb(101, 106, 255);
 }
 .react-calendar__tile--highlighted {
-  background-color: rgb(70, 199, 134) !important; /* Wymuszenie tła dla wyróżnionych dni */
+  background-color: rgb(70, 199, 134) !important; 
   color: white !important;
 }
 
 .react-calendar__tile--highlighted:hover {
-  background-color: rgb(78, 165, 134) !important; /* Zmiana tła po najechaniu */
+  background-color: rgb(78, 165, 134) !important;
   color: white !important;
+}
+.react-calendar__tile--active {
+  background-color: rgb(61, 106, 255) !important;
+  /* color: black !important; */
 }
 @media (max-width: 1100px) {
   .backgroundChart {

@@ -12,6 +12,7 @@ const Profile = () => {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [preview, setPreview] = useState(null); // Stan do przechowywania URL podglądu
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -78,8 +79,9 @@ const Profile = () => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
       setProfilePicture(file);
+      setPreview(URL.createObjectURL(file));
     } else {
-      alert("Proszę przesłać prawidłowy plik graficzny.");
+      alert("Choose a proper jpg/png file.");
     }
   };
 
@@ -97,6 +99,7 @@ const Profile = () => {
 
     const data = await response.json();
     setUser(prevUser => ({ ...prevUser, profilePicture: data.url }));
+    setPreview(null);
   };
 
   if (loading) return <p>Ładowanie...</p>;
@@ -114,31 +117,36 @@ const Profile = () => {
       <div className='row'>
         <div className='backgroundCalendar'>
         <form onSubmit={handleProfilePictureUpload}>
-  <input
-    type="file"
-    id="fileInput"
-    onChange={handleFileChange}
-    style={{ 
-      opacity: 0,
-      position: 'absolute',
-      zIndex: -1,
-    }} 
-  />
-  <button
-    className='button displayProfile'
-    type="button"
-    onClick={() => document.getElementById('fileInput').click()}
-  >
-    Wybierz plik
-  </button>
-  <button
-    className='button displayProfile'
-    type="submit"
-    disabled={!profilePicture} // Wyłączenie przycisku, jeśli nie ma pliku
-  >
-    Zaktualizuj zdjęcie profilowe
-  </button>
-</form>
+          <input
+            type="file"
+            id="fileInput"
+            onChange={handleFileChange}
+            style={{ 
+              opacity: 0,
+              position: 'absolute',
+              zIndex: -1,
+            }} 
+          />
+          <button
+            className=' displayProfile button'
+            type="button"
+            onClick={() => document.getElementById('fileInput').click()}
+          >
+            Choose
+          </button>
+          <button
+            className=' displayProfile button'
+            type="submit"
+            disabled={!profilePicture}
+          >
+            Upload
+          </button>
+          {preview && (
+            <div className="previewContainer">
+              <img src={preview} alt="Podgląd zdjęcia" className="profilePreview" />
+            </div>
+          )}
+        </form>
         </div>
       </div>
       <Footer/>
