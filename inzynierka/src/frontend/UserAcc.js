@@ -5,6 +5,7 @@ import RecentDistance from './Components/RecentDistance';
 import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
+import earthImage from './Components/earth.png';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -105,7 +106,7 @@ const UserAcc = () => {
   const sortedUserRoutes = [...userRoutes].sort((a, b) => new Date(b.date) - new Date(a.date));
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
   <Header 
     user={user} 
     theme={theme} 
@@ -113,7 +114,7 @@ const UserAcc = () => {
     toggleSidebar={toggleSidebar} 
   />
       <div className='row'>
-      <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
+      {/* <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
         <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
         <Distance 
             totalDistance={totalDistance.toFixed(2)}
@@ -128,8 +129,8 @@ const UserAcc = () => {
             recentCO2={formattedRecentCO2} 
             recentMoney={formattedRecentMoney}
           />
-        </div>
-        <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
+        </div> */}
+        {/* <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
           <div className='row textAcc'><p className='textStyleActivity'>Your activities</p></div>
           {sortedUserRoutes.map((route, index) => (
             <div key={index} className='activity-card'>
@@ -141,6 +142,32 @@ const UserAcc = () => {
               <p><strong>Activity duration:</strong> {route.duration}</p>
             </div>
           ))}
+        </div> */}
+        <div className='row'>
+        <div className='backgroundInfo'>
+            <p className='textStyleActivity'>CO2 Saved</p>
+            <Distance 
+            totalCO2={totalCO2.toFixed(2)}
+          />
+          
+        </div>
+        <div className='background'>
+          <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately 42 kilometers by car.</p>
+          <img src={earthImage} alt='Earth' className='earth-image' />
+        </div>
+        </div>
+        <div className='row'>
+        <div className='backgroundInfo'>
+            <p className='textStyleActivity'>CO2 Saved</p>
+            <Distance 
+            totalCO2={totalCO2.toFixed(2)}
+          />
+          
+        </div>
+        <div className='background'>
+          <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately 42 kilometers by car.</p>
+          <img src={earthImage} alt='Earth' className='earth-image' />
+        </div>
         </div>
       </div>
       <Footer/>

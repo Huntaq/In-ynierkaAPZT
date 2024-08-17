@@ -76,7 +76,7 @@ const Settings = () => {
 
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header 
         user={user} 
         theme={theme} 
