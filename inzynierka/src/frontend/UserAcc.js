@@ -6,6 +6,10 @@ import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import earthImage from './Components/earth.png';
+import PLN from './Components/PLN';
+import Chart from './Components/Chart';
+import MonthSelector from './Components/MonthSelector';
+
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -14,6 +18,11 @@ const UserAcc = () => {
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [transportMode, setTransportMode] = useState(1);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,6 +52,7 @@ const UserAcc = () => {
             if (routesResponse.ok) {
               const routesData = await routesResponse.json();
               setUserRoutes(routesData);
+              calculateStreaks(routesData);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
             }
@@ -70,6 +80,43 @@ const UserAcc = () => {
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
+  const calculateStreaks = (routes) => {
+    // Normalizowanie i sortowanie dat od najstarszej do najnowszej
+    const uniqueDates = Array.from(new Set(
+      routes.map(route => normalizeDate(new Date(route.date)).toDateString())
+    ));
+    const sortedDates = uniqueDates
+      .map(dateStr => new Date(dateStr))
+      .sort((a, b) => a - b); // Sortowanie rosnąco
+
+    let currentStreakCount = 0;
+    let longestStreakCount = 0;
+    let previousDate = null;
+
+    // Obliczanie streaków
+    sortedDates.forEach(date => {
+      if (previousDate === null) {
+        currentStreakCount = 1;
+      } else {
+        const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
+        if (dayDifference === 1) {
+          currentStreakCount += 1;
+        } else if (dayDifference > 1) {
+          currentStreakCount = 1;
+        }
+      }
+
+      longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
+      previousDate = date;
+    });
+
+    setCurrentStreak(currentStreakCount);
+    setLongestStreak(longestStreakCount);
+  };
+
+  const normalizeDate = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -78,6 +125,14 @@ const UserAcc = () => {
     const options = { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' };
     const date = new Date(dateString);
     return date.toLocaleString('pl-PL', options);
+  };
+  const handleMonthChange = (newMonth, newYear) => {
+    setMonth(newMonth);
+    setYear(newYear);
+  };
+  
+  const handleTransportChange = (selectedMode) => {
+    setTransportMode(selectedMode);
   };
   
   
@@ -99,7 +154,8 @@ const UserAcc = () => {
   const formattedRecentKcal = recentKcal.toFixed(2);
   const formattedRecentCO2 = recentCO2.toFixed(2);
   const formattedRecentMoney = recentMoney.toFixed(2);
-
+  const averageCO2PerKm = 0.12;
+  const savedKm = totalCO2 / averageCO2PerKm;
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -152,23 +208,34 @@ const UserAcc = () => {
           
         </div>
         <div className='background'>
-          <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately 42 kilometers by car.</p>
+        <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately {savedKm.toFixed(0)} kilometers by car.</p>
           <img src={earthImage} alt='Earth' className='earth-image' />
         </div>
         </div>
+
         <div className='row'>
         <div className='backgroundInfo'>
-            <p className='textStyleActivity'>CO2 Saved</p>
-            <Distance 
-            totalCO2={totalCO2.toFixed(2)}
-          />
+            <p className='textStyleActivity'>PLN Saved</p>
+            <PLN totalMoney={totalMoney.toFixed(2)}/>
           
         </div>
+        <div className='background1'>
+        <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
+        <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
+        </div>
+        </div>
+
+        <div className='row'>
+        <div className='backgroundInfo'>
+          <p className='Co2Info'>Current Streak {currentStreak}</p>
+          <p className='Co2Info'>Longest streak {longestStreak}</p>
+        </div>
         <div className='background'>
-          <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately 42 kilometers by car.</p>
+        <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately {savedKm.toFixed(0)} kilometers by car.</p>
           <img src={earthImage} alt='Earth' className='earth-image' />
         </div>
         </div>
+        
       </div>
       <Footer/>
     </div>

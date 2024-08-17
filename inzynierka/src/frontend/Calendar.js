@@ -14,13 +14,13 @@ const Calendar1 = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [transportMode, setTransportMode] = useState(1);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dailyActivities, setDailyActivities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -50,6 +50,7 @@ const Calendar1 = () => {
             if (routesResponse.ok) {
               const routesData = await routesResponse.json();
               setUserRoutes(routesData);
+              calculateStreaks(routesData);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
             }
@@ -67,18 +68,18 @@ const Calendar1 = () => {
 
     fetchUserData();
   }, []);
+
   useEffect(() => {
     const activities = userRoutes.filter(route => {
-      const routeDate = new Date(route.date);
+      const routeDate = normalizeDate(new Date(route.date));
       return (
         routeDate.getDate() === selectedDate.getDate() &&
         routeDate.getMonth() === selectedDate.getMonth() &&
-        routeDate.getFullYear() === selectedDate.getFullYear() &&
-        route.transport_mode_id === transportMode
+        routeDate.getFullYear() === selectedDate.getFullYear()
       );
     });
     setDailyActivities(activities);
-  }, [selectedDate, userRoutes, transportMode]);
+  }, [selectedDate, userRoutes]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -93,12 +94,77 @@ const Calendar1 = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
     localStorage.setItem('theme', theme);
   };
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    const activities = userRoutes.filter(route => {
+      const routeDate = normalizeDate(new Date(route.date));
+      return (
+        routeDate.getDate() === date.getDate() &&
+        routeDate.getMonth() === date.getMonth() &&
+        routeDate.getFullYear() === date.getFullYear()
+      );
+    });
+    setDailyActivities(activities);
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const normalizeDate = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+
+  const calculateStreaks = (routes) => {
+  const uniqueDates = Array.from(new Set(
+    routes.map(route => normalizeDate(new Date(route.date)).toDateString())
+  ));
+  const sortedDates = uniqueDates
+    .map(dateStr => new Date(dateStr))
+    .sort((a, b) => a - b)
+
+  console.log('Sorted dates:', sortedDates);
+
+  let currentStreakCount = 0;
+  let longestStreakCount = 0;
+  let previousDate = null;
+
+  sortedDates.forEach(date => {
+    if (previousDate === null) {
+      currentStreakCount = 1;
+    } else {
+      const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
+      if (dayDifference === 1) {
+        currentStreakCount += 1;
+      } else if (dayDifference > 1) {
+        currentStreakCount = 1;
+      }
+    }
+
+    longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
+    previousDate = date;
+
+    console.log(`Processing date: ${date.toDateString()}`);
+    console.log(`Day difference: ${(date - previousDate) / (1000 * 60 * 60 * 24)}`);
+    console.log(`Current streak count: ${currentStreakCount}`);
+    console.log(`Longest streak count: ${longestStreakCount}`);
+  });
+
+  setCurrentStreak(currentStreakCount);
+  setLongestStreak(longestStreakCount);
+};
+
+  const getTransportModeName = (id) => {
+    switch(id) {
+      case 1:
+        return 'Bieganie';
+      case 2:
+        return 'Rower';
+      default:
+        return 'Nieznany tryb';
+    }
   };
 
   if (loading) return <p>Ładowanie...</p>;
@@ -106,7 +172,7 @@ const Calendar1 = () => {
 
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header 
         user={user} 
         theme={theme} 
@@ -115,24 +181,21 @@ const Calendar1 = () => {
       />
       <div className="row">
         <div className='backgroundCalendar'>
-        <Calendar
-        onChange={handleDateChange}
-        value={selectedDate}
-        tileClassName={({ date, view }) => {
-          if (userRoutes.some(route => {
-            const routeDate = new Date(route.date);
-            return (
-              routeDate.getDate() === date.getDate() &&
-              routeDate.getMonth() === date.getMonth() &&
-              routeDate.getFullYear() === date.getFullYear()
-            );
-          })) {
-            return 'react-calendar__tile--highlighted';
-          }
-          return null;
-        }}
-      />
-      </div>
+          <Calendar
+            onChange={handleDateChange}
+            value={selectedDate}
+            tileClassName={({ date }) => {
+              const isActiveDay = userRoutes.some(route => {
+                const routeDate = normalizeDate(new Date(route.date));
+                return (
+                  routeDate.toDateString() === date.toDateString()
+                );
+              });
+              return isActiveDay ? 'react-calendar__tile--highlighted' : null;
+            }}
+          />
+        </div>
+        
       </div>
       <Footer/>
       <Modal
@@ -146,13 +209,13 @@ const Calendar1 = () => {
         {dailyActivities.length > 0 ? (
           <ul>
             {dailyActivities.map((activity, index) => (
-              <ul key={index}>
-                {activity.distance_km} km - {activity.duration} - CO2: {activity.CO2} kg - kcal: {activity.kcal}
-              </ul>
+              <li key={index}>
+                {getTransportModeName(activity.transport_mode_id)} - {activity.distance_km} km - {activity.duration} - CO2: {activity.CO2} kg - kcal: {activity.kcal}
+              </li>
             ))}
           </ul>
         ) : (
-          <p></p>
+          <p>Brak aktywności na ten dzień.</p>
         )}
         <button className='button' onClick={closeModal}>Zamknij</button>
       </Modal>

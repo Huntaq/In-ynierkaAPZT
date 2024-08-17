@@ -24,6 +24,7 @@ const Activities = () => {
   const [dailyActivities, setDailyActivities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
