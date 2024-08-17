@@ -20,9 +20,6 @@ const Sidebar = ({user, isOpen, toggleSidebar, userRoutes }) => {
     const goToSettings = () => {
         navigate('/Settings', { state: { userRoutes } });
     };
-    const goToActivities = () => {
-        navigate('/Activities', { state: { userRoutes } });
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -52,7 +49,6 @@ const Sidebar = ({user, isOpen, toggleSidebar, userRoutes }) => {
                 <ul>
                     <li className='T' onClick={goToHome}>Overview</li>
                     <li className='T' onClick={goToProfile}>Profile</li>
-                    <li className='T' onClick={goToActivities}>Activities</li>
                     <li className='T' onClick={goToTrophies}>Trophies</li>
                     <li className='T' onClick={goToCalendar}>Calendar</li>
                     <li className='T' onClick={goToSettings}>Settings</li>

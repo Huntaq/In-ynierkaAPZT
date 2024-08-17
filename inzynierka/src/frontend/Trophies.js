@@ -14,6 +14,7 @@ const Trophies = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
+  const [trophiesCount, setTrophiesCount] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -55,6 +56,12 @@ const Trophies = () => {
 
               setRunningDistance(runningDistance);
               setCyclingDistance(cyclingDistance);
+
+              // Obliczanie liczby zdobytych pucharków
+              const runningTrophy = runningDistance >= 100;
+              const cyclingTrophy = cyclingDistance >= 100;
+              const totalTrophies = (runningTrophy ? 1 : 0) + (cyclingTrophy ? 1 : 0);
+              setTrophiesCount(totalTrophies);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
             }
@@ -76,10 +83,12 @@ const Trophies = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
+
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     localStorage.setItem('theme', theme);
@@ -96,7 +105,7 @@ const Trophies = () => {
 
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header 
         user={user} 
         theme={theme} 
@@ -105,6 +114,7 @@ const Trophies = () => {
       />
       <h2>Your Trophies</h2>
       <div className="trophies-container">
+        <p className="trophies-count">Total Trophies: {trophiesCount}</p>
         <div className="trophy-list">
           {hasRunningTrophy ? (
             <div className="trophy">

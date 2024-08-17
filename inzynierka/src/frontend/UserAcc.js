@@ -6,9 +6,11 @@ import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import earthImage from './Components/earth.png';
+import meter from './Components/meter.png'
 import PLN from './Components/PLN';
 import Chart from './Components/Chart';
 import MonthSelector from './Components/MonthSelector';
+import Trophy from './Components/Trophy';
 
 
 const UserAcc = () => {
@@ -23,6 +25,8 @@ const UserAcc = () => {
   const [transportMode, setTransportMode] = useState(1);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
+  const [trophiesCount, setTrophiesCount] = useState(0);
+  const [trophies, setTrophies] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -53,6 +57,7 @@ const UserAcc = () => {
               const routesData = await routesResponse.json();
               setUserRoutes(routesData);
               calculateStreaks(routesData);
+              calculateTrophies(routesData);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
             }
@@ -113,6 +118,30 @@ const UserAcc = () => {
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
   };
+  const calculateTrophies = (routes) => {
+    // Oblicz dystans dla różnych trybów transportu
+    const runningDistance = routes
+      .filter(route => route.transport_mode_id === 1)
+      .reduce((acc, route) => acc + route.distance_km, 0);
+  
+    const cyclingDistance = routes
+      .filter(route => route.transport_mode_id === 2)
+      .reduce((acc, route) => acc + route.distance_km, 0);
+  
+    console.log('Running Distance:', runningDistance);
+    console.log('Cycling Distance:', cyclingDistance);
+  
+    // Ustal, które pucharki są zdobyte
+    const trophiesList = [
+      { type: 'running', isEarned: runningDistance >= 100 },
+      { type: 'cycling', isEarned: cyclingDistance >= 100 }
+    ];
+  
+    console.log('Trophies List:', trophiesList);
+  
+    setTrophies(trophiesList);
+  };
+  
 
   const normalizeDate = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -227,12 +256,23 @@ const UserAcc = () => {
 
         <div className='row'>
         <div className='backgroundInfo'>
-          <p className='Co2Info'>Current Streak {currentStreak}</p>
-          <p className='Co2Info'>Longest streak {longestStreak}</p>
+          <p className='textStyleActivity'>Current Streak</p>
+          
+          <div className='row'>
+            <p className='StreakInfo'>{currentStreak} </p>
+            <img src={meter} alt='Earth' className='meterimage inline' />
+          </div>
+          <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
         </div>
-        <div className='background'>
-        <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately {savedKm.toFixed(0)} kilometers by car.</p>
-          <img src={earthImage} alt='Earth' className='earth-image' />
+        {/* {currentStreak} {longestStreak}*/}
+        <div className='background2'>
+            {trophies.length > 0 ? (
+              trophies.map((trophy, index) => (
+                <Trophy key={index} type={trophy.type} isEarned={trophy.isEarned} />
+              ))
+            ) : (
+              <p>No trophies earned yet</p>
+            )}
         </div>
         </div>
         

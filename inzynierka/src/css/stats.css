@@ -84,9 +84,23 @@ body.dark {
   color: #000000;
 }
 .earth-image {
-  width: 100px; /* Dostosuj szerokość w zależności od potrzeb */
-  height: 100px; /* Utrzymanie proporcji */
+  width: 100px;
+  height: 100px;
   margin: auto;
+}
+.meterimage{
+  width: 90px;
+  height: 90px;
+  margin-top: 30px;
+  margin-right: 20px;
+}
+.StreakInfo{
+  padding: 10px;
+  width: 20%;
+  font-weight: bold;
+  font-size: 50px;
+  color: #000000;
+  margin-top: 30px;
 }
 .Co2Info{
   padding: 20px;
@@ -94,6 +108,7 @@ body.dark {
   font-weight: bold;
   color: #000000;
 }
+
 .backgroundInfo{
   background-color: white;
   height: 200px;
@@ -128,6 +143,21 @@ body.dark {
   display: flex;
   align-items: center;
 }
+.background2 {
+  background: white;
+  height: 200px;
+  width: 45%;
+  min-width: 400px;
+  padding: 10px;
+  border-radius: 7px;
+  margin: auto;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+
   .inline{
     display: inline;
   }
@@ -142,12 +172,12 @@ body.dark {
     position: relative;
     padding: 10px 20px;
     border-radius: 7px;
-    border: 1px solid rgb(61, 106, 255);
+    border: 1px solid #409A55;
     font-size: 14px;
     text-transform: uppercase;
     font-weight: 600;
     letter-spacing: 2px;
-    background: rgb(61, 106, 255);
+    background: #409A55;
     color: white;
     overflow: hidden;
     box-shadow: 0 0 0 0 transparent;
@@ -155,57 +185,8 @@ body.dark {
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
     }
-
 .button:hover {
-  background: rgb(101, 106, 255);
-  border: 1px solid rgb(101, 106, 255);
-  box-shadow: 2px 2px 0 0 rgba(128, 128, 128, 0.815);
-}
-
-.button:hover::before {
-  -webkit-animation: sh02 0.5s 0s linear;
-  -moz-animation: sh02 0.5s 0s linear;
-  animation: sh02 0.5s 0s linear;
-}
-
-.button::before {
-  content: '';
-  width: 0px;
-  height: 86%;
-  position: absolute;
-  top: 7%;
-  left: 0%;
-  opacity: 0;
-  background: #fff;
-  box-shadow: 0 0 50px 30px #fff;
-  -webkit-transform: skewX(-20deg);
-  -moz-transform: skewX(-20deg);
-  -ms-transform: skewX(-20deg);
-  -o-transform: skewX(-20deg);
-  transform: skewX(-20deg);
-}
-
-@keyframes sh02 {
-  from {
-    opacity: 0;
-    left: 0%;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-    left: 100%;
-  }
-}
-
-.button:active {
-  box-shadow: 0 0 0 0 transparent;
-  -webkit-transition: box-shadow 0.2s ease-in;
-  -moz-transition: box-shadow 0.2s ease-in;
-  transition: box-shadow 0.2s ease-in;
+  background: #317c43;
 }
 .margin-right{
   margin-right:5px;
@@ -216,71 +197,6 @@ body.dark {
 .margin-left1{
   margin-left:7px;
 }
-.activity-card {
-  display: grid;
-    text-align: center;
-    position: relative;
-    color: white;
-    background-color: #007bff;
-    border: 1px solid #726b6b;
-    border-radius: 8px;
-    margin: 10px;
-    padding: 10px;
-    height: 200px;
-    width: 250px;
-    -webkit-transition: all 0.2s ease-in;
-    -moz-transition: all 0.2s ease-in;
-    transition: all 0.2s ease-in;
-}
-.activity-card:hover{
-    background: rgb(101, 106, 255);
-    border: 1px solid #726b6b;
-}
-.activity-card:hover::before {
-    -webkit-animation: sh02 0.5s 0s linear;
-    -moz-animation: sh02 0.5s 0s linear;
-    animation: sh02 0.5s 0s linear;
-  }
-  
-  .activity-card::before {
-    content: '';
-    width: 0px;
-    height: 86%;
-    position: absolute;
-    top: 7%;
-    left: 0%;
-    opacity: 0;
-    background: #fff;
-    box-shadow: 0 0 50px 30px #fff;
-    -webkit-transform: skewX(-20deg);
-    -moz-transform: skewX(-20deg);
-    -ms-transform: skewX(-20deg);
-    -o-transform: skewX(-20deg);
-    transform: skewX(-20deg);
-  }
-  
-  @keyframes sh02 {
-    from {
-      opacity: 0;
-      left: 0%;
-    }
-  
-    50% {
-      opacity: 1;
-    }
-  
-    to {
-      opacity: 0;
-      left: 100%;
-    }
-  }
-  
-  .activity-card:active {
-    box-shadow: 0 0 0 0 transparent;
-    -webkit-transition: box-shadow 0.2s ease-in;
-    -moz-transition: box-shadow 0.2s ease-in;
-    transition: box-shadow 0.2s ease-in;
-  }
 
 .activity-date {
     font-size: 1.1rem;
