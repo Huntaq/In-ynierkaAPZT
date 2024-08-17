@@ -8,6 +8,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const [nameError, setNameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -16,7 +17,30 @@ const Register = () => {
     const [genderError, setGenderError] = useState('');
 
     const validateName = (name) => /^[A-Za-z]{2,30}$/.test(name);
-    const validatePassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s,]{8,24}$/.test(password);
+    const validatePassword = (password) => {
+        if (password.length < 8) {
+            return 'Password should be at least 8 characters long';
+        }
+        if (password.length > 24) {
+            return 'Password should be no more than 24 characters long';
+        }
+        if (!/[a-z]/.test(password)) {
+            return 'Password should contain at least one lowercase letter';
+        }
+        if (!/[A-Z]/.test(password)) {
+            return 'Password should contain at least one uppercase letter';
+        }
+        if (!/\d/.test(password)) {
+            return 'Password should contain at least one digit';
+        }
+        if (!/[\W_]/.test(password)) {
+            return 'Password should contain at least one special character';
+        }
+        if (/\s/.test(password)) {
+            return 'Password should not contain any whitespace characters';
+        }
+        return '';
+    };
     const validateEmail = (email) => /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(email);
     const validateAge = (age) => /^\d{1,3}$/.test(age) && age >= 18 && age <= 99;
     const validateGender = (gender) => /^(M|F)$/.test(gender);
@@ -26,7 +50,7 @@ const Register = () => {
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (token) {
-        navigate('../UserAcc');
+            navigate('../UserAcc');
         }
     }, [navigate]);
 
@@ -40,8 +64,9 @@ const Register = () => {
             setNameError('');
         }
 
-        if (!validatePassword(password)) {
-            setPasswordError('Invalid password');
+        const passwordValidationResult = validatePassword(password);
+        if (passwordValidationResult !== '') {
+            setPasswordError(passwordValidationResult);
             isValid = false;
         } else {
             setPasswordError('');
@@ -95,32 +120,41 @@ const Register = () => {
     };
 
     return (
-        <div className='container'>
-            <div className='row'>
+        <div className='container2'>
+            <div className='row2 marginP'>
                 <h2 className='register'>Register</h2>
             </div>
-            <div className='row'>
-                <p className='inline inputype'>Nickname </p>
-                {nameError && <p className='error inline'>{nameError}</p>}
+            <div className='row2'>
+                <p className='inline1 inputype1'>Nickname </p>
+                {nameError && <p className='error inline1'>{nameError}</p>}
                 <input
                     className='inputRegister margin-top'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
             </div>
-            <div className='row'>
-                <p className='inline inputype'>Password </p>
-                {passwordError && <p className='error inline'>{passwordError}</p>}
-                <input
-                    type='password'
-                    className='inputRegister margin-top'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+            <div className='row2'>
+                <p className='inline1 inputype1'>Password </p>
+                {passwordError && <p className='error1 inline1'>{passwordError}</p>}
+                <div className='input-container'>
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        className='inputRegister margin-top'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                        type='button'
+                        className='show-password-button'
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? 'Hide' : 'Show'}
+                    </button>
+                </div>
             </div>
-            <div className='row'>
-                <p className='inline inputype'>E-mail </p>
-                {emailError && <p className='error inline'>{emailError}</p>}
+            <div className='row2'>
+                <p className='inline1 inputype1'>E-mail </p>
+                {emailError && <p className='error inline1'>{emailError}</p>}
                 <input
                     type='email'
                     className='inputRegister margin-top'
@@ -128,9 +162,9 @@ const Register = () => {
                     onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
-            <div className='row'>
-                <p className='inline inputype'>Age </p>
-                {ageError && <p className='error inline'>{ageError}</p>}
+            <div className='row2'>
+                <p className='inline1 inputype1'>Age </p>
+                {ageError && <p className='error inline1'>{ageError}</p>}
                 <input
                     type='number'
                     className='inputRegister margin-top'
@@ -138,9 +172,9 @@ const Register = () => {
                     onChange={(e) => setAge(e.target.value)}
                 />
             </div>
-            <div className='row'>
-                <p className='inline inputype'>Gender </p>
-                {genderError && <p className='error inline'>{genderError}</p>}
+            <div className='row2'>
+                <p className='inline1 inputype1'>Gender </p>
+                {genderError && <p className='error inline1'>{genderError}</p>}
                 <select
                     className='inputRegister margin-top' 
                     value={gender}
@@ -151,11 +185,11 @@ const Register = () => {
                     <option value='F'>Female</option>
                 </select>
             </div>
-            <div className='row'>
-                <button className='button margin-top' onClick={() => window.location.href = '../'}>
+            <div className='row2'>
+                <button className='button margin-top inline1' onClick={() => window.location.href = '../'}>
                     Go back
                 </button>
-                <button className='button margin-top float-right' onClick={handleRegister}>
+                <button className='button margin-top float-right inline1' onClick={handleRegister}>
                     Register
                 </button>
             </div>

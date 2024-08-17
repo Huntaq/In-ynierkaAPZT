@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../css/login.css';
+import '../css/stats.css';
+import Distance from './Components/Distance';
+import RecentDistance from './Components/RecentDistance';
+import Sidebar from './Components/Sidebar';
+import Header from './Components/Header';
+import Footer from './Components/Footer';
+import earthImage from './Components/earth.png';
 
 const UserAcc = () => {
-  const [user, setUser] = useState(null); // Używamy pojedynczego obiektu, a nie tablicy
+  const [user, setUser] = useState(null);
+  const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -15,70 +22,155 @@ const UserAcc = () => {
 
       if (token && id) {
         try {
-          const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
           });
 
-          if (response.ok) {
-            const data = await response.json();
-            // Assuming `data` is an array with a single user object
-            setUser(data[0]);
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            setUser(userData[0]);
+
+            const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+
+            if (routesResponse.ok) {
+              const routesData = await routesResponse.json();
+              setUserRoutes(routesData);
+            } else {
+              setError('Błąd podczas pobierania danych tras użytkownika');
+            }
           } else {
-            setError('Failed to fetch user data');
+            setError('Błąd podczas pobierania danych użytkownika');
           }
         } catch (err) {
-          setError('An error occurred while fetching user data');
+          setError('Wystąpił błąd podczas pobierania danych');
         }
         setLoading(false);
       } else {
-        setError('User is not authenticated');
+        setError('Użytkownik nie jest zalogowany');
         setLoading(false);
       }
     };
 
     fetchUserData();
   }, []);
-  
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('id');
-    navigate('/');
+
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <p>Ładowanie...</p>;
+  if (error) return <p>Błąd: {error}</p>;
 
+  const formatDate = (dateString) => {
+    const options = { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' };
+    const date = new Date(dateString);
+    return date.toLocaleString('pl-PL', options);
+  };
+  
+  
+  const totalDistance = userRoutes.reduce((acc, route) => acc + route.distance_km, 0);
+  const totalKcal = userRoutes.reduce((acc, route) => acc + route.kcal, 0);
+  const totalCO2 = userRoutes.reduce((acc, route) => acc + route.CO2, 0);
+  const totalMoney = userRoutes.reduce((acc, route) => acc + route.money, 0);
+
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 30);
+  
+  const recentRoutes = userRoutes.filter(route => new Date(route.date) >= threeDaysAgo);
+  const recentDistance = recentRoutes.reduce((acc, route) => acc + route.distance_km, 0);
+  const recentKcal = recentRoutes.reduce((acc, route) => acc + route.kcal, 0);
+  const recentCO2 = recentRoutes.reduce((acc, route) => acc + route.CO2, 0);
+  const recentMoney = recentRoutes.reduce((acc, route) => acc + route.money, 0);
+
+  const formattedRecentDistance = recentDistance.toFixed(2);
+  const formattedRecentKcal = recentKcal.toFixed(2);
+  const formattedRecentCO2 = recentCO2.toFixed(2);
+  const formattedRecentMoney = recentMoney.toFixed(2);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+  const sortedUserRoutes = [...userRoutes].sort((a, b) => new Date(b.date) - new Date(a.date));
   return (
-    <div>
-      {user ? (
-        <>
-          <h1>Hello {user.username}</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.age}</td>
-              </tr>
-            </tbody>
-          </table>
-        </>
-      ) : (
-        <p>No user data available</p>
-      )}
-      <button className='button' onClick={handleLogout}>Logout</button>
+    <div className='container'>
+      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+  <Header 
+    user={user} 
+    theme={theme} 
+    toggleTheme={toggleTheme} 
+    toggleSidebar={toggleSidebar} 
+  />
+      <div className='row'>
+      {/* <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
+        <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
+        <Distance 
+            totalDistance={totalDistance.toFixed(2)}
+            totalKcal={totalKcal.toFixed(2)}
+            totalCO2={totalCO2.toFixed(2)}
+            totalMoney={totalMoney.toFixed(2)}
+          />
+        
+        <RecentDistance 
+            recentDistance={formattedRecentDistance} 
+            recentKcal={formattedRecentKcal} 
+            recentCO2={formattedRecentCO2} 
+            recentMoney={formattedRecentMoney}
+          />
+        </div> */}
+        {/* <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
+          <div className='row textAcc'><p className='textStyleActivity'>Your activities</p></div>
+          {sortedUserRoutes.map((route, index) => (
+            <div key={index} className='activity-card'>
+              <p className='activity-date'>{formatDate(route.date)}</p>
+              <p><strong>Distance:</strong> {route.distance_km} km</p>
+              <p><strong>Kcal burnt:</strong> {route.kcal}</p>
+              <p><strong>CO2 saved:</strong> {route.CO2}</p>
+              <p><strong>Money saved:</strong> {route.money} PLN</p>
+              <p><strong>Activity duration:</strong> {route.duration}</p>
+            </div>
+          ))}
+        </div> */}
+        <div className='row'>
+        <div className='backgroundInfo'>
+            <p className='textStyleActivity'>CO2 Saved</p>
+            <Distance 
+            totalCO2={totalCO2.toFixed(2)}
+          />
+          
+        </div>
+        <div className='background'>
+          <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately 42 kilometers by car.</p>
+          <img src={earthImage} alt='Earth' className='earth-image' />
+        </div>
+        </div>
+        <div className='row'>
+        <div className='backgroundInfo'>
+            <p className='textStyleActivity'>CO2 Saved</p>
+            <Distance 
+            totalCO2={totalCO2.toFixed(2)}
+          />
+          
+        </div>
+        <div className='background'>
+          <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately 42 kilometers by car.</p>
+          <img src={earthImage} alt='Earth' className='earth-image' />
+        </div>
+        </div>
+      </div>
+      <Footer/>
     </div>
   );
 };

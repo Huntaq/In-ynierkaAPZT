@@ -35,26 +35,32 @@ const Login = () => {
       } else {
         setLoginError(data.error || 'Invalid login');
       }
-    } catch 
-    (error) {
+    } catch (error) {
       console.error('Error during login:', error);
       setLoginError('An error occurred. Please try again.');
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
-    <div className='container'>
-      <div className='row'>
+    <div className='container1'>
+      <div className='row1'>
         <h2 className='inline'>Login</h2>
         {loginError && <p className='error inline'>{loginError}</p>}
       </div>
-      <div className='row'>
+      <div className='row1'>
         <div className='credentials'>
           <input
             className='login margin-bottom'
             placeholder='username'
             value={username}
-            onChange={(e) => setUsername(e.target.value)} 
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <input
             className='passwd'
@@ -62,10 +68,11 @@ const Login = () => {
             placeholder='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
-      <div className='row'>
+      <div className='row1'>
         <button className='buttonLogin float-right' onClick={handleLogin}>
           Login
         </button>
