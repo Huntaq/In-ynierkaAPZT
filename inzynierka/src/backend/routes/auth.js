@@ -3,9 +3,27 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const db = require('../config/db');
-
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const router = express.Router();
+const SECRET_KEY = process.env.SECRET_KEY;
 
+// Middleware do weryfikacji tokena
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Zakładając, że token jest w formacie "Bearer <token>"
+
+  if (token == null) return res.sendStatus(401); // Brak tokena
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403); // Token jest niepoprawny
+
+    req.user = user; // Przechowujemy dane użytkownika w obiekcie żądania
+    next(); // Przechodzimy do kolejnego middleware lub trasy
+  });
+};
+
+// Rejestracja użytkownika
 router.post('/register', async (req, res) => {
   const { name, password, email, age, gender } = req.body;
   console.log('Received data:', { name, password, email, age, gender });
@@ -54,41 +72,45 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Logowanie użytkownika
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    console.log('Received login data:', { username, password });
-  
-    if (!username || !password) {
-      console.log('Missing username or password');
-      return res.status(400).json({ error: 'Username and password are required' });
-    }
-  
-    try {
-      db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
-        if (err) {
-          console.error('Database query error:', err);
-          return res.status(500).json({ error: 'Database query error' });
-        }
-  
-        if (results.length === 0) {
-          console.log('User not found');
-          return res.status(400).json({ error: 'Invalid username or password' });
-        }
-  
-        const user = results[0];
-        const isMatch = await bcrypt.compare(password, user.password_hash);
-  
-        if (isMatch) {
-          res.json({ message: 'Login successful', id: user.id });
-        } else {
-          console.log('Password mismatch');
-          res.status(400).json({ error: 'Invalid username or password' });
-        }
-      });
-    } catch (error) {
-      console.error('Server error:', error);
-      res.status(500).json({ error: 'Server error' });
-    }
-  });
+  const { username, password } = req.body;
 
-module.exports = router;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username i hasło są wymagane' });
+  }
+
+  try {
+    db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
+      if (err) {
+        console.error('Błąd zapytania do bazy danych:', err);
+        return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+      }
+
+      if (results.length === 0) {
+        return res.status(400).json({ error: 'Nieprawidłowy username lub hasło' });
+      }
+
+      const user = results[0];
+      const isMatch = await bcrypt.compare(password, user.password_hash);
+
+      if (isMatch) {
+        // Generowanie tokena JWT
+        const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+        res.json({ token });
+      } else {
+        return res.status(400).json({ error: 'Nieprawidłowy username lub hasło' });
+      }
+    });
+  } catch (error) {
+    console.error('Błąd serwera:', error);
+    res.status(500).json({ error: 'Błąd serwera' });
+  }
+});
+
+// Chroniona trasa (przykład)
+router.get('/protected', authenticateToken, (req, res) => {
+  res.json({});
+});
+
+module.exports = { authenticateToken, router };

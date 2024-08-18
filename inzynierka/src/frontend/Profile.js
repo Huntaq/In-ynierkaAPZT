@@ -3,7 +3,7 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-
+import { jwtDecode } from "jwt-decode";
 const Profile = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,10 +17,11 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-      const id = localStorage.getItem('id');
 
-      if (token && id) {
+      if (token) {
         try {
+          const decodedToken = jwtDecode(token);
+          const id = decodedToken.id;
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {

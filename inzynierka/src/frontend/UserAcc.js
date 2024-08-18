@@ -6,12 +6,12 @@ import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import earthImage from './Components/earth.png';
-import meter from './Components/meter.png'
+import meter from './Components/meter.png';
 import PLN from './Components/PLN';
 import Chart from './Components/Chart';
 import MonthSelector from './Components/MonthSelector';
 import Trophy from './Components/Trophy';
-
+import { jwtDecode } from "jwt-decode";
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -25,54 +25,54 @@ const UserAcc = () => {
   const [transportMode, setTransportMode] = useState(1);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
-  const [trophiesCount, setTrophiesCount] = useState(0);
   const [trophies, setTrophies] = useState([]);
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-      const id = localStorage.getItem('id');
-
-      if (token && id) {
+      if (token) {
         try {
-          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
+          const decodedToken = jwtDecode(token);
+          const userId = decodedToken.id;
+    
+          const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
           });
-
+    
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
-
-            const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (routesResponse.ok) {
-              const routesData = await routesResponse.json();
-              setUserRoutes(routesData);
-              calculateStreaks(routesData);
-              calculateTrophies(routesData);
-            } else {
-              setError('Błąd podczas pobierania danych tras użytkownika');
-            }
           } else {
             setError('Błąd podczas pobierania danych użytkownika');
+          }
+    
+          const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+    
+          if (routesResponse.ok) {
+            const routesData = await routesResponse.json();
+            setUserRoutes(routesData);
+            calculateStreaks(routesData);
+            calculateTrophies(routesData);
+          } else {
+            setError('Błąd podczas pobierania tras użytkownika');
           }
         } catch (err) {
           setError('Wystąpił błąd podczas pobierania danych');
         }
-        setLoading(false);
       } else {
-        setError('Użytkownik nie jest zalogowany');
-        setLoading(false);
+        setError('Brak tokena uwierzytelniającego');
       }
+      setLoading(false);
     };
+    
 
     fetchUserData();
   }, []);
@@ -85,20 +85,19 @@ const UserAcc = () => {
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
+
   const calculateStreaks = (routes) => {
-    // Normalizowanie i sortowanie dat od najstarszej do najnowszej
     const uniqueDates = Array.from(new Set(
       routes.map(route => normalizeDate(new Date(route.date)).toDateString())
     ));
     const sortedDates = uniqueDates
       .map(dateStr => new Date(dateStr))
-      .sort((a, b) => a - b); // Sortowanie rosnąco
+      .sort((a, b) => a - b);
 
     let currentStreakCount = 0;
     let longestStreakCount = 0;
     let previousDate = null;
 
-    // Obliczanie streaków
     sortedDates.forEach(date => {
       if (previousDate === null) {
         currentStreakCount = 1;
@@ -118,30 +117,23 @@ const UserAcc = () => {
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
   };
+
   const calculateTrophies = (routes) => {
-    // Oblicz dystans dla różnych trybów transportu
     const runningDistance = routes
       .filter(route => route.transport_mode_id === 1)
       .reduce((acc, route) => acc + route.distance_km, 0);
-  
+
     const cyclingDistance = routes
       .filter(route => route.transport_mode_id === 2)
       .reduce((acc, route) => acc + route.distance_km, 0);
-  
-    console.log('Running Distance:', runningDistance);
-    console.log('Cycling Distance:', cyclingDistance);
-  
-    // Ustal, które pucharki są zdobyte
+
     const trophiesList = [
       { type: 'running', isEarned: runningDistance >= 100 },
       { type: 'cycling', isEarned: cyclingDistance >= 100 }
     ];
-  
-    console.log('Trophies List:', trophiesList);
-  
+
     setTrophies(trophiesList);
   };
-  
 
   const normalizeDate = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -155,15 +147,15 @@ const UserAcc = () => {
     const date = new Date(dateString);
     return date.toLocaleString('pl-PL', options);
   };
+
   const handleMonthChange = (newMonth, newYear) => {
     setMonth(newMonth);
     setYear(newYear);
   };
-  
+
   const handleTransportChange = (selectedMode) => {
     setTransportMode(selectedMode);
   };
-  
   
   const totalDistance = userRoutes.reduce((acc, route) => acc + route.distance_km, 0);
   const totalKcal = userRoutes.reduce((acc, route) => acc + route.kcal, 0);

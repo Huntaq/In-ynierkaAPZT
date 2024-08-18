@@ -4,7 +4,7 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-
+import { jwtDecode } from "jwt-decode";
 const Trophies = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [runningDistance, setRunningDistance] = useState(0);
@@ -19,11 +19,14 @@ const Trophies = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-      const id = localStorage.getItem('id');
 
-      if (token && id) {
+      if (token) {
         try {
-          // Pobieranie danych użytkownika
+          // Dekodowanie tokena
+          const decodedToken = jwtDecode(token);
+          const id = decodedToken.id;
+
+          // Pobieranie danych użytkownika na podstawie ID
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
@@ -35,7 +38,6 @@ const Trophies = () => {
             const userData = await userResponse.json();
             setUser(userData[0]);
 
-            // Pobieranie tras użytkownika
             const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
               method: 'GET',
               headers: {

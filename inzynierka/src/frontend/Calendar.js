@@ -6,7 +6,7 @@ import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-
+import { jwtDecode } from "jwt-decode";
 Modal.setAppElement('#root');
 
 const Calendar1 = () => {
@@ -25,10 +25,13 @@ const Calendar1 = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-      const id = localStorage.getItem('id');
 
-      if (token && id) {
+      if (token) {
         try {
+
+          const decodedToken = jwtDecode(token);
+          const id = decodedToken.id;
+          
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {

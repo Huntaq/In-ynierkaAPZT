@@ -16,8 +16,6 @@ const Login = () => {
   }, [navigate]);
 
   const handleLogin = async () => {
-    console.log('Attempting to login with username:', username);
-
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -26,18 +24,41 @@ const Login = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-
-      const data = await response.json();
+  
       if (response.ok) {
+        const data = await response.json();
         localStorage.setItem('authToken', data.token);
-        localStorage.setItem('id', data.id);
+  
+        console.log('Zalogowano pomyślnie');
+        console.log('Token:', data.token);
+  
+        // Pobierz dane z chronionej trasy
+        const protectedResponse = await fetch('http://localhost:5000/api/protected', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${data.token}`,
+          },
+        });
+  
+        if (protectedResponse.ok) {
+          const protectedData = await protectedResponse.json();
+          console.log('Dane chronione:', protectedData);
+  
+          // Zapisz dane w localStorage
+          localStorage.setItem('protectedData', JSON.stringify(protectedData));
+        } else {
+          console.error('Błąd podczas pobierania danych chronionych');
+        }
+  
+        // Przekierowanie po udanym logowaniu
         navigate('/UserAcc');
       } else {
-        setLoginError(data.error || 'Invalid login');
+        console.error('Błąd podczas logowania');
+        setLoginError('Invalid username or password');
       }
-    } catch (error) {
-      console.error('Error during login:', error);
-      setLoginError('An error occurred. Please try again.');
+    } catch (err) {
+      console.error('Wystąpił błąd:', err);
+      setLoginError('An error occurred during login');
     }
   };
 

@@ -2,23 +2,23 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/sidebar.css';
 
-const Sidebar = ({user, isOpen, toggleSidebar, userRoutes }) => {
+const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
 
     const goToTrophies = () => {
-        navigate('/Trophies', { state: { userRoutes } });
+        navigate('/Trophies', { state: { userRoutes: userRoutes || [] } });
     };
     const goToHome = () => {
-        navigate('/UserAcc', { state: { userRoutes } });
+        navigate('/UserAcc', { state: { userRoutes: userRoutes || [] } });
     };
     const goToCalendar = () => {
-        navigate('/Calendar', { state: { userRoutes } });
+        navigate('/Calendar', { state: { userRoutes: userRoutes || [] } });
     };
     const goToProfile = () => {
-        navigate('/Profile', { state: { userRoutes } });
+        navigate('/Profile', { state: { userRoutes: userRoutes || [] } });
     };
     const goToSettings = () => {
-        navigate('/Settings', { state: { userRoutes } });
+        navigate('/Settings', { state: { userRoutes: userRoutes || [] } });
     };
 
     const handleLogout = () => {
@@ -29,17 +29,17 @@ const Sidebar = ({user, isOpen, toggleSidebar, userRoutes }) => {
 
     return (
         <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-             <div className='row centerImg'>
+            <div className='row centerImg'>
                 <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
                     {user && user.profilePicture ? (
-                    <img 
-                        src={user.profilePicture} 
-                        alt="Profile" 
-                        className='user-icon' 
-                        style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
-                    />
+                        <img 
+                            src={user.profilePicture} 
+                            alt="Profile" 
+                            className='user-icon' 
+                            style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
+                        />
                     ) : (
-                    <div className='user-icon'>{user && user.username[0]}</div>
+                        <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
                     )}
                 </a>
             </div>

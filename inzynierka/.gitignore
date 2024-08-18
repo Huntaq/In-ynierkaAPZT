@@ -14,7 +14,7 @@
 # config files
 windy-marker-431819-c0-262ab0058e6d.json
 db.js 
-
+.env
 
 # misc
 .DS_Store
