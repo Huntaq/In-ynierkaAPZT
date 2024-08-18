@@ -7,7 +7,7 @@
     background-color:#8ac598;
     overflow-x: hidden;
     transition: width 0.5s ease-in-out;
-    padding-top: 60px;
+    padding-top:20px;
     z-index: 1000;
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
     display: flex;
@@ -20,8 +20,8 @@
   }
   .close-btn {
     position: absolute;
-    top: 20px;
-    right: 25px;
+    top: 30px;
+    right: 30px;
     font-size: 36px;
     max-width: 150px;
     max-height: 40px;
@@ -36,27 +36,19 @@
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
     }
-
+.navCenter{
+  margin-top: 60px;
+}
 .close-btn:hover {
   background: #317c43;
 }
 .centerImg{
+  margin-top: 15px;
   justify-content: center;
 }
-.user-icon {
-  margin: auto;
-  margin-top: 10px;
-  width: 40px;
-  height: 40px;
-  background-color: white;
-  color: #409A55;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  border: 2px solid #409A55;
+.leaf-image{
+  width: 50px;
+  height: 50px;
 }
 .sidebar nav ul {
     list-style-type: none;

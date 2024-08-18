@@ -269,7 +269,7 @@ const UserAcc = () => {
         </div>
         
       </div>
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 };

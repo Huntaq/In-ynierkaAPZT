@@ -4,7 +4,7 @@ import '../css/stats.css';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import { jwtDecode } from "jwt-decode";
-const Settings = () => {
+const Statistics = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -84,10 +84,9 @@ const Settings = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      
       {/* <Footer/> */}
     </div>
   );
 };
 
-export default Settings;
+export default Statistics;

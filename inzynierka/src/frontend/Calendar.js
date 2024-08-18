@@ -200,7 +200,7 @@ const Calendar1 = () => {
         </div>
         
       </div>
-      <Footer/>
+      {/* <Footer/> */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}

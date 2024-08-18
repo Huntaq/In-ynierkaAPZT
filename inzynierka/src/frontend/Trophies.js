@@ -142,7 +142,7 @@ const Trophies = () => {
           )}
         </div>
       </div>
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 };

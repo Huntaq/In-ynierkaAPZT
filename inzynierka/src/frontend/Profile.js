@@ -115,8 +115,25 @@ const Profile = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
+      <div>
       <div className='row'>
-        <div className='backgroundCalendar'>
+        <div className='backgroundProfileInfo inline'>
+          <div className='row'>
+          <div className='inline'>
+        <a href="/Profile" className='user-info inline' style={{ textDecoration: 'none' }}>
+          {user && user.profilePicture ? (
+            <img 
+              src={user.profilePicture} 
+              alt="Profile" 
+              className='user-icon' 
+              style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
+            />
+          ) : (
+            <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
+          )}
+        </a>
+        </div>
+        <div className='inline'>
         <form onSubmit={handleProfilePictureUpload}>
           <input
             type="file"
@@ -129,14 +146,14 @@ const Profile = () => {
             }} 
           />
           <button
-            className=' displayProfile button'
+            className=' displayProfile button inline'
             type="button"
             onClick={() => document.getElementById('fileInput').click()}
           >
             Choose
           </button>
           <button
-            className=' displayProfile button'
+            className=' displayProfile button inline'
             type="submit"
             disabled={!profilePicture}
           >
@@ -147,10 +164,22 @@ const Profile = () => {
               <img src={preview} alt="Podgląd zdjęcia" className="profilePreview" />
             </div>
           )}
+          
         </form>
         </div>
+        </div>
+        </div>
+        <div>
+          <div className='backgroundInfoProfile margintest'>
+            sda
+          </div>
+          <div className='backgroundInfoProfile '>
+            sda
+          </div>
+        </div>
       </div>
-      <Footer/>
+      </div>
+      {/* <Footer/> */}
     </div>
   );
 };

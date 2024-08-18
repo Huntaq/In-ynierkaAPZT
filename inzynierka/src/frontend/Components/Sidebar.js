@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
+import leaf from './leaf.png';
 
 const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
@@ -21,7 +22,12 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const goToSettings = () => {
         navigate('/Settings', { state: { userRoutes: userRoutes || [] } });
     };
-
+    const goToRankings = () => {
+        navigate('/Rankings', { state: { userRoutes: userRoutes || [] } });
+    };
+    const goToStatistics = () => {
+        navigate('/Statistics', { state: { userRoutes: userRoutes || [] } });
+    };
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('id');
@@ -35,13 +41,16 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
         location.pathname === '/Calendar' ? 'calendar-page' :
         location.pathname === '/Profile' ? 'profile-page' :
         location.pathname === '/Settings' ? 'settings-page' :
+        location.pathname === '/Rankings' ? 'rankings-page' :
+        location.pathname === '/Statistics' ? 'statistics-page' :
         ''
     }`;
 
     return (
         <div className={sidebarClass}>
             <div className='row centerImg'>
-                <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
+            <img src={leaf} alt='Earth' className='leaf-image inline' />
+                {/* <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
                     {user && user.profilePicture ? (
                         <img 
                             src={user.profilePicture} 
@@ -52,14 +61,16 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
                     ) : (
                         <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
                     )}
-                </a>
+                </a> */}
+                <button className="close-btn" onClick={toggleSidebar}>X</button>
             </div>
-            <button className="close-btn" onClick={toggleSidebar}>X</button>
             
-            <nav>
+            <nav className='navCenter'>
                 <ul>
                     <li className='T Home' onClick={goToHome}>Overview</li>
                     <li className='T Profile' onClick={goToProfile}>Profile</li>
+                    <li className='T Statistics' onClick={goToStatistics}>Statistics</li>
+                    <li className='T Rankings' onClick={goToRankings}>Rankings</li>
                     <li className='T Trophies' onClick={goToTrophies}>Trophies</li>
                     <li className='T Calendar' onClick={goToCalendar}>Calendar</li>
                     <li className='T Settings' onClick={goToSettings}>Settings</li>

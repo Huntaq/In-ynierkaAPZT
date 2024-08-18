@@ -9,6 +9,8 @@ import Trophies from './Trophies';
 import Calendar1 from './Calendar';
 import Profile from './Profile';
 import Settings from './Settings';
+import Rankings from './Rankings';
+import Statistics from './Statistics'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           <Route path="/Calendar" element={<PrivateRoute element={<Calendar1 />} />} />
           <Route path="/Profile" element={<PrivateRoute element={<Profile />} />} />
           <Route path="/Settings" element={<PrivateRoute element={<Settings />} />} />
+          <Route path="/Rankings" element={<PrivateRoute element={<Rankings />} />} />
+          <Route path="/Statistics" element={<PrivateRoute element={<Statistics />} />} />
         </Routes>
     </Router>
   );
