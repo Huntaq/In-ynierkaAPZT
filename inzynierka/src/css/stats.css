@@ -302,7 +302,7 @@ body.dark {
   max-width: 100% !important;
   padding: 20px;
   font-family: Arial, sans-serif;
-  border: 2px solid black !important;
+  border: none !important;
   border-radius: 15px;
 }
 
@@ -335,7 +335,8 @@ body.dark {
 
 .react-calendar__tile {
   background-color: white !important;
-  border: 2px solid black !important;
+  border: 3px solid #8ac598 !important;
+  border-radius: 10px;
   width: 1vw;
   height: auto;
   background: none;
@@ -369,6 +370,36 @@ body.dark {
 .react-calendar__tile--active {
   background-color: rgb(61, 106, 255) !important;
   /* color: black !important; */
+}
+.home-page .Home{
+  background-color: #5ca86e !important; 
+}
+.home-page .Home:hover{
+  background-color: #409A55 !important;
+}
+.profile-page .Profile{
+  background-color: #5ca86e !important; 
+}
+.profile-page .Profile:hover{
+  background-color: #409A55 !important; 
+}
+.calendar-page .Calendar{
+  background-color: #5ca86e !important; 
+}
+.calendar-page .Calendar:hover{
+  background-color: #409A55 !important;
+}
+.trophies-page .Trophies{
+  background-color: #5ca86e !important; 
+}
+.trophies-page .Trophies:hover{
+  background-color: #409A55 !important; 
+}
+.settings-page .Settings{
+  background-color: #5ca86e !important; 
+}
+.settings-page .Settings:hover{
+  background-color: #409A55 !important; 
 }
 @media (max-width: 700px) {
   .background,

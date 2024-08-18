@@ -1,9 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
 
 const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
+    const location = useLocation(); // Uzyskaj bieżącą lokalizację
 
     const goToTrophies = () => {
         navigate('/Trophies', { state: { userRoutes: userRoutes || [] } });
@@ -27,8 +28,18 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
         navigate('/');
     };
 
+    // Stylizacja w zależności od lokalizacji
+    const sidebarClass = `sidebar ${isOpen ? 'open' : ''} ${
+        location.pathname === '/Trophies' ? 'trophies-page' :
+        location.pathname === '/UserAcc' ? 'home-page' :
+        location.pathname === '/Calendar' ? 'calendar-page' :
+        location.pathname === '/Profile' ? 'profile-page' :
+        location.pathname === '/Settings' ? 'settings-page' :
+        ''
+    }`;
+
     return (
-        <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className={sidebarClass}>
             <div className='row centerImg'>
                 <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
                     {user && user.profilePicture ? (
@@ -47,11 +58,11 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
             
             <nav>
                 <ul>
-                    <li className='T' onClick={goToHome}>Overview</li>
-                    <li className='T' onClick={goToProfile}>Profile</li>
-                    <li className='T' onClick={goToTrophies}>Trophies</li>
-                    <li className='T' onClick={goToCalendar}>Calendar</li>
-                    <li className='T' onClick={goToSettings}>Settings</li>
+                    <li className='T Home' onClick={goToHome}>Overview</li>
+                    <li className='T Profile' onClick={goToProfile}>Profile</li>
+                    <li className='T Trophies' onClick={goToTrophies}>Trophies</li>
+                    <li className='T Calendar' onClick={goToCalendar}>Calendar</li>
+                    <li className='T Settings' onClick={goToSettings}>Settings</li>
                     <li className="logout" onClick={handleLogout}><a href=".">Logout</a></li>
                 </ul>
             </nav>
