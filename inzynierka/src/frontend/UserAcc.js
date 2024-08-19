@@ -94,29 +94,53 @@ const UserAcc = () => {
       .map(dateStr => new Date(dateStr))
       .sort((a, b) => a - b);
 
-    let currentStreakCount = 0;
     let longestStreakCount = 0;
+    let currentStreakCount = 0;
     let previousDate = null;
 
-    sortedDates.forEach(date => {
-      if (previousDate === null) {
-        currentStreakCount = 1;
-      } else {
-        const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
-        if (dayDifference === 1) {
-          currentStreakCount += 1;
-        } else if (dayDifference > 1) {
-          currentStreakCount = 1;
+    sortedDates.forEach((date, index) => {
+        if (previousDate === null) {
+            currentStreakCount = 1; // Rozpoczynamy streak
+        } else {
+            const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
+            if (dayDifference === 1) {
+                currentStreakCount += 1; // Kontynuacja streaka
+            } else if (dayDifference > 1) {
+                currentStreakCount = 1; // Rozpoczynamy nowy streak od 1
+            }
         }
-      }
 
-      longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
-      previousDate = date;
+        longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
+        previousDate = date;
     });
+
+    // Sprawdzamy, czy streak jest aktualny (czy ostatnia aktywność była wczoraj lub dzisiaj)
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (sortedDates.length > 0) {
+        const lastActivityDate = sortedDates[sortedDates.length - 1];
+        const dayDifferenceWithYesterday = (yesterday - lastActivityDate) / (1000 * 60 * 60 * 24);
+        const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
+
+        if (dayDifferenceWithYesterday > 1 && dayDifferenceWithToday > 1) {
+            currentStreakCount = 0; // Jeśli ostatnia aktywność była wcześniej niż wczoraj, reset streaka
+        }
+    } else {
+        currentStreakCount = 0; // Jeśli nie było żadnych aktywności, streak jest 0
+    }
 
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
-  };
+};
+
+
+
+
+
+
+
 
   const calculateTrophies = (routes) => {
     const runningDistance = routes
