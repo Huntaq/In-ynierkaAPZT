@@ -296,6 +296,17 @@ body.dark {
 .buttonAvatar:hover {
 background: #317c43;
 }
+.Notify{
+  top: 0;
+  right: 0;
+  margin-left: 20px;
+  min-width: 140px;
+}
+.buttonAvatar.Notify:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 .buttonAvatarDelete {
   top: 20px;
   right: 25px;

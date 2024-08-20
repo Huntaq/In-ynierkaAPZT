@@ -16,9 +16,10 @@ const Profile = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-
+  const [isCooldown, setIsCooldown] = useState(false);
   const [emailNotification, setEmailNotification] = useState('yes');
   const [pushNotification, setPushNotification] = useState('yes');
+  const [remainingCooldown, setRemainingCooldown] = useState(60);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -154,11 +155,36 @@ const Profile = () => {
   const handlePushNotificationChange = (value) => {
     setPushNotification(value);
   };
+
   const handleUpdateClick = async () => {
+    if (isCooldown) {
+      alert('Poczekaj 60 sekund przed kolejną aktualizacją.');
+      return;
+    }
+  
+    setIsCooldown(true);
+    setRemainingCooldown(60);
+    localStorage.setItem('cooldownTimestamp', Date.now());
+  
+    const interval = setInterval(() => {
+      setRemainingCooldown(prev => {
+        if (prev > 1) {
+          return prev - 1;
+        } else {
+          clearInterval(interval);
+          setIsCooldown(false);
+          localStorage.removeItem('cooldownTimestamp');
+          return 60;
+        }
+      });
+    }, 1000);
+  
     const token = localStorage.getItem('authToken');
   
     if (!token) {
-      alert('Brak tokena autoryzacyjnego. Proszę zalogować się ponownie.');
+      clearInterval(interval);
+      setIsCooldown(false);
+      setRemainingCooldown(60);
       return;
     }
   
@@ -176,20 +202,46 @@ const Profile = () => {
       });
   
       if (response.ok) {
-        alert('Ustawienia zostały zaktualizowane.');
       } else {
         const errorData = await response.json();
-        alert(`Błąd: ${errorData.message || 'Nie udało się zaktualizować ustawień.'}`);
       }
     } catch (error) {
-      alert('Wystąpił błąd podczas aktualizacji ustawień.');
     }
   };
+  
+  useEffect(() => {
+    const cooldownTimestamp = localStorage.getItem('cooldownTimestamp');
+    if (cooldownTimestamp) {
+      const timeElapsed = Date.now() - parseInt(cooldownTimestamp, 10);
+      const remainingCooldownTime = 60000 - timeElapsed;
+  
+      if (remainingCooldownTime > 0) {
+        setIsCooldown(true);
+        setRemainingCooldown(Math.ceil(remainingCooldownTime / 1000));
+  
+        const interval = setInterval(() => {
+          setRemainingCooldown(prev => {
+            if (prev > 1) {
+              return prev - 1;
+            } else {
+              clearInterval(interval);
+              setIsCooldown(false);
+              localStorage.removeItem('cooldownTimestamp');
+              return 60;
+            }
+          });
+        }, 1000);
+  
+        return () => clearInterval(interval);
+      } else {
+        localStorage.removeItem('cooldownTimestamp');
+      }
+    }
+  }, []);
   
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
-
   return (
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
@@ -321,13 +373,23 @@ const Profile = () => {
                   /> No
                 </label>
               </div>
-              <button className='button' onClick={handleUpdateClick}>
-  Update
-</button>
+              <button
+                className={`buttonAvatar Notify ${isCooldown ? 'cooldown' : ''}`}
+                onClick={handleUpdateClick}
+                disabled={isCooldown}
+              >
+                {isCooldown ? `(${remainingCooldown})` : 'Update'}
+              </button>
+
             </div>
             <div className='backgroundInfoProfile fitFact '>
               <div className='rowWidthFact'>
-                Did you know that regular exercise can boost your brainpower? Physical activity increases the production of proteins that improve brain function, memory, and learning capabilities. Just 30 minutes of exercise a few times a week can make a significant difference!
+                Did you know that regular exercise can boost your 
+                brainpower? Physical activity increases 
+                the production of proteins that improve brain 
+                function, memory, and learning capabilities. Just 
+                30 minutes of exercise a few times a week can 
+                make a significant difference!
               </div>
             </div>
           </div>

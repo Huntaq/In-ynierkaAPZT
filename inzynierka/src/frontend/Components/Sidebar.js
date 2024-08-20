@@ -5,7 +5,7 @@ import leaf from './leaf.png';
 
 const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
-    const location = useLocation(); // Uzyskaj bieżącą lokalizację
+    const location = useLocation();
 
     const goToTrophies = () => {
         navigate('/Trophies', { state: { userRoutes: userRoutes || [] } });
@@ -31,10 +31,10 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('id');
+        localStorage.removeItem('cooldownTimestamp');
         navigate('/');
     };
 
-    // Stylizacja w zależności od lokalizacji
     const sidebarClass = `sidebar ${isOpen ? 'open' : ''} ${
         location.pathname === '/Trophies' ? 'trophies-page' :
         location.pathname === '/UserAcc' ? 'home-page' :

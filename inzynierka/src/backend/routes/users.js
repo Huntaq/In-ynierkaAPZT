@@ -52,9 +52,7 @@ router.put('/:id/notifications', async (req, res) => {
       }
       
       if (result.affectedRows > 0) {
-        res.status(200).json({ message: 'Ustawienia zostały zaktualizowane.' });
       } else {
-        res.status(404).json({ message: 'Użytkownik nie znaleziony.' });
       }
     });
   } catch (error) {

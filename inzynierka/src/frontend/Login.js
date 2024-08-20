@@ -29,10 +29,8 @@ const Login = () => {
         const data = await response.json();
         localStorage.setItem('authToken', data.token);
   
-        console.log('Zalogowano pomyślnie');
         console.log('Token:', data.token);
   
-        // Pobierz dane z chronionej trasy
         const protectedResponse = await fetch('http://localhost:5000/api/protected', {
           method: 'GET',
           headers: {
@@ -42,18 +40,12 @@ const Login = () => {
   
         if (protectedResponse.ok) {
           const protectedData = await protectedResponse.json();
-          console.log('Dane chronione:', protectedData);
-  
-          // Zapisz dane w localStorage
-          localStorage.setItem('protectedData', JSON.stringify(protectedData));
         } else {
-          console.error('Błąd podczas pobierania danych chronionych');
+          console.error('Error with protected data');
         }
-  
-        // Przekierowanie po udanym logowaniu
         navigate('/UserAcc');
       } else {
-        console.error('Błąd podczas logowania');
+        console.error('Login error');
         setLoginError('Invalid username or password');
       }
     } catch (err) {
