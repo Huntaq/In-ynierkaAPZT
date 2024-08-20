@@ -4,6 +4,7 @@ import '../css/stats.css';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import { jwtDecode } from "jwt-decode";
+
 const Profile = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,8 @@ const Profile = () => {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [preview, setPreview] = useState(null); // Stan do przechowywania URL podglądu
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -73,24 +75,29 @@ const Profile = () => {
 
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-    localStorage.setItem('theme', theme);
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      setProfilePicture(file);
-      setPreview(URL.createObjectURL(file));
+      setSelectedFile(file);
+      const fileUrl = URL.createObjectURL(file);
+    setPreviewUrl(fileUrl);
     } else {
-      alert("Choose a proper jpg/png file.");
+      alert("Wybierz poprawny plik jpg/png.");
     }
   };
 
   const handleProfilePictureUpload = async (event) => {
     event.preventDefault();
     
+    if (!selectedFile) {
+      alert("Proszę wybrać plik przed przesłaniem.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('file', profilePicture);
+    formData.append('file', selectedFile);
     formData.append('userId', user.id);
 
     const response = await fetch('http://localhost:5000/api/profilePicture', {
@@ -100,7 +107,27 @@ const Profile = () => {
 
     const data = await response.json();
     setUser(prevUser => ({ ...prevUser, profilePicture: data.url }));
-    setPreview(null);
+    setProfilePicture(data.url);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  };
+
+  const handleProfilePictureDelete = async () => {
+    const response = await fetch('http://localhost:5000/api/profilePicture', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: user.id }),
+    });
+
+    if (response.ok) {
+      setUser(prevUser => ({ ...prevUser, profilePicture: null }));
+      setProfilePicture(null);
+      setPreviewUrl(null);
+    } else {
+      alert('Błąd podczas usuwania zdjęcia profilowego.');
+    }
   };
 
   if (loading) return <p>Ładowanie...</p>;
@@ -116,68 +143,84 @@ const Profile = () => {
         toggleSidebar={toggleSidebar} 
       />
       <div>
-      <div className='row'>
-        <div className='backgroundProfileInfo inline'>
-          <div className='row'>
-          <div className='inline'>
-        <a href="/Profile" className='user-info inline' style={{ textDecoration: 'none' }}>
-          {user && user.profilePicture ? (
-            <img 
-              src={user.profilePicture} 
-              alt="Profile" 
-              className='user-icon' 
-              style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
-            />
-          ) : (
-            <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
-          )}
-        </a>
-        </div>
-        <div className='inline'>
-        <form onSubmit={handleProfilePictureUpload}>
-          <input
-            type="file"
-            id="fileInput"
-            onChange={handleFileChange}
-            style={{ 
-              opacity: 0,
-              position: 'absolute',
-              zIndex: -1,
-            }} 
-          />
-          <button
-            className=' displayProfile button inline'
-            type="button"
-            onClick={() => document.getElementById('fileInput').click()}
-          >
-            Choose
-          </button>
-          <button
-            className=' displayProfile button inline'
-            type="submit"
-            disabled={!profilePicture}
-          >
-            Upload
-          </button>
-          {preview && (
-            <div className="previewContainer">
-              <img src={preview} alt="Podgląd zdjęcia" className="profilePreview" />
+        <div className='row'>
+          <div className='backgroundProfileInfo inline'>
+            <div className='rowProfile profile-container11'>
+              <div className='inline'>
+                <a href="/Profile" className='inline profilePlacement' style={{ textDecoration: 'none' }}>
+                {user && (previewUrl || user.profilePicture) ? (
+                  <img 
+                    src={previewUrl || user.profilePicture} 
+                    alt="Profile" 
+                    className='profilePlacement' 
+                    style={{ borderRadius: '50%' }} 
+                  />
+                ) : (
+                  <div className='profilePlacement'>
+                    {user && user.username ? user.username[0] : 'U'}
+                  </div>
+                )}
+                </a>
+              </div>
+              <div className='inline margin-left-button'>
+                <form onSubmit={handleProfilePictureUpload}>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    onChange={handleFileChange}
+                    style={{ 
+                      opacity: 0,
+                      position: 'absolute',
+                      zIndex: -1,
+                    }} 
+                  />
+                  {!selectedFile ? (
+                    <button
+                      className='displayProfile buttonAvatar inline'
+                      type="button"
+                      onClick={() => document.getElementById('fileInput').click()}
+                    >
+                      Choose
+                    </button>
+                  ) : (
+                    <button
+                      className='displayProfile buttonAvatar inline'
+                      type="submit"
+                    >
+                      Upload
+                    </button>
+                  )}
+                  {user && (
+                    <button
+                      className='displayProfile buttonAvatarDelete inline'
+                      type="button"
+                      onClick={handleProfilePictureDelete}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </form>
+              </div>
             </div>
-          )}
-          
-        </form>
-        </div>
-        </div>
-        </div>
-        <div>
-          <div className='backgroundInfoProfile margintest'>
-            sda
-          </div>
-          <div className='backgroundInfoProfile '>
-            sda
-          </div>
-        </div>
+            {user && (
+      <div>
+        <p>Email: {user.email}</p>
+        <p>Wiek: {user.age}</p>
+        <p>ID: {user.id}</p>
+        <p>Gender: {user.gender}</p>
       </div>
+    )}
+          </div>
+          
+          <div>
+            <div className='backgroundInfoProfile margintest'>
+              sda
+            </div>
+            <div className='backgroundInfoProfile'>
+              sda
+            </div>
+          </div>
+        </div>
       </div>
       {/* <Footer/> */}
     </div>

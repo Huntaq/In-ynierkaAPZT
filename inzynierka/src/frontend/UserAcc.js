@@ -100,13 +100,13 @@ const UserAcc = () => {
 
     sortedDates.forEach((date, index) => {
         if (previousDate === null) {
-            currentStreakCount = 1; // Rozpoczynamy streak
+            currentStreakCount = 1;
         } else {
             const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
             if (dayDifference === 1) {
-                currentStreakCount += 1; // Kontynuacja streaka
+                currentStreakCount += 1;
             } else if (dayDifference > 1) {
-                currentStreakCount = 1; // Rozpoczynamy nowy streak od 1
+                currentStreakCount = 1;
             }
         }
 
@@ -114,7 +114,6 @@ const UserAcc = () => {
         previousDate = date;
     });
 
-    // Sprawdzamy, czy streak jest aktualny (czy ostatnia aktywność była wczoraj lub dzisiaj)
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
@@ -125,10 +124,10 @@ const UserAcc = () => {
         const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
 
         if (dayDifferenceWithYesterday > 1 && dayDifferenceWithToday > 1) {
-            currentStreakCount = 0; // Jeśli ostatnia aktywność była wcześniej niż wczoraj, reset streaka
+            currentStreakCount = 0;
         }
     } else {
-        currentStreakCount = 0; // Jeśli nie było żadnych aktywności, streak jest 0
+        currentStreakCount = 0;
     }
 
     setCurrentStreak(currentStreakCount);

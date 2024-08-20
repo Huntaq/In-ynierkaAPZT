@@ -21,10 +21,6 @@ body.dark {
     height: 100vh;
     min-height: 100vh;
 }
-.displayProfile{
-  display: inline-flex;
-  margin: 10px 10px 10px 10px;
-}
 
 .user-info {
   display: flex;
@@ -33,8 +29,8 @@ body.dark {
 .user-icon {
   margin: auto;
   margin-top: 10px;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   background-color: white;
   color: #409A55;
   border-radius: 50%;
@@ -45,6 +41,23 @@ body.dark {
   font-weight: bold;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
+.profilePlacement{
+  margin: auto;
+  margin-top: 10px;
+  margin-left: 20px;
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  color: #409A55;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
 .profilePreview {
   margin-top: 10px;
   width: 100px; 
@@ -66,6 +79,25 @@ body.dark {
     max-width: 1500px;
     margin-bottom: 20px;
     margin-top: 5px;
+}
+.rowProfile {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1500px;
+  margin-bottom: 20px;
+  margin-top: -15px;
+}
+.margin-left-button{
+  margin-left: 50px;
+}
+.displayProfile{
+  display: inline-flex;
+  margin: 0px 10px 0px 30px;
+}
+.profile-container11 {
+  display: flex;
+  align-items: center;
 }
 .rowTable {
     display: contents;
@@ -132,6 +164,7 @@ body.dark {
   border-radius: 7px;
   overflow-y: auto;
   margin: auto;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 .background {
   background: linear-gradient(180deg, #BEDDFA 44%, #3F8FDA 100%);
@@ -145,6 +178,7 @@ body.dark {
   margin-left: 5px;
   display: flex;
   align-items: center;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 .background1 {
   background: white;
@@ -157,6 +191,7 @@ body.dark {
   margin-left: 5px;
   display: flex;
   align-items: center;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 .backgroundProfileInfo{
   background: white;
@@ -168,6 +203,7 @@ body.dark {
   display: flex;
   align-items: center;
   box-shadow: 2px 2px 15px rgba(88, 88, 88, 0.2);
+  
 }
 .backgroundInfoProfile{
   margin-left: 50px !important;
@@ -194,6 +230,7 @@ body.dark {
   display: flex;
   align-items: center;
   justify-content: space-around;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -228,6 +265,56 @@ body.dark {
     }
 .button:hover {
   background: #317c43;
+}
+.buttonAvatar {
+  top: 20px;
+  right: 25px;
+  align-self: center;
+  max-width: 150px;
+  max-height: 40px;
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid #409A55;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: #409A55;
+  color: white;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  }
+.buttonAvatar:hover {
+background: #317c43;
+}
+.buttonAvatarDelete {
+  top: 20px;
+  right: 25px;
+  align-self: center;
+  max-width: 150px;
+  max-height: 40px;
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid #C5C5C5;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: #C5C5C5;;
+  color: white;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  }
+.buttonAvatarDelete:hover {
+background: #a1a1a1;
 }
 .buttonMode {
   align-self: center;
@@ -463,7 +550,7 @@ background: #317c43;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  transition: transform 0.3s ease;
+  transition: transform 1.0s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -528,6 +615,7 @@ background: #317c43;
 .statistics-page .Statistics:hover{
   background-color: #409A55 !important; 
 }
+
 .btncos{
   align-self: auto;
     margin-left: 50px;
