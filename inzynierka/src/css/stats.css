@@ -41,12 +41,17 @@ body.dark {
   font-weight: bold;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
+.profilePlacement:hover,
+.user-icon:hover,
+.toggle-switch:hover {
+  transform: scale(1.05);
+}
 .profilePlacement{
   margin: auto;
   margin-top: 10px;
   margin-left: 20px;
-  width: 100px;
-  height: 100px;
+  width: 108px;
+  height: 108px;
   background-color: white;
   color: #409A55;
   border-radius: 50%;

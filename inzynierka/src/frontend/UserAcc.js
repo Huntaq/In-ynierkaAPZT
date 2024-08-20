@@ -26,7 +26,7 @@ const UserAcc = () => {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
   const [trophies, setTrophies] = useState([]);
-  
+
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
@@ -34,28 +34,28 @@ const UserAcc = () => {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.id;
-    
+
           const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
           });
-    
+
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
           } else {
             setError('Błąd podczas pobierania danych użytkownika');
           }
-    
+
           const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
           });
-    
+
           if (routesResponse.ok) {
             const routesData = await routesResponse.json();
             setUserRoutes(routesData);
@@ -72,7 +72,7 @@ const UserAcc = () => {
       }
       setLoading(false);
     };
-    
+
 
     fetchUserData();
   }, []);
@@ -99,19 +99,19 @@ const UserAcc = () => {
     let previousDate = null;
 
     sortedDates.forEach((date, index) => {
-        if (previousDate === null) {
-            currentStreakCount = 1;
-        } else {
-            const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
-            if (dayDifference === 1) {
-                currentStreakCount += 1;
-            } else if (dayDifference > 1) {
-                currentStreakCount = 1;
-            }
+      if (previousDate === null) {
+        currentStreakCount = 1;
+      } else {
+        const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
+        if (dayDifference === 1) {
+          currentStreakCount += 1;
+        } else if (dayDifference > 1) {
+          currentStreakCount = 1;
         }
+      }
 
-        longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
-        previousDate = date;
+      longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
+      previousDate = date;
     });
 
     const today = new Date();
@@ -119,27 +119,20 @@ const UserAcc = () => {
     yesterday.setDate(today.getDate() - 1);
 
     if (sortedDates.length > 0) {
-        const lastActivityDate = sortedDates[sortedDates.length - 1];
-        const dayDifferenceWithYesterday = (yesterday - lastActivityDate) / (1000 * 60 * 60 * 24);
-        const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
+      const lastActivityDate = sortedDates[sortedDates.length - 1];
+      const dayDifferenceWithYesterday = (yesterday - lastActivityDate) / (1000 * 60 * 60 * 24);
+      const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
 
-        if (dayDifferenceWithYesterday > 1 && dayDifferenceWithToday > 1) {
-            currentStreakCount = 0;
-        }
-    } else {
+      if (dayDifferenceWithYesterday > 1 && dayDifferenceWithToday > 1) {
         currentStreakCount = 0;
+      }
+    } else {
+      currentStreakCount = 0;
     }
 
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
-};
-
-
-
-
-
-
-
+  };
 
   const calculateTrophies = (routes) => {
     const runningDistance = routes
@@ -179,7 +172,7 @@ const UserAcc = () => {
   const handleTransportChange = (selectedMode) => {
     setTransportMode(selectedMode);
   };
-  
+
   const totalDistance = userRoutes.reduce((acc, route) => acc + route.distance_km, 0);
   const totalKcal = userRoutes.reduce((acc, route) => acc + route.kcal, 0);
   const totalCO2 = userRoutes.reduce((acc, route) => acc + route.CO2, 0);
@@ -187,7 +180,7 @@ const UserAcc = () => {
 
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 30);
-  
+
   const recentRoutes = userRoutes.filter(route => new Date(route.date) >= threeDaysAgo);
   const recentDistance = recentRoutes.reduce((acc, route) => acc + route.distance_km, 0);
   const recentKcal = recentRoutes.reduce((acc, route) => acc + route.kcal, 0);
@@ -206,15 +199,15 @@ const UserAcc = () => {
   const sortedUserRoutes = [...userRoutes].sort((a, b) => new Date(b.date) - new Date(a.date));
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-  <Header 
-    user={user} 
-    theme={theme} 
-    toggleTheme={toggleTheme} 
-    toggleSidebar={toggleSidebar} 
-  />
+      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Header
+        user={user}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        toggleSidebar={toggleSidebar}
+      />
       <div className='row'>
-      {/* <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
+        {/* <div className={`activities background ${theme === 'light' ? 'light' : 'dark'}`}>
         <div className='row textAcc'><p className='textStyleActivity'>Your stats</p></div>
         <Distance 
             totalDistance={totalDistance.toFixed(2)}
@@ -244,43 +237,43 @@ const UserAcc = () => {
           ))}
         </div> */}
         <div className='row'>
-        <div className='backgroundInfo'>
+          <div className='backgroundInfo'>
             <p className='textStyleActivity'>CO2 Saved</p>
-            <Distance 
-            totalCO2={totalCO2.toFixed(2)}
-          />
-          
-        </div>
-        <div className='background'>
-        <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately {savedKm.toFixed(0)} kilometers by car.</p>
-          <img src={earthImage} alt='Earth' className='earth-image' />
-        </div>
-        </div>
+            <Distance
+              totalCO2={totalCO2.toFixed(2)}
+            />
 
-        <div className='row'>
-        <div className='backgroundInfo'>
-            <p className='textStyleActivity'>PLN Saved</p>
-            <PLN totalMoney={totalMoney.toFixed(2)}/>
-          
-        </div>
-        <div className='background1'>
-        <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
-        <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
-        </div>
-        </div>
-
-        <div className='row'>
-        <div className='backgroundInfo'>
-          <p className='textStyleActivity'>Current Streak</p>
-          
-          <div className='row'>
-            <p className='StreakInfo'>{currentStreak} </p>
-            <img src={meter} alt='Earth' className='meterimage inline' />
           </div>
-          <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
+          <div className='background'>
+            <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately {savedKm.toFixed(0)} kilometers by car.</p>
+            <img src={earthImage} alt='Earth' className='earth-image' />
+          </div>
         </div>
-        {/* {currentStreak} {longestStreak}*/}
-        <div className='background2'>
+
+        <div className='row'>
+          <div className='backgroundInfo'>
+            <p className='textStyleActivity'>PLN Saved</p>
+            <PLN totalMoney={totalMoney.toFixed(2)} />
+
+          </div>
+          <div className='background1'>
+            <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
+            <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
+          </div>
+        </div>
+
+        <div className='row'>
+          <div className='backgroundInfo'>
+            <p className='textStyleActivity'>Current Streak</p>
+
+            <div className='row'>
+              <p className='StreakInfo'>{currentStreak} </p>
+              <img src={meter} alt='Earth' className='meterimage inline' />
+            </div>
+            <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
+          </div>
+          {/* {currentStreak} {longestStreak}*/}
+          <div className='background2'>
             {trophies.length > 0 ? (
               trophies.map((trophy, index) => (
                 <Trophy key={index} type={trophy.type} isEarned={trophy.isEarned} />
@@ -288,9 +281,9 @@ const UserAcc = () => {
             ) : (
               <p>No trophies earned yet</p>
             )}
+          </div>
         </div>
-        </div>
-        
+
       </div>
       {/* <Footer/> */}
     </div>
