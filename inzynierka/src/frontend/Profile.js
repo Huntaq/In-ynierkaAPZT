@@ -17,7 +17,6 @@ const Profile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // Nowe stany dla checkboxów
   const [emailNotification, setEmailNotification] = useState('yes');
   const [pushNotification, setPushNotification] = useState('yes');
 
@@ -40,6 +39,9 @@ const Profile = () => {
             const userData = await userResponse.json();
             setUser(userData[0]);
             setProfilePicture(userData[0].profilePicture);
+
+            setEmailNotification(userData[0].email_notifications === 1 ? 'yes' : 'no');
+            setPushNotification(userData[0].push_notifications === 1 ? 'yes' : 'no');
 
             const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
               method: 'GET',
@@ -83,25 +85,25 @@ const Profile = () => {
   };
 
   const MAX_FILE_SIZE_MB = 1.7; 
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; 
+  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; 
 
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      alert(`Plik jest za duży. Maksymalny rozmiar pliku to ${MAX_FILE_SIZE_MB} MB.`);
-      return;
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        alert(`Plik jest za duży. Maksymalny rozmiar pliku to ${MAX_FILE_SIZE_MB} MB.`);
+        return;
+      }
+      
+      if (file.type.startsWith('image/')) {
+        setSelectedFile(file);
+        const fileUrl = URL.createObjectURL(file);
+        setPreviewUrl(fileUrl);
+      } else {
+        alert("Wybierz poprawny plik jpg/png.");
+      }
     }
-    
-    if (file.type.startsWith('image/')) {
-      setSelectedFile(file);
-      const fileUrl = URL.createObjectURL(file);
-      setPreviewUrl(fileUrl);
-    } else {
-      alert("Wybierz poprawny plik jpg/png.");
-    }
-  }
-};
+  };
 
   const handleProfilePictureUpload = async (event) => {
     event.preventDefault();
@@ -145,7 +147,6 @@ const handleFileChange = (event) => {
     }
   };
 
-  // Funkcje do obsługi zmiany checkboxów
   const handleEmailNotificationChange = (value) => {
     setEmailNotification(value);
   };
@@ -153,6 +154,38 @@ const handleFileChange = (event) => {
   const handlePushNotificationChange = (value) => {
     setPushNotification(value);
   };
+  const handleUpdateClick = async () => {
+    const token = localStorage.getItem('authToken');
+  
+    if (!token) {
+      alert('Brak tokena autoryzacyjnego. Proszę zalogować się ponownie.');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/users/${user.id}/notifications`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email_notifications: emailNotification === 'yes' ? 1 : 0,
+          push_notifications: pushNotification === 'yes' ? 1 : 0,
+        }),
+      });
+  
+      if (response.ok) {
+        alert('Ustawienia zostały zaktualizowane.');
+      } else {
+        const errorData = await response.json();
+        alert(`Błąd: ${errorData.message || 'Nie udało się zaktualizować ustawień.'}`);
+      }
+    } catch (error) {
+      alert('Wystąpił błąd podczas aktualizacji ustawień.');
+    }
+  };
+  
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -288,6 +321,9 @@ const handleFileChange = (event) => {
                   /> No
                 </label>
               </div>
+              <button className='button' onClick={handleUpdateClick}>
+  Update
+</button>
             </div>
             <div className='backgroundInfoProfile fitFact '>
               <div className='rowWidthFact'>
