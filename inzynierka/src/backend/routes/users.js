@@ -38,5 +38,26 @@ router.get('/:id/routes', (req, res) => {
     res.json(results);
   });
 });
+router.put('/:id/notifications', async (req, res) => {
+  const { email_notifications, push_notifications } = req.body;
+  const userId = req.params.id;
+
+  try {
+    
+    const updateQuery = 'UPDATE users SET email_notifications = ?, push_notifications = ? WHERE id = ?';
+    db.query(updateQuery, [email_notifications, push_notifications, userId], (err, result) => {
+      if (err) {
+        console.error('Błąd podczas aktualizacji ustawień:', err);
+        return res.status(500).json({ message: 'Wystąpił błąd podczas aktualizacji ustawień.' });
+      }
+      
+      if (result.affectedRows > 0) {
+      } else {
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Wystąpił błąd podczas aktualizacji ustawień.' });
+  }
+});
 
 module.exports = router;

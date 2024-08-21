@@ -66,4 +66,40 @@ router.post('/', upload.single('file'), async (req, res) => {
   });
 });
 
+router.delete('/', async (req, res) => {
+  const userId = req.body.userId;
+
+  const getUserQuery = 'SELECT profilePicture FROM users WHERE id = ?';
+  db.query(getUserQuery, [userId], async (err, results) => {
+    if (err) {
+      console.error('Błąd podczas pobierania użytkownika:', err);
+      return res.status(500).send('Błąd serwera');
+    }
+
+    const currentProfilePictureUrl = results[0]?.profilePicture;
+
+    if (currentProfilePictureUrl) {
+      const currentFileName = currentProfilePictureUrl.split('/').pop();
+
+      const file = bucket.file(currentFileName);
+      try {
+        await file.delete();
+        console.log('Zdjęcie profilowe zostało usunięte.');
+
+        const updateQuery = `UPDATE users SET profilePicture = NULL WHERE id = ?`;
+        db.query(updateQuery, [userId]);
+
+        res.status(200).send('Zdjęcie profilowe zostało usunięte.');
+      } catch (error) {
+        console.error('Błąd podczas usuwania zdjęcia profilowego:', error);
+        res.status(500).send('Błąd podczas usuwania pliku');
+      }
+    } else {
+      res.status(400).send('Brak zdjęcia profilowego do usunięcia.');
+    }
+  });
+});
+
+
+
 module.exports = router;

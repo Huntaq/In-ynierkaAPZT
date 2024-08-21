@@ -1,61 +1,78 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
+import leaf from './leaf.png';
 
-const Sidebar = ({user, isOpen, toggleSidebar, userRoutes }) => {
+const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const goToTrophies = () => {
-        navigate('/Trophies', { state: { userRoutes } });
+        navigate('/Trophies', { state: { userRoutes: userRoutes || [] } });
     };
     const goToHome = () => {
-        navigate('/UserAcc', { state: { userRoutes } });
+        navigate('/UserAcc', { state: { userRoutes: userRoutes || [] } });
     };
     const goToCalendar = () => {
-        navigate('/Calendar', { state: { userRoutes } });
+        navigate('/Calendar', { state: { userRoutes: userRoutes || [] } });
     };
     const goToProfile = () => {
-        navigate('/Profile', { state: { userRoutes } });
+        navigate('/Profile', { state: { userRoutes: userRoutes || [] } });
     };
     const goToSettings = () => {
-        navigate('/Settings', { state: { userRoutes } });
+        navigate('/Settings', { state: { userRoutes: userRoutes || [] } });
     };
-    const goToActivities = () => {
-        navigate('/Activities', { state: { userRoutes } });
+    const goToRankings = () => {
+        navigate('/Rankings', { state: { userRoutes: userRoutes || [] } });
     };
-
+    const goToStatistics = () => {
+        navigate('/Statistics', { state: { userRoutes: userRoutes || [] } });
+    };
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('id');
+        localStorage.removeItem('cooldownTimestamp');
         navigate('/');
     };
 
+    const sidebarClass = `sidebar ${isOpen ? 'open' : ''} ${
+        location.pathname === '/Trophies' ? 'trophies-page' :
+        location.pathname === '/UserAcc' ? 'home-page' :
+        location.pathname === '/Calendar' ? 'calendar-page' :
+        location.pathname === '/Settings' ? 'settings-page' :
+        location.pathname === '/Rankings' ? 'rankings-page' :
+        location.pathname === '/Statistics' ? 'statistics-page' :
+        ''
+    }`;
+
     return (
-        <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-             <div className='row centerImg'>
-                <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
-                    {user && user.profilePicture ? (
-                    <img 
-                        src={user.profilePicture} 
-                        alt="Profile" 
-                        className='user-icon' 
-                        style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
-                    />
-                    ) : (
-                    <div className='user-icon'>{user && user.username[0]}</div>
-                    )}
-                </a>
-            </div>
-            <button className="close-btn" onClick={toggleSidebar}>X</button>
+        <div className={sidebarClass}>
+            <div className='row centerImg'>
+                <p  onClick={goToHome}><img src={leaf} alt='Earth' className='leaf-image inline' /></p>
             
-            <nav>
+                {/* <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
+                    {user && user.profilePicture ? (
+                        <img 
+                            src={user.profilePicture} 
+                            alt="Profile" 
+                            className='user-icon' 
+                            style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
+                        />
+                    ) : (
+                        <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
+                    )}
+                </a> */}
+                <button className="close-btn" onClick={toggleSidebar}>X</button>
+            </div>
+            
+            <nav className='navCenter'>
                 <ul>
-                    <li className='T' onClick={goToHome}>Overview</li>
-                    <li className='T' onClick={goToProfile}>Profile</li>
-                    <li className='T' onClick={goToActivities}>Activities</li>
-                    <li className='T' onClick={goToTrophies}>Trophies</li>
-                    <li className='T' onClick={goToCalendar}>Calendar</li>
-                    <li className='T' onClick={goToSettings}>Settings</li>
+                    <li className='T Home' onClick={goToHome}>Overview</li>
+                    <li className='T Statistics' onClick={goToStatistics}>Statistics</li>
+                    <li className='T Rankings' onClick={goToRankings}>Rankings</li>
+                    <li className='T Trophies' onClick={goToTrophies}>Trophies</li>
+                    <li className='T Calendar' onClick={goToCalendar}>Calendar</li>
+                    <li className='T Settings' onClick={goToSettings}>Settings</li>
                     <li className="logout" onClick={handleLogout}><a href=".">Logout</a></li>
                 </ul>
             </nav>

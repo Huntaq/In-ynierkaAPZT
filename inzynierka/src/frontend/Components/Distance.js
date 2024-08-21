@@ -7,7 +7,6 @@ const Distance = ({ totalDistance,totalKcal,totalCO2 ,totalMoney}) => {
     <div className='xd123'>
       <p className='Co2 inline'>{totalCO2}</p>
       <p className='KG inline'>KG</p>
-      
     </div>
   );
 };

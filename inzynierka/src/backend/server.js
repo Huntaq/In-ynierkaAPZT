@@ -4,6 +4,8 @@ const db = require('./config/db');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users'); 
 const profilePictureRoutes = require('./routes/profilePicture');
+require('dotenv').config();
+
 
 const app = express();
 const port = 5000;
@@ -11,9 +13,13 @@ const port = 5000;
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes.router);
 app.use('/api/users', userRoutes);
 app.use('/api/profilePicture', profilePictureRoutes);
+
+app.get('/api/protected', authRoutes.authenticateToken, (req, res) => {
+  res.json({ user: req.user });
+});
 
 app.listen(port, () => {
   console.log(`Serwer działa na http://localhost:${port}`);
