@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../css/stats.css';
 import leaf from './leaf.png';
+import { useLocation } from 'react-router-dom';
 
 const ToggleSwitch = ({ theme, toggleTheme }) => {
   return (
@@ -12,14 +13,32 @@ const ToggleSwitch = ({ theme, toggleTheme }) => {
   );
 };
 
+// Poprawiona wersja funkcji getGreetingMessage
+const getGreetingMessage = (user, location) => {
+  switch (location.pathname) {
+    case '/UserAcc':
+      return `Hello ${user?.username || 'User'}!`;
+    case '/Profile':
+      return `Profile`;
+    case '/Settings':
+      return `Settings`;
+      case '/Calendar':
+      return `Calendar`;
+    default:
+      return `Hello ${user?.username || 'User'}!`;
+  }
+};
+
 const Header = ({ user, theme, toggleTheme, toggleSidebar }) => {
+  const location = useLocation();
+
   return (
     <div className='row'>
        <div className='profile-container'>
         <button className="button btncos" onClick={toggleSidebar}>☰</button>
         
-        <div className='user-info inline title' style={{ marginLeft: '20px' }}>
-          {user && user.username ? `Hello  ${user.username}!` : 'Hello : User'}
+        <div className='user-info inline title' style={{ marginLeft: '10px',color: '#727272' }}>
+          {getGreetingMessage(user, location)}
         </div>
       </div>
       <div className='profile-container'>

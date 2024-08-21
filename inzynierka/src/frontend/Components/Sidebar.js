@@ -39,7 +39,6 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
         location.pathname === '/Trophies' ? 'trophies-page' :
         location.pathname === '/UserAcc' ? 'home-page' :
         location.pathname === '/Calendar' ? 'calendar-page' :
-        location.pathname === '/Profile' ? 'profile-page' :
         location.pathname === '/Settings' ? 'settings-page' :
         location.pathname === '/Rankings' ? 'rankings-page' :
         location.pathname === '/Statistics' ? 'statistics-page' :
@@ -49,7 +48,8 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     return (
         <div className={sidebarClass}>
             <div className='row centerImg'>
-            <img src={leaf} alt='Earth' className='leaf-image inline' />
+                <p  onClick={goToHome}><img src={leaf} alt='Earth' className='leaf-image inline' /></p>
+            
                 {/* <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
                     {user && user.profilePicture ? (
                         <img 
@@ -68,7 +68,6 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
             <nav className='navCenter'>
                 <ul>
                     <li className='T Home' onClick={goToHome}>Overview</li>
-                    <li className='T Profile' onClick={goToProfile}>Profile</li>
                     <li className='T Statistics' onClick={goToStatistics}>Statistics</li>
                     <li className='T Rankings' onClick={goToRankings}>Rankings</li>
                     <li className='T Trophies' onClick={goToTrophies}>Trophies</li>

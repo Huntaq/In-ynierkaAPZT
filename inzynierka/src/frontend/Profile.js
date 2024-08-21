@@ -85,7 +85,7 @@ const Profile = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const MAX_FILE_SIZE_MB = 1.7; 
+  const MAX_FILE_SIZE_MB = 1; 
   const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; 
 
   const handleFileChange = (event) => {
@@ -158,7 +158,7 @@ const Profile = () => {
 
   const handleUpdateClick = async () => {
     if (isCooldown) {
-      alert('Poczekaj 60 sekund przed kolejną aktualizacją.');
+      alert('Wait 60s');
       return;
     }
   
@@ -245,13 +245,12 @@ const Profile = () => {
   return (
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header
-        user={user}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        toggleSidebar={toggleSidebar}
-      />
+      <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} currentPage="Profile" />
       <div>
+        <div className='row ProfileNotify'>
+        <p className='widthProfile '>Your profile</p>
+        <p className=''>Notification settings</p>
+        </div>
         <div className='row'>
           <div className='backgroundProfileInfo inline'>
             <div className='rowProfile profile-container11'>

@@ -208,7 +208,6 @@ body.dark {
   display: flex;
   align-items: center;
   box-shadow: 2px 2px 15px rgba(88, 88, 88, 0.2);
-  
 }
 .backgroundInfoProfile{
   margin-left: 50px !important;
@@ -631,10 +630,22 @@ background: #317c43;
 .statistics-page .Statistics:hover{
   background-color: #409A55 !important; 
 }
-
 .btncos{
   align-self: auto;
     margin-left: 50px;
+}
+.row.ProfileNotify{
+  color: #727272;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  display: ruby;
+}
+.widthProfile{
+  margin-bottom: 10px;
+  margin-left: 15px;
+  width: 670px;
 }
 @media (max-width: 700px) {
   .background,

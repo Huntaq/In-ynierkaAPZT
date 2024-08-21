@@ -1,0 +1,29 @@
+.Problem{
+    background: white;
+    height: 300px;
+    width: 600px;
+    padding: 10px;
+    border-radius: 7px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    box-shadow: 2px 2px 15px rgba(88, 88, 88, 0.2);
+}
+.FAQ.Problem{
+    height: 50px;
+    width: 100px;
+    text-align: center;
+    justify-content: center;
+}
+.none{
+    text-decoration: none;
+    color: #000 !important;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.rest-content{
+    margin-left: 150px;
+}
+  
