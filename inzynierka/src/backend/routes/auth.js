@@ -7,23 +7,36 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const router = express.Router();
 const SECRET_KEY = process.env.SECRET_KEY;
+const crypto = require('crypto');
 
-// Middleware do weryfikacji tokena
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Zakładając, że token jest w formacie "Bearer <token>"
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (token == null) return res.sendStatus(401); // Brak tokena
 
-  jwt.verify(token, SECRET_KEY, (err, user) => {
+  jwt.verify(token, SECRET_KEY, (err, payload) => {
     if (err) return res.sendStatus(403); // Token jest niepoprawny
 
-    req.user = user; // Przechowujemy dane użytkownika w obiekcie żądania
-    next(); // Przechodzimy do kolejnego middleware lub trasy
+    // Sprawdzenie sesji w bazie danych
+    db.query('SELECT session_key FROM users WHERE id = ?', [payload.id], (err, results) => {
+      if (err) {
+        console.error('Błąd zapytania do bazy danych:', err);
+        return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+      }
+
+      if (results.length === 0 || results[0].session_key !== payload.sessionKey) {
+        return res.sendStatus(403); // Sesja jest niepoprawna
+      }
+
+      req.user = payload;
+      next();
+    });
   });
 };
 
-// Rejestracja użytkownika
+
+
 router.post('/register', async (req, res) => {
   const { name, password, email, age, gender } = req.body;
   console.log('Received data:', { name, password, email, age, gender });
@@ -72,7 +85,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Logowanie użytkownika
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -95,9 +107,19 @@ router.post('/login', async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password_hash);
 
       if (isMatch) {
-        // Generowanie tokena JWT
-        const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
-        res.json({ token });
+        const sessionKey = crypto.randomBytes(64).toString('hex');
+        
+        // Aktualizacja klucza sesji w bazie danych
+        db.query('UPDATE users SET session_key = ? WHERE id = ?', [sessionKey, user.id], (err) => {
+          if (err) {
+            console.error('Błąd aktualizacji klucza sesji:', err);
+            return res.status(500).json({ error: 'Błąd aktualizacji klucza sesji' });
+          }
+          
+          // Generowanie tokena JWT
+          const token = jwt.sign({ id: user.id, username: user.username, sessionKey }, SECRET_KEY, { expiresIn: '1h' });
+          res.json({ token });
+        });
       } else {
         return res.status(400).json({ error: 'Nieprawidłowy username lub hasło' });
       }

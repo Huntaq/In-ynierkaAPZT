@@ -15,46 +15,52 @@ const Statistics = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-
-      if (token ) {
+      if (token) {
         try {
           const decodedToken = jwtDecode(token);
-          const id = decodedToken.id;
-          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
+          const userId = decodedToken.id;
+          const sessionKey = decodedToken.sessionKey;
+          
+
+          const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
             },
           });
+
 
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
-
-            const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (routesResponse.ok) {
-              const routesData = await routesResponse.json();
-              setUserRoutes(routesData);
-            } else {
-              setError('Błąd podczas pobierania danych tras użytkownika');
-            }
           } else {
             setError('Błąd podczas pobierania danych użytkownika');
+          }
+
+          const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
+            },
+          });
+
+          if (routesResponse.ok) {
+            const routesData = await routesResponse.json();
+            setUserRoutes(routesData);
+          } else {
+            setError('Błąd podczas pobierania tras użytkownika');
           }
         } catch (err) {
           setError('Wystąpił błąd podczas pobierania danych');
         }
       } else {
-        setError('Użytkownik nie jest zalogowany');
+        setError('Brak tokena uwierzytelniającego');
       }
       setLoading(false);
     };
+
 
     fetchUserData();
   }, []);

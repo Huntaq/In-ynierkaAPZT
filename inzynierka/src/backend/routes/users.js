@@ -5,19 +5,31 @@ const router = express.Router();
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
+  const sessionKey = req.headers['sessionkey'];
 
   if (!id) {
-    return res.status(400).json({ error: 'Id jest wymagane' });
+    return res.status(400).json({ error: 'Id is required' });
   }
 
-  const sql = 'SELECT * FROM users WHERE id = ?';
 
-  db.query(sql, [id], (err, results) => {
+  const sqlUser = 'SELECT * FROM users WHERE id = ?';
+  db.query(sqlUser, [id], (err, results) => {
     if (err) {
-      console.error('Błąd zapytania:', err);
-      return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+      console.error('Query error:', err);
+      return res.status(500).json({ error: 'DB error' });
     }
-    res.json(results);
+
+    if (results.length > 0) {
+      const user = results[0];
+
+      if (user.session_key === sessionKey) {
+        res.json(results); 
+      } else {
+        res.status(403).json({ error: 'no access' });
+      }
+    } else {
+      res.status(404).json({ error: 'user not found' });
+    }
   });
 });
 
@@ -25,7 +37,7 @@ router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
 
   if (!userId) {
-    return res.status(400).json({ error: 'Id jest wymagane' });
+    return res.status(400).json({ error: 'Id is required' });
   }
 
   const sql = 'SELECT * FROM user_routes WHERE user_id = ?';
@@ -33,7 +45,7 @@ router.get('/:id/routes', (req, res) => {
   db.query(sql, [userId], (err, results) => {
     if (err) {
       console.error('Błąd zapytania:', err);
-      return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+      return res.status(500).json({ error: 'DB error' });
     }
     res.json(results);
   });

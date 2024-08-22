@@ -29,8 +29,6 @@ const Login = () => {
         const data = await response.json();
         localStorage.setItem('authToken', data.token);
   
-        console.log('Token:', data.token);
-  
         const protectedResponse = await fetch('http://localhost:5000/api/protected', {
           method: 'GET',
           headers: {
@@ -39,7 +37,7 @@ const Login = () => {
         });
   
         if (protectedResponse.ok) {
-          const protectedData = await protectedResponse.json();
+          // const protectedData = await protectedResponse.json();
         } else {
           console.error('Error with protected data');
         }

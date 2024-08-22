@@ -34,11 +34,13 @@ const UserAcc = () => {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.id;
+          const sessionKey = decodedToken.sessionKey;
 
           const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
             },
           });
 
@@ -53,6 +55,7 @@ const UserAcc = () => {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
             },
           });
 
