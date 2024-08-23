@@ -12,6 +12,7 @@ import Chart from './Components/Chart';
 import MonthSelector from './Components/MonthSelector';
 import Trophy from './Components/Trophy';
 import { jwtDecode } from "jwt-decode";
+import { useNavigate} from 'react-router-dom';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -26,6 +27,7 @@ const UserAcc = () => {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
   const [trophies, setTrophies] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -48,7 +50,9 @@ const UserAcc = () => {
             const userData = await userResponse.json();
             setUser(userData[0]);
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('cooldownTimestamp');
+            navigate('/');
           }
 
           const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {

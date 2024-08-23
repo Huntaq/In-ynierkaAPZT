@@ -1,4 +1,3 @@
-// routes/auth.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
@@ -13,20 +12,19 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (token == null) return res.sendStatus(401); // Brak tokena
+  if (token == null) return res.sendStatus(401); 
 
   jwt.verify(token, SECRET_KEY, (err, payload) => {
-    if (err) return res.sendStatus(403); // Token jest niepoprawny
+    if (err) return res.sendStatus(403); 
 
-    // Sprawdzenie sesji w bazie danych
     db.query('SELECT session_key FROM users WHERE id = ?', [payload.id], (err, results) => {
       if (err) {
-        console.error('Błąd zapytania do bazy danych:', err);
-        return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+        console.error('db error:', err);
+        return res.status(500).json({ error: 'querry error' });
       }
 
       if (results.length === 0 || results[0].session_key !== payload.sessionKey) {
-        return res.sendStatus(403); // Sesja jest niepoprawna
+        return res.sendStatus(403); 
       }
 
       req.user = payload;
@@ -73,8 +71,8 @@ router.post('/register', async (req, res) => {
 
     db.query(query, values, (err, results) => {
       if (err) {
-        console.error('Błąd zapytania:', err);
-        return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+        console.error('querry error:', err);
+        return res.status(500).json({ error: 'DB error' });
       }
       res.json({ message: 'User registered successfully!' });
       console.log('udalo sie');
@@ -89,18 +87,18 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ error: 'Username i hasło są wymagane' });
+    return res.status(400).json({ error: 'Username and pass are required' });
   }
 
   try {
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
       if (err) {
-        console.error('Błąd zapytania do bazy danych:', err);
-        return res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
+        console.error('DB error:', err);
+        return res.status(500).json({ error: 'querry error' });
       }
 
       if (results.length === 0) {
-        return res.status(400).json({ error: 'Nieprawidłowy username lub hasło' });
+        return res.status(400).json({ error: 'Wrong username or pass' });
       }
 
       const user = results[0];
@@ -109,28 +107,25 @@ router.post('/login', async (req, res) => {
       if (isMatch) {
         const sessionKey = crypto.randomBytes(64).toString('hex');
         
-        // Aktualizacja klucza sesji w bazie danych
         db.query('UPDATE users SET session_key = ? WHERE id = ?', [sessionKey, user.id], (err) => {
           if (err) {
             console.error('Błąd aktualizacji klucza sesji:', err);
             return res.status(500).json({ error: 'Błąd aktualizacji klucza sesji' });
           }
           
-          // Generowanie tokena JWT
           const token = jwt.sign({ id: user.id, username: user.username, sessionKey }, SECRET_KEY, { expiresIn: '1h' });
           res.json({ token });
         });
       } else {
-        return res.status(400).json({ error: 'Nieprawidłowy username lub hasło' });
+        return res.status(400).json({ error: 'Wrong username or pass' });
       }
     });
   } catch (error) {
-    console.error('Błąd serwera:', error);
-    res.status(500).json({ error: 'Błąd serwera' });
+    console.error('server error:', error);
+    res.status(500).json({ error: 'server error' });
   }
 });
 
-// Chroniona trasa (przykład)
 router.get('/protected', authenticateToken, (req, res) => {
   res.json({});
 });
