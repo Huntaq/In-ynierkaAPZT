@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Platform, Text, TouchableOpacity, Modal, Alert, Share } from 'react-native';
+import { StyleSheet, View, Platform, Text, TouchableOpacity, Modal, Alert } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
@@ -24,6 +24,7 @@ const CustomMap = () => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
+  const [lastRecordedPosition, setLastRecordedPosition] = useState(null); // New state
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -48,12 +49,22 @@ const CustomMap = () => {
           if (isTracking) {
             const newCoordinate = { latitude, longitude };
 
-            setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
+            // Update only if the distance from last recorded position exceeds 200 meters
+            if (lastRecordedPosition) {
+              const distance = haversine(lastRecordedPosition, newCoordinate, { unit: 'meter' });
+              if (distance >= 200) {
+                setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
 
-            if (routeCoordinates.length > 0) {
-              const lastCoordinate = routeCoordinates[routeCoordinates.length - 1];
-              const distance = haversine(lastCoordinate, newCoordinate);
-              setDistanceTravelled((prevDistance) => prevDistance + distance);
+                // Update distanceTravelled
+                setDistanceTravelled((prevDistance) => prevDistance + distance);
+
+                // Update last recorded position
+                setLastRecordedPosition(newCoordinate);
+              }
+            } else {
+              // If it's the first coordinate, set it as the last recorded position
+              setLastRecordedPosition(newCoordinate);
+              setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
             }
           }
 
@@ -82,7 +93,7 @@ const CustomMap = () => {
     return () => {
       Geolocation.clearWatch(); 
     };
-  }, [isTracking, routeCoordinates]);
+  }, [isTracking, lastRecordedPosition]);
 
   useEffect(() => {
     let interval = null;
@@ -103,6 +114,7 @@ const CustomMap = () => {
     setRouteCoordinates([]);
     setDistanceTravelled(0);
     setTimeElapsed(0);
+    setLastRecordedPosition(null); // Reset last recorded position
     console.log('Start pressed');
   };
 
@@ -122,19 +134,16 @@ const CustomMap = () => {
   };
 
   const calculateSavings = () => {
-    // Zakładając, że oszczędność to 0,5 PLN/km w trybie "Walking" i "Cycling"
     const savingsPerKm = transportMode === 'Bus' ? 1 : 0.5;
     return (distanceTravelled * savingsPerKm).toFixed(2);
   };
 
   const calculateCO2Savings = () => {
-    // Zakładając, że jazda samochodem generuje 120 g CO2 na km
     const co2PerKm = 120; // g CO2/km
     return (distanceTravelled * co2PerKm).toFixed(2);
   };
 
   const calculateCaloriesBurned = () => {
-    // Zakładając, że spalane jest 50 kcal/km podczas chodzenia i 35 kcal/km podczas jazdy rowerem
     const caloriesPerKm = transportMode === 'Walking' ? 50 : 35;
     return (distanceTravelled * caloriesPerKm).toFixed(2);
   };
@@ -142,8 +151,6 @@ const CustomMap = () => {
   const handleFinishPress = () => {
     setModalVisible(true);
   };
-
- 
 
   return (
     <View style={styles.container}>
@@ -236,8 +243,6 @@ const CustomMap = () => {
             <Text style={styles.modalText}>Zaoszczędzone CO2: {calculateCO2Savings()} g</Text>
             <Text style={styles.modalText}>Spalone kalorie: {calculateCaloriesBurned()} kcal</Text>
 
-           
-            
             {/* Przycisk zamknięcia */}
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}

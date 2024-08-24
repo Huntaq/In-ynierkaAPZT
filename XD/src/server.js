@@ -28,7 +28,7 @@ db.connect(err => {
 
 // Endpoint do pobierania danych użytkowników
 app.get('/api/users', (req, res) => {
-  db.query('SELECT * FROM users', (err, results) => {
+  db.query('SELECT * FROM users WHERE id=48', (err, results) => {
     if (err) {
       console.error('Błąd zapytania:', err);
       res.status(500).json({ error: 'Błąd zapytania do bazy danych' });
