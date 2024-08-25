@@ -2,10 +2,9 @@
     background: white;
     height: 300px;
     width: 600px;
-    padding: 10px;
+    padding: 15px;
     border-radius: 7px;
     margin-left: 5px;
-    display: flex;
     align-items: center;
     box-shadow: 2px 2px 15px rgba(88, 88, 88, 0.2);
 }
@@ -14,6 +13,7 @@
     width: 100px;
     text-align: center;
     justify-content: center;
+    display: flex;
 }
 .none{
     text-decoration: none;
@@ -26,4 +26,62 @@
 .rest-content{
     margin-left: 150px;
 }
+.buttonSendEmail {
+    align-self: center;
+    max-width: 150px;
+    max-height: 40px;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 7px;
+    border: 1px solid #409A55;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 2px;
+    background: #409A55;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0 0 0 0 transparent;
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    }
+.buttonSendEmail:hover {
+  background: #317c43;
+}
+.input-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .input-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    padding: 0 4px;
+  }
+  
+  .styled-input {
+    height: 220px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+  .char-count {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #888;
+  }
+  
   
