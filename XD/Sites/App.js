@@ -13,11 +13,13 @@ import SaveRoad from './SaveRoad';
 import Home from './Home';
 import Settings from './Settings';
 import Profile from './Profile';
+import Log from './Log';
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Logowanie" component={Log} /> 
         <Stack.Screen name="Home" component={Home} /> 
         <Stack.Screen name="Feed" component={Feed} />
         <Stack.Screen name="Details" component={SaveRoad} />

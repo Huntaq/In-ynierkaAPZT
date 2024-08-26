@@ -1863,7 +1863,7 @@
     hermes-parser "0.19.1"
     nullthrows "^1.1.1"
 
-"@react-native/metro-config@0.74.87":
+"@react-native/metro-config@^0.74.87":
   version "0.74.87"
   resolved "https://registry.npmjs.org/@react-native/metro-config/-/metro-config-0.74.87.tgz"
   integrity sha512-WjXk7GmzL7/+e5qqc9uumQSl6uCqNlpo8LaKuMxxlUfQ6DsWSXIdbLXmD1k5qTURjL0fZjVQGszgvT1xKYifaQ==
