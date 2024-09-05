@@ -506,7 +506,6 @@ background: #317c43;
   height: auto;
   background: none;
   border: none;
-  padding: 10px;
   text-align: center;
   cursor: pointer;
 }
@@ -536,7 +535,6 @@ background: #317c43;
 }
 .react-calendar__tile--active {
   background-color: rgb(61, 106, 255) !important;
-  /* color: black !important; */
 }
 .toggle-switch {
   width: 60px;

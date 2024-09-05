@@ -3,7 +3,6 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Modal from 'react-modal';
 import Header from './Components/Header';
-import Footer from './Components/Footer';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { jwtDecode } from "jwt-decode";
