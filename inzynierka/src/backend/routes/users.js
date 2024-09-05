@@ -32,6 +32,28 @@ router.get('/:id', (req, res) => {
     }
   });
 });
+router.get('/:id/routes_with_usernames', (req, res) => {
+  const userId = req.params.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Id is required' });
+  }
+
+  const sql = `
+    SELECT ur.*, u.username 
+    FROM user_routes ur
+    JOIN users u ON ur.user_id = u.id
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error('Query error:', err);
+      return res.status(500).json({ error: 'DB error' });
+    }
+    
+    res.json(results);
+  });
+});
 
 router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
