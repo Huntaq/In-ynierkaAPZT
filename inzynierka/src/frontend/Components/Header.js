@@ -13,7 +13,6 @@ const ToggleSwitch = ({ theme, toggleTheme }) => {
   );
 };
 
-// Poprawiona wersja funkcji getGreetingMessage
 const getGreetingMessage = (user, location) => {
   switch (location.pathname) {
     case '/UserAcc':
@@ -37,7 +36,7 @@ const Header = ({ user, theme, toggleTheme, toggleSidebar }) => {
        <div className='profile-container'>
         <button className="button btncos" onClick={toggleSidebar}>☰</button>
         
-        <div className='user-info inline title' style={{ marginLeft: '10px',color: '#727272' }}>
+        <div className='user-info inline title greeting-message' style={{ marginLeft: '10px',color: '#727272' }}>
           {getGreetingMessage(user, location)}
         </div>
       </div>

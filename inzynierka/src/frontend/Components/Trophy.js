@@ -6,11 +6,11 @@ const Trophy = ({ type, isEarned }) => {
     const getIcon = () => {
       switch (type) {
         case 'running':
-          return '🏃'; // Ikona pucharka za bieganie
+          return '🏃';
         case 'cycling':
-          return '🚴'; // Ikona pucharka za jazdę na rowerze
+          return '🚴'; 
         default:
-          return '🏆'; // Domyślna ikona pucharka
+          return '🏆'; 
       }
     };
   

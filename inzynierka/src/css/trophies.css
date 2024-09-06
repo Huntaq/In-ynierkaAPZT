@@ -107,7 +107,7 @@
   color: #666;
 }
 
-.popup {
+.popup1 {
   position: fixed;
   top: 0;
   left: 0;
@@ -120,7 +120,7 @@
   z-index: 1000;
 }
 
-.popup-content {
+.popup1-content {
   background: #fff;
   border-radius: 15px;
   padding: 30px;
@@ -138,14 +138,14 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.popup-content p {
+.popup1-content p {
   font-size: 1.2rem;
   color: #666;
   margin: 10px 0;
   line-height: 1.6;
 }
 
-.popup-content .headerModalTrophy {
+.popup1-content .headerModalTrophy {
   font-size: 2rem; 
   color: #333;
   margin-bottom: 20px;

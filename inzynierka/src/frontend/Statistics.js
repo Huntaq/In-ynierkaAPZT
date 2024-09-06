@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
+import '../css/statistics.css';
 import Header from './Components/Header';
-import Footer from './Components/Footer';
 import { jwtDecode } from "jwt-decode";
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO } from 'date-fns';
+
 const Statistics = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,6 +13,84 @@ const Statistics = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
+
+  const calculateMetrics = (routes) => {
+    const now = new Date();
+    const startOfWeekDate = startOfWeek(now, { weekStartsOn: 1 });
+    const endOfWeekDate = endOfWeek(now, { weekStartsOn: 1 });
+
+    const thisWeekRoutes = routes.filter(route => {
+      const routeDate = parseISO(route.date);
+      return isWithinInterval(routeDate, { start: startOfWeekDate, end: endOfWeekDate });
+    });
+
+    const totalMinutes = thisWeekRoutes.reduce((sum, route) => {
+      const [hours, minutes, seconds] = route.duration.split(':').map(Number);
+      return sum + (hours * 60) + minutes;
+    }, 0);
+
+    const totalCalories = thisWeekRoutes.reduce((sum, route) => sum + route.kcal, 0);
+    const totalCO2 = thisWeekRoutes.reduce((sum, route) => sum + route.CO2, 0);
+    const totalMoney = thisWeekRoutes.reduce((sum, route) => sum + route.money, 0);
+
+    return {
+      totalMinutes,
+      totalCalories,
+      totalCO2,
+      totalMoney
+    };
+  };
+
+  const calculateFullMetrics = (routes) => {
+    const totalMinutes = routes.reduce((sum, route) => {
+      const [hours, minutes, seconds] = route.duration.split(':').map(Number);
+      return sum + (hours * 60) + minutes;
+    }, 0);
+
+    const totalCalories = routes.reduce((sum, route) => sum + route.kcal, 0);
+    const totalCO2 = routes.reduce((sum, route) => sum + route.CO2, 0);
+    const totalMoney = routes.reduce((sum, route) => sum + route.money, 0);
+
+    return {
+      totalMinutes,
+      totalCalories,
+      totalCO2,
+      totalMoney
+    };
+  };
+
+  const calculateDistance = (routes, timeRange) => {
+    const now = new Date();
+    let startDate, endDate;
+
+    if (timeRange === 'week') {
+      startDate = startOfWeek(now, { weekStartsOn: 1 });
+      endDate = endOfWeek(now, { weekStartsOn: 1 });
+    } else if (timeRange === 'month') {
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+    } else if (timeRange === 'year') {
+      startDate = startOfYear(now);
+      endDate = endOfYear(now);
+    }
+
+    return routes.reduce((sum, route) => {
+      const routeDate = parseISO(route.date);
+      if (isWithinInterval(routeDate, { start: startDate, end: endDate })) {
+        return sum + route.distance_km;
+      }
+      return sum;
+    }, 0);
+  };
+
+  const findBestRoute = (routes, metric) => {
+    return routes.reduce((bestRoute, route) => {
+      if (route[metric] > (bestRoute[metric] || 0)) {
+        return route;
+      }
+      return bestRoute;
+    }, {});
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -20,7 +100,6 @@ const Statistics = () => {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.id;
           const sessionKey = decodedToken.sessionKey;
-          
 
           const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
             method: 'GET',
@@ -29,7 +108,6 @@ const Statistics = () => {
               'sessionKey': sessionKey
             },
           });
-
 
           if (userResponse.ok) {
             const userData = await userResponse.json();
@@ -61,36 +139,181 @@ const Statistics = () => {
       setLoading(false);
     };
 
-
     fetchUserData();
   }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
+
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     localStorage.setItem('theme', theme);
   };
 
-
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
 
+  const {
+    totalMinutes: minutesThisWeek,
+    totalCalories: caloriesThisWeek,
+    totalCO2: co2ThisWeek,
+    totalMoney: moneyThisWeek
+  } = calculateMetrics(userRoutes);
+  const distanceThisWeek = calculateDistance(userRoutes, 'week');
+  const distanceThisMonth = calculateDistance(userRoutes, 'month');
+  const distanceThisYear = calculateDistance(userRoutes, 'year');
+  const {
+    totalMinutes: totalMinutes,
+    totalCO2: totalCO2,
+  } = calculateFullMetrics(userRoutes);
+
+  const bestRouteCO2 = findBestRoute(userRoutes, 'CO2');
+  const bestRouteCalories = findBestRoute(userRoutes, 'kcal');
+
   return (
     <div className='container'>
-      <Sidebar isOpen={sidebarOpen}user={user}  toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header 
-        user={user} 
-        theme={theme} 
-        toggleTheme={toggleTheme} 
-        toggleSidebar={toggleSidebar} 
-      />
-      {/* <Footer/> */}
+      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
+    
+      <div className='stats-container '>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🏃‍♂️</div>
+          <div className='stats-info'>
+            <h3>Distance traveled this week:</h3>
+            <p>{distanceThisWeek} km</p>
+            <div className='popup'>
+              Your weekly distance contributes to a healthier you and a greener planet. Keep moving!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientAlternative'>
+          <div className='emoji'>📅</div>
+          <div className='stats-info'>
+            <h3>Distance traveled this month:</h3>
+            <p>{distanceThisMonth} km</p>
+            <div className='popup'>
+              Your monthly distance is a great way to track long-term progress. Keep up the good work!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientAlternative'>
+          <div className='emoji'>🌍</div>
+          <div className='stats-info'>
+            <h3>Distance traveled this year:</h3>
+            <p>{distanceThisYear} km</p>
+            <div className='popup'>
+              Your yearly distance shows your commitment to an active lifestyle. Well done!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🕒</div>
+          <div className='stats-info'>
+            <h3>Minutes of activity this week:</h3>
+            <p>{minutesThisWeek} minutes</p>
+            <div className='popup'>
+              Every minute of activity is a step towards a healthier you and a greener environment.
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🔥</div>
+          <div className='stats-info'>
+            <h3>Calories burned this week:</h3>
+            <p>{caloriesThisWeek} kcal</p>
+            <div className='popup'>
+              Burning calories means you’re staying active and contributing to a healthier planet. Keep it up!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientAlternative'>
+          <div className='emoji'>🌱</div>
+          <div className='stats-info'>
+            <h3>CO2 saved this week:</h3>
+            <p>{co2ThisWeek} kg</p>
+            <div className='popup'>
+              Your CO2 savings help fight climate change. Every bit makes a difference!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientAlternative'>
+          <div className='emoji'>💸</div>
+          <div className='stats-info'>
+            <h3>Money saved this week:</h3>
+            <p>{moneyThisWeek} PLN</p>
+            <div className='popup'>
+              Saving money while staying active is a win-win. Keep up the great work!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🌊</div>
+          <div className='stats-info'>
+            <h3>Water Saved from Reducing CO2:</h3>
+            <p>{(totalCO2 * 10).toFixed(2)} liters</p>
+            <div className='popup'>
+              By reducing CO2 emissions, you help conserve water. Great job!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🌳</div>
+          <div className='stats-info'>
+            <h3>Equivalent Trees Planted:</h3>
+            <p>{(totalCO2 / 0.05).toFixed(0)} trees</p>
+            <div className='popup'>
+              Your CO2 savings are like planting trees. You’re making a big difference!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientAlternative'>
+          <div className='emoji'>🌟</div>
+          <div className='stats-info'>
+            <h3>Energy Saved by Your Activities:</h3>
+            <p>{(totalMinutes * 0.05).toFixed(2)} kWh</p>
+            <div className='popup'>
+              Your activity saves energy. A more active lifestyle contributes to a sustainable future!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientAlternative'>
+          <div className='emoji'>🍃</div>
+          <div className='stats-info'>
+            <h3>Air Quality Improved:</h3>
+            <p>{(totalCO2 * 0.8).toFixed(2)} kg</p>
+            <div className='popup'>
+              Every bit of CO2 you save helps improve air quality. Keep up the great work!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🏅</div>
+          <div className='stats-info'>
+            <h3>Best Route (CO2 saved):</h3>
+            <p>{bestRouteCO2.distance_km} km with {bestRouteCO2.CO2} kg CO2 saved</p>
+            <div className='popup'>
+              This route achieved the highest CO2 savings. Fantastic effort!
+            </div>
+          </div>
+        </div>
+        <div className='stats-card gradientBasic'>
+          <div className='emoji'>🏆</div>
+          <div className='stats-info'>
+            <h3>Best Route (Calories burned):</h3>
+            <p>{bestRouteCalories.distance_km} km with {bestRouteCalories.kcal} kcal burned</p>
+            <div className='popup'>
+              
+              This route burned the most calories. Keep up the excellent work!
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

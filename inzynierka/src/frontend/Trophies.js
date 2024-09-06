@@ -261,8 +261,8 @@ const Trophies = () => {
         </div>
       </div>
       {popupVisible && (
-  <div className="popup">
-    <div className="popup-content" ref={popupRef}>
+  <div className="popup1">
+    <div className="popup1-content" ref={popupRef}>
       <p className='headerModalTrophy'>{popupContent.title}</p>
       <p>Level: {popupContent.level}</p>
       <p>{popupContent.detail}</p>

@@ -1,0 +1,81 @@
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 20px;
+  }
+  .gradientBasic{
+    background: linear-gradient(145deg, #a8e063, #56ab2f);
+  }
+  .gradientAlternative {
+    background: linear-gradient(180deg, #619eff, #92dd48);
+  }
+  
+  .stats-card {
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative; 
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .emoji {
+    font-size: 2.5rem;
+    margin-right: 15px;
+  }
+  
+  .stats-info {
+    margin-left: 10px;
+  }
+  
+  .stats-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .stats-info p {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .popup {
+    position: absolute;
+    bottom: 0; 
+    left: 0; 
+    height: 100%;
+    width: 100%; 
+    background: #56ab2f; 
+    color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .stats-card:hover .popup {
+    opacity: 1; 
+  }
+  
+  

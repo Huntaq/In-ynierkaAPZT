@@ -645,6 +645,13 @@ background: #317c43;
   margin-left: 15px;
   width: 670px;
 }
+.greeting-message {
+  font-weight: bold;
+  background: linear-gradient(180deg, #a8e063, #56ab2f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 @media (max-width: 700px) {
   .background,
   .background1
