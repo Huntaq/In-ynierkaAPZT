@@ -1,81 +1,151 @@
 .stats-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    width: 90%;
-    max-width: 1200px;
-    margin-top: 20px;
-  }
-  .gradientBasic{
-    background: linear-gradient(145deg, #a8e063, #56ab2f);
-  }
-  .gradientAlternative {
-    background: linear-gradient(180deg, #619eff, #92dd48);
-  }
-  
-  .stats-card {
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative; 
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  
-  .stats-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  }
-  
-  .emoji {
-    font-size: 2.5rem;
-    margin-right: 15px;
-  }
-  
-  .stats-info {
-    margin-left: 10px;
-  }
-  
-  .stats-info h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .stats-info p {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #fff;
-    font-weight: 600;
-  }
-  
-  .popup {
-    position: absolute;
-    bottom: 0; 
-    left: 0; 
-    height: 100%;
-    width: 100%; 
-    background: #56ab2f; 
-    color: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .stats-card:hover .popup {
-    opacity: 1; 
-  }
-  
-  
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 20px;
+  width: 90%;
+  max-width: 1200px;
+  margin-top: 20px;
+  box-sizing: border-box; 
+  justify-content: center;
+}
+
+.gradientBasic {
+  background: linear-gradient(145deg, #a8e063, #56ab2f);
+}
+
+.gradientAlternative {
+  background: linear-gradient(180deg, #619eff, #92dd48);
+}
+
+.stats-card11 {
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative; 
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 300px;
+  height: 150px;
+}
+
+.stats-card11::before {
+  content: '';
+  font-size: 5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.stats-card11.distance-week::before {
+  content: '📅'; 
+}
+
+.stats-card11.distance-run::before {
+  content: '🏃‍♂️'; 
+}
+
+.stats-card11.distance-medal::before {
+  content: '🏅'; 
+}
+
+.stats-card11.distance-month::before {
+  content: '🌍'; 
+}
+
+.stats-card11.distance-year::before {
+  content: '🏆'; 
+}
+
+.stats-card11.minutes-week::before {
+  content: '🕒'; 
+}
+
+.stats-card11.calories-week::before {
+  content: '🔥'; 
+}
+
+.stats-card11.co2-week::before {
+  content: '🌱'; 
+}
+
+.stats-card11.money-week::before {
+  content: '💸'; 
+}
+
+.stats-card11.water-saved::before {
+  content: '🌊'; 
+}
+
+.stats-card11.trees-planted::before {
+  content: '🌳'; 
+}
+
+.stats-card11.energy-saved::before {
+  content: '🌟'; 
+}
+
+.stats-card11.air-quality::before {
+  content: '🍃'; 
+}
+
+.stats-card11:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.emoji {
+  font-size: 2.5rem;
+  margin-right: 15px;
+}
+
+.stats-info {
+  margin-left: 10px;
+  z-index: 1;
+}
+
+.stats-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffff;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+}
+
+.stats-info p {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+}
+
+.popup {
+  position: absolute;
+  bottom: 0; 
+  left: 0; 
+  height: 100%;
+  width: 100%; 
+  background: linear-gradient(145deg, #9bca61, #4aa520);
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stats-card11:hover .popup {
+  opacity: 1; 
+}

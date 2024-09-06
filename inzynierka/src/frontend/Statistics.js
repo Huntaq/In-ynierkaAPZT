@@ -182,8 +182,7 @@ const Statistics = () => {
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
     
       <div className='stats-container '>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🏃‍♂️</div>
+        <div className='stats-card11 distance-run gradientBasic'>
           <div className='stats-info'>
             <h3>Distance traveled this week:</h3>
             <p>{distanceThisWeek} km</p>
@@ -192,8 +191,8 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientAlternative'>
-          <div className='emoji'>📅</div>
+        <div className='stats-card11 distance-week gradientAlternative'>
+          
           <div className='stats-info'>
             <h3>Distance traveled this month:</h3>
             <p>{distanceThisMonth} km</p>
@@ -202,8 +201,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientAlternative'>
-          <div className='emoji'>🌍</div>
+        <div className='stats-card11 distance-month gradientBasic'>
           <div className='stats-info'>
             <h3>Distance traveled this year:</h3>
             <p>{distanceThisYear} km</p>
@@ -212,8 +210,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🕒</div>
+        <div className='stats-card11 minutes-week gradientAlternative'>
           <div className='stats-info'>
             <h3>Minutes of activity this week:</h3>
             <p>{minutesThisWeek} minutes</p>
@@ -222,8 +219,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🔥</div>
+        <div className='stats-card11 calories-week gradientBasic'>
           <div className='stats-info'>
             <h3>Calories burned this week:</h3>
             <p>{caloriesThisWeek} kcal</p>
@@ -232,8 +228,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientAlternative'>
-          <div className='emoji'>🌱</div>
+        <div className='stats-card11 co2-week gradientAlternative'>
           <div className='stats-info'>
             <h3>CO2 saved this week:</h3>
             <p>{co2ThisWeek} kg</p>
@@ -242,8 +237,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientAlternative'>
-          <div className='emoji'>💸</div>
+        <div className='stats-card11 money-week gradientBasic'>
           <div className='stats-info'>
             <h3>Money saved this week:</h3>
             <p>{moneyThisWeek} PLN</p>
@@ -252,8 +246,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🌊</div>
+        <div className='stats-card11 water-saved gradientAlternative'>
           <div className='stats-info'>
             <h3>Water Saved from Reducing CO2:</h3>
             <p>{(totalCO2 * 10).toFixed(2)} liters</p>
@@ -262,8 +255,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🌳</div>
+        <div className='stats-card11 trees-planted gradientBasic'>
           <div className='stats-info'>
             <h3>Equivalent Trees Planted:</h3>
             <p>{(totalCO2 / 0.05).toFixed(0)} trees</p>
@@ -272,8 +264,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientAlternative'>
-          <div className='emoji'>🌟</div>
+        <div className='stats-card11 energy-saved gradientAlternative'>
           <div className='stats-info'>
             <h3>Energy Saved by Your Activities:</h3>
             <p>{(totalMinutes * 0.05).toFixed(2)} kWh</p>
@@ -282,8 +273,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientAlternative'>
-          <div className='emoji'>🍃</div>
+        <div className='stats-card11 air-quality gradientBasic'>
           <div className='stats-info'>
             <h3>Air Quality Improved:</h3>
             <p>{(totalCO2 * 0.8).toFixed(2)} kg</p>
@@ -292,8 +282,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🏅</div>
+        <div className='stats-card11 distance-medal gradientAlternative'>
           <div className='stats-info'>
             <h3>Best Route (CO2 saved):</h3>
             <p>{bestRouteCO2.distance_km} km with {bestRouteCO2.CO2} kg CO2 saved</p>
@@ -302,8 +291,7 @@ const Statistics = () => {
             </div>
           </div>
         </div>
-        <div className='stats-card gradientBasic'>
-          <div className='emoji'>🏆</div>
+        <div className='stats-card11 distance-year gradientBasic'>
           <div className='stats-info'>
             <h3>Best Route (Calories burned):</h3>
             <p>{bestRouteCalories.distance_km} km with {bestRouteCalories.kcal} kcal burned</p>

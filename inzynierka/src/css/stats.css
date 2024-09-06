@@ -1,6 +1,6 @@
 body.light {
   color: #000000;
-  background-color: rgb(241, 241, 241);
+  background: linear-gradient(180deg, #f9f9f9, #e1e1e1);
 }
 
 body.dark {
