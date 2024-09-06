@@ -4,6 +4,7 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
+import TrophyList from './Components/TrophyList';
 
 const Trophies = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -203,62 +204,14 @@ const Trophies = () => {
       />
       <h2>🏅 Your Trophies 🏅</h2>
       <div className="trophies-container">
-        <div className="trophy-list">
-          <div className={`trophy row level-${runningTrophy.level}`} onClick={() => handleTrophyClick('running')}>
-            <div className="trophy-header">
-              <h3 className="trophy-title">🏃‍♂️ Running </h3>
-              <h3 className="trophy-level">Level {runningTrophy.level}</h3>
-            </div>
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${(100 - (runningTrophy.next / (runningTrophy.next + runningDistance)) * 100).toFixed(2)}%` }}>
-              </div>
-            </div>
-          </div>
-
-          <div className={`trophy row level-${cyclingTrophy.level}`} onClick={() => handleTrophyClick('cycling')}>
-            <div className="trophy-header">
-              <h3 className="trophy-title">🚴‍♂️ Cycling </h3>
-              <h3 className="trophy-level">Level {cyclingTrophy.level}</h3>
-            </div>
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${(100 - (cyclingTrophy.next / (cyclingTrophy.next + cyclingDistance)) * 100).toFixed(2)}%` }}>
-              </div>
-            </div>
-          </div>
-
-          <div className={`trophy row level-${co2Trophy.level}`} onClick={() => handleTrophyClick('co2')}>
-            <div className="trophy-header">
-              <h3 className="trophy-title">🌍 CO2 Savings </h3>
-              <h3 className="trophy-level">Level {co2Trophy.level}</h3>
-            </div>
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${(100 - (co2Trophy.next / (co2Trophy.next + Co2Saved)) * 100).toFixed(2)}%` }}>
-              </div>
-            </div>
-          </div>
-
-          <div className={`trophy row level-${caloriesTrophy.level}`} onClick={() => handleTrophyClick('calories')}>
-            <div className="trophy-header">
-              <h3 className="trophy-title">🔥 Calories Burned </h3>
-              <h3 className="trophy-level">Level {caloriesTrophy.level}</h3>
-            </div>
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${(100 - (caloriesTrophy.next / (caloriesTrophy.next + CaloriesBurned)) * 100).toFixed(2)}%` }}>
-              </div>
-            </div>
-          </div>
-
-          <div className={`trophy row level-${moneyTrophy.level}`} onClick={() => handleTrophyClick('money')}>
-            <div className="trophy-header">
-              <h3 className="trophy-title">💸 Money Saved </h3>
-              <h3 className="trophy-level">Level {moneyTrophy.level}</h3>
-            </div>
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${(100 - (moneyTrophy.next / (moneyTrophy.next + MoneySaved)) * 100).toFixed(2)}%` }}>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TrophyList
+          runningDistance={runningDistance}
+          cyclingDistance={cyclingDistance}
+          Co2Saved={Co2Saved}
+          CaloriesBurned={CaloriesBurned}
+          MoneySaved={MoneySaved}
+          handleTrophyClick={handleTrophyClick}
+        />
       </div>
       {popupVisible && (
   <div className="popup1">

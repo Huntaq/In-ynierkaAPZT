@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../css/stats.css';
 import Distance from './Components/Distance';
 import Sidebar from './Components/Sidebar';
@@ -8,13 +8,18 @@ import meter from './Components/meter.png';
 import PLN from './Components/PLN';
 import Chart from './Components/Chart';
 import MonthSelector from './Components/MonthSelector';
-import Trophy from './Components/Trophy';
 import { jwtDecode } from "jwt-decode";
 import SettingsPopup from './Components/SettingsPopup';
+import TrophyList from './Components/TrophyList';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
   const [userRoutes, setUserRoutes] = useState([]);
+  const [runningDistance, setRunningDistance] = useState(0);
+  const [cyclingDistance, setCyclingDistance] = useState(0);
+  const [Co2Saved, setCo2Saved] = useState(0);
+  const [CaloriesBurned, setCaloriesBurned] = useState(0);
+  const [MoneySaved, setMoneySaved] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -24,8 +29,29 @@ const UserAcc = () => {
   const [transportMode, setTransportMode] = useState(1);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
-  const [trophies, setTrophies] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [popupContent, setPopupContent] = useState({});
+  const [popupVisible1, setPopupVisible1] = useState(false);
+  const popupRef = useRef(null);
+
+  const getTrophyLevel = (distance) => {
+    if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
+    if (distance >= 75) return { level: 4, color: 'silver', next: 100 - distance };
+    if (distance >= 50) return { level: 3, color: 'bronze', next: 75 - distance };
+    if (distance >= 20) return { level: 2, color: 'blue', next: 50 - distance };
+    if (distance >= 10) return { level: 1, color: 'green', next: 20 - distance };
+    return { level: 0, color: 'grey', next: 10 - distance };
+  };
+
+  const getTrophyLevelForStats = (value, thresholds) => {
+    if (value >= thresholds[4]) return { level: 5, color: 'gold', next: 0 };
+    if (value >= thresholds[3]) return { level: 4, color: 'silver', next: thresholds[4] - value };
+    if (value >= thresholds[2]) return { level: 3, color: 'bronze', next: thresholds[3] - value };
+    if (value >= thresholds[1]) return { level: 2, color: 'blue', next: thresholds[2] - value };
+    if (value >= thresholds[0]) return { level: 1, color: 'green', next: thresholds[1] - value };
+    return { level: 0, color: 'grey', next: thresholds[0] - value };
+  };
+
 
   const defaultSections = [
     { id: 'co2', label: 'CO2 Saved', visible: true },
@@ -89,7 +115,23 @@ const UserAcc = () => {
             const routesData = await routesResponse.json();
             setUserRoutes(routesData);
             calculateStreaks(routesData);
-            calculateTrophies(routesData);
+
+            const runningDistance = routesData
+                .filter(route => route.transport_mode_id === 1)
+                .reduce((acc, route) => acc + route.distance_km, 0);
+              const cyclingDistance = routesData
+                .filter(route => route.transport_mode_id === 2)
+                .reduce((acc, route) => acc + route.distance_km, 0);
+
+              const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
+              const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
+              const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
+
+              setRunningDistance(runningDistance);
+              setCyclingDistance(cyclingDistance);
+              setCo2Saved(totalCo2Saved);
+              setCaloriesBurned(totalCaloriesBurned);
+              setMoneySaved(totalMoneySaved);
           } else {
             setError('Błąd podczas pobierania tras użytkownika');
           }
@@ -105,7 +147,75 @@ const UserAcc = () => {
 
     fetchUserData();
   }, []);
+  const runningTrophy = getTrophyLevel(runningDistance);
+  const cyclingTrophy = getTrophyLevel(cyclingDistance);
 
+  const co2Trophy = getTrophyLevelForStats(Co2Saved, [10, 20, 50, 75, 100]);
+  const caloriesTrophy = getTrophyLevelForStats(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
+  const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
+
+  const handleTrophyClick = (trophyType) => {
+    console.log(`Clicked on ${trophyType} trophy`);
+    
+    let content;
+    switch (trophyType) {
+      case 'running':
+        content = {
+          title: '🏃‍♂️ Running',
+          level: runningTrophy.level,
+          detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
+          fact: 'Running improves cardiovascular and lung health.',
+        };
+        break;
+      case 'cycling':
+        content = {
+          title: '🚴‍♂️ Cycling',
+          level: cyclingTrophy.level,
+          detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
+          fact: 'Cycling is great exercise for the lower body.',
+        };
+        break;
+      case 'co2':
+        content = {
+          title: '🌍 CO2 Savings',
+          level: co2Trophy.level,
+          detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
+          fact: 'Saving CO2 helps combat climate change.',
+        };
+        break;
+      case 'calories':
+        content = {
+          title: '🔥 Calories Burned',
+          level: caloriesTrophy.level,
+          detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
+          fact: 'Burning calories improves overall body fitness.',
+        };
+        break;
+      case 'money':
+        content = {
+          title: '💸 Money Saved',
+          level: moneyTrophy.level,
+          detail: `Money saved: ${MoneySaved.toFixed(2)} zł`,
+          fact: 'Saving money allows for future investments.',
+        };
+        break;
+      default:
+        content = {};
+    }
+    setPopupContent(content);
+    setPopupVisible(true);
+  };
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupVisible && popupRef.current && !popupRef.current.contains(event.target)) {
+        setPopupVisible(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [popupVisible]);
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
@@ -163,23 +273,6 @@ const UserAcc = () => {
     setLongestStreak(longestStreakCount);
   };
 
-  const calculateTrophies = (routes) => {
-    const runningDistance = routes
-      .filter(route => route.transport_mode_id === 1)
-      .reduce((acc, route) => acc + route.distance_km, 0);
-
-    const cyclingDistance = routes
-      .filter(route => route.transport_mode_id === 2)
-      .reduce((acc, route) => acc + route.distance_km, 0);
-
-    const trophiesList = [
-      { type: 'running', isEarned: runningDistance >= 100 },
-      { type: 'cycling', isEarned: cyclingDistance >= 100 }
-    ];
-
-    setTrophies(trophiesList);
-  };
-
   const normalizeDate = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
@@ -206,7 +299,6 @@ const UserAcc = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
   return (
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
@@ -217,13 +309,13 @@ const UserAcc = () => {
         toggleSidebar={toggleSidebar}
       />
       <div className='row'>
-        <button className="button" onClick={() => setPopupVisible(true)}>Layout</button>
+        <button className="button" onClick={() => setPopupVisible1(true)}>Layout</button>
 
-        {popupVisible && (
+        {popupVisible1 && (
           <SettingsPopup
             sections={sections}
             toggleSectionVisibility={toggleSectionVisibility}
-            onClose={() => setPopupVisible(false)}
+            onClose={() => setPopupVisible1(false)}
           />
         )}
 
@@ -269,13 +361,24 @@ const UserAcc = () => {
                     <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
                   </div>
                   <div className='background2'>
-                    {trophies.length > 0 ? (
-                      trophies.map((trophy) => (
-                        <Trophy key={trophy.type} type={trophy.type} isEarned={trophy.isEarned} />
-                      ))
-                    ) : (
-                      <p>No trophies earned yet</p>
-                    )}
+                  <TrophyList
+          runningDistance={runningDistance}
+          cyclingDistance={cyclingDistance}
+          Co2Saved={Co2Saved}
+          CaloriesBurned={CaloriesBurned}
+          MoneySaved={MoneySaved}
+          handleTrophyClick={handleTrophyClick}
+        />
+        {popupVisible && (
+  <div className="popup1">
+    <div className="popup1-content" ref={popupRef}>
+      <p className='headerModalTrophy'>{popupContent.title}</p>
+      <p>Level: {popupContent.level}</p>
+      <p>{popupContent.detail}</p>
+      <p>{popupContent.fact}</p>
+    </div>
+  </div>
+)}
                   </div>
                 </div>
               );
