@@ -39,8 +39,6 @@
   }
   .button {
     position: absolute;
-    top: 20px;
-    right: 25px;
     font-size: 36px;
     max-width: 150px;
     max-height: 40px;
@@ -54,6 +52,7 @@
     -webkit-transition: all 0.2s ease-in;
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
+
     }
 
 .button:hover {

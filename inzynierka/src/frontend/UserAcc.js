@@ -308,8 +308,8 @@ const UserAcc = () => {
         toggleTheme={toggleTheme}
         toggleSidebar={toggleSidebar}
       />
-      <div className='row'>
-        <button className="button" onClick={() => setPopupVisible1(true)}>Layout</button>
+      <div className='row layout'>
+      <button className="button " onClick={() => setPopupVisible1(true)}>Layout</button>
 
         {popupVisible1 && (
           <SettingsPopup
@@ -318,8 +318,10 @@ const UserAcc = () => {
             onClose={() => setPopupVisible1(false)}
           />
         )}
-
+      </div>
+      <div className='row'>
         {sections.map((section) => {
+          
           if (!section.visible) return null;
 
           switch (section.id) {

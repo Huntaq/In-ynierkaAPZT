@@ -240,13 +240,15 @@ body.dark {
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 .background2::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
+  
 }
 
 
 .background2::-webkit-scrollbar-thumb {
   background: linear-gradient(45deg, #f9a825, #ffcc80);
   border-radius: 7px;
+  border: 3px solid white;
 }
 
   .inline{
@@ -539,6 +541,11 @@ background: #317c43;
 }
 .profile-container{
   display: flex;
+  align-items: center;
+  width: 33%;
+}
+.profileIconNightmode{
+  justify-content: end;
 }
 .react-calendar__tile--highlighted:hover {
   background-color: rgb(78, 165, 134) !important;
@@ -641,7 +648,7 @@ background: #317c43;
 }
 .btncos{
   align-self: auto;
-    margin-left: 50px;
+  margin-left: 20px;
 }
 .row.ProfileNotify{
   color: #727272;
@@ -661,8 +668,15 @@ background: #317c43;
   background: linear-gradient(180deg, #a8e063, #56ab2f);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
-
+.layout{
+  justify-content: end !important;
+}
 @media (max-width: 700px) {
   .background,
   .background1
