@@ -366,6 +366,9 @@ background: #a1a1a1;
 .buttonMode:hover {
 background: #317c43;
 }
+.admin{
+  margin-right: 10px;
+}
 .margin-right{
   margin-right:5px;
 }

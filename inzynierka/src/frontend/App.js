@@ -11,6 +11,7 @@ import Profile from './Profile';
 import Settings from './Settings';
 import Rankings from './Rankings';
 import Statistics from './Statistics'
+import AdminPanel from './AdminPanel';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/Settings" element={<PrivateRoute element={<Settings />} />} />
           <Route path="/Rankings" element={<PrivateRoute element={<Rankings />} />} />
           <Route path="/Statistics" element={<PrivateRoute element={<Statistics />} />} />
+          <Route path="/AdminPanel" element={<PrivateRoute element={<AdminPanel />} />} />
         </Routes>
     </Router>
   );

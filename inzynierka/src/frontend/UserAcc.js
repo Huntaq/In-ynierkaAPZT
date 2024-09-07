@@ -11,6 +11,7 @@ import MonthSelector from './Components/MonthSelector';
 import { jwtDecode } from "jwt-decode";
 import SettingsPopup from './Components/SettingsPopup';
 import TrophyList from './Components/TrophyList';
+import { useNavigate } from 'react-router-dom';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -33,6 +34,8 @@ const UserAcc = () => {
   const [popupContent, setPopupContent] = useState({});
   const [popupVisible1, setPopupVisible1] = useState(false);
   const popupRef = useRef(null);
+  const navigate = useNavigate();
+  const [showAdminButton, setShowAdminButton] = useState(false);
 
   const getTrophyLevel = (distance) => {
     if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
@@ -98,9 +101,13 @@ const UserAcc = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            if (userData[0].id === 48) {
+              setShowAdminButton(true);
+            }
           } else {
             localStorage.removeItem('authToken');
             localStorage.removeItem('cooldownTimestamp');
+            navigate('/');
           }
 
           const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
@@ -300,6 +307,7 @@ const UserAcc = () => {
     setSidebarOpen(!sidebarOpen);
   };
   return (
+    
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header
@@ -308,7 +316,13 @@ const UserAcc = () => {
         toggleTheme={toggleTheme}
         toggleSidebar={toggleSidebar}
       />
+      
       <div className='row layout'>
+      {showAdminButton && (
+          <button onClick={() => navigate('/AdminPanel')} className="button admin">
+            Admin
+          </button>
+        )}
       <button className="button " onClick={() => setPopupVisible1(true)}>Layout</button>
 
         {popupVisible1 && (
@@ -318,6 +332,7 @@ const UserAcc = () => {
             onClose={() => setPopupVisible1(false)}
           />
         )}
+        
       </div>
       <div className='row'>
         {sections.map((section) => {
