@@ -361,24 +361,25 @@ const UserAcc = () => {
                     <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
                   </div>
                   <div className='background2'>
+                  <h2>🏅 Your Trophies 🏅</h2>
                   <TrophyList
-          runningDistance={runningDistance}
-          cyclingDistance={cyclingDistance}
-          Co2Saved={Co2Saved}
-          CaloriesBurned={CaloriesBurned}
-          MoneySaved={MoneySaved}
-          handleTrophyClick={handleTrophyClick}
-        />
-        {popupVisible && (
-  <div className="popup1">
-    <div className="popup1-content" ref={popupRef}>
-      <p className='headerModalTrophy'>{popupContent.title}</p>
-      <p>Level: {popupContent.level}</p>
-      <p>{popupContent.detail}</p>
-      <p>{popupContent.fact}</p>
-    </div>
-  </div>
-)}
+                    runningDistance={runningDistance}
+                    cyclingDistance={cyclingDistance}
+                    Co2Saved={Co2Saved}
+                    CaloriesBurned={CaloriesBurned}
+                    MoneySaved={MoneySaved}
+                    handleTrophyClick={handleTrophyClick}
+                  />
+                  {popupVisible && (
+                      <div className="popup1">
+                        <div className="popup1-content" ref={popupRef}>
+                          <p className='headerModalTrophy'>{popupContent.title}</p>
+                          <p>Level: {popupContent.level}</p>
+                          <p>{popupContent.detail}</p>
+                          <p>{popupContent.fact}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

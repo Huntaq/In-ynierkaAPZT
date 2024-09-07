@@ -185,19 +185,6 @@ body.dark {
   align-items: center;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
-.background1 {
-  background: white;
-  height: 200px;
-  width: 45%;
-  min-width: 400px;
-  padding: 10px;
-  border-radius: 7px;
-  margin: auto;
-  margin-left: 5px;
-  display: flex;
-  align-items: center;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
-}
 .backgroundProfileInfo{
   background: white;
   height: 600px;
@@ -235,8 +222,32 @@ body.dark {
   align-items: center;
   justify-content: space-around;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap;
+  overflow: hidden;
+  overflow-y: scroll;  
+}
+.background1 {
+  background: white;
+  height: 200px;
+  width: 45%;
+  min-width: 400px;
+  padding: 10px;
+  border-radius: 7px;
+  margin: auto;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+.background2::-webkit-scrollbar {
+  width: 10px;
 }
 
+
+.background2::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #f9a825, #ffcc80);
+  border-radius: 7px;
+}
 
   .inline{
     display: inline;

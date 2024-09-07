@@ -203,7 +203,7 @@ const Trophies = () => {
         toggleSidebar={toggleSidebar} 
       />
       <h2>🏅 Your Trophies 🏅</h2>
-      <div className="trophies-container">
+      <div className="trophies-container testyy">
         <TrophyList
           runningDistance={runningDistance}
           cyclingDistance={cyclingDistance}

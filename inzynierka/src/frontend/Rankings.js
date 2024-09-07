@@ -183,13 +183,15 @@ const Rankings = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="ranking-dropdown">
+      <div className="ranking">
+        <div className='row'>
+        <p>Ranking</p>
+        <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="ranking-dropdown">
           <option value="CO2">CO2 Saved</option>
           <option value="kcal">Calories Burned</option>
           <option value="money">Money Saved</option>
         </select>
-      <div className="ranking">
-        <p>Ranking</p>
+        </div>
         <div className="ranking-section">
           <ul>
             {getRankingItems(rankingType)}

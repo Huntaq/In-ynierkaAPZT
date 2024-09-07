@@ -3,10 +3,12 @@
 }
 
 .trophy-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); 
+  display: flex;
   gap: 10px;
   justify-content: center;
+  flex-wrap: wrap;
+  box-sizing: border-box; 
+  overflow: hidden;
 }
 
 .trophy {
@@ -20,8 +22,12 @@
   background-color: #f8f8f8;
   box-sizing: border-box; 
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+  box-sizing: border-box;
+  justify-content: center;
 }
-
+.testyy{
+  width: 75%;
+}
 .trophy:hover {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
@@ -150,5 +156,14 @@
   color: #333;
   margin-bottom: 20px;
   font-family: 'Verdana', sans-serif;
+}
+@media (max-width: 900px) {
+  .testyy{
+    width: 99%;
+  }
+  .trophy {
+    max-width: 220px; 
+    min-width: 220px; 
+  }
 }
 
