@@ -18,8 +18,6 @@ const Calendar1 = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dailyActivities, setDailyActivities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStreak, setCurrentStreak] = useState(0);
-  const [longestStreak, setLongestStreak] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -122,46 +120,6 @@ const Calendar1 = () => {
   const normalizeDate = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
-
-  const calculateStreaks = (routes) => {
-  const uniqueDates = Array.from(new Set(
-    routes.map(route => normalizeDate(new Date(route.date)).toDateString())
-  ));
-  const sortedDates = uniqueDates
-    .map(dateStr => new Date(dateStr))
-    .sort((a, b) => a - b)
-
-  console.log('Sorted dates:', sortedDates);
-
-  let currentStreakCount = 0;
-  let longestStreakCount = 0;
-  let previousDate = null;
-
-  sortedDates.forEach(date => {
-    if (previousDate === null) {
-      currentStreakCount = 1;
-    } else {
-      const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
-      if (dayDifference === 1) {
-        currentStreakCount += 1;
-      } else if (dayDifference > 1) {
-        currentStreakCount = 1;
-      }
-    }
-
-    longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
-    previousDate = date;
-
-    console.log(`Processing date: ${date.toDateString()}`);
-    console.log(`Day difference: ${(date - previousDate) / (1000 * 60 * 60 * 24)}`);
-    console.log(`Current streak count: ${currentStreakCount}`);
-    console.log(`Longest streak count: ${longestStreakCount}`);
-  });
-
-  setCurrentStreak(currentStreakCount);
-  setLongestStreak(longestStreakCount);
-};
-
   const getTransportModeName = (id) => {
     switch(id) {
       case 1:
@@ -203,7 +161,6 @@ const Calendar1 = () => {
         </div>
         
       </div>
-      {/* <Footer/> */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}

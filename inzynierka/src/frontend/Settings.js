@@ -138,7 +138,6 @@ const Settings = () => {
           </div>
           <div className='Problem'>
             <div className='row'>
-              <label htmlFor="issue-select" className="input-label">Select issue type</label>
               <select
                 id="issue-select"
                 className="styled-select"
@@ -192,7 +191,6 @@ const Settings = () => {
           </div>
         </div>
       </div>
-      {/* <Footer/> */}
     </div>
   );
 };

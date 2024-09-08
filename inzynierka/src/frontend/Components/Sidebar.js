@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
 import leaf from './leaf.png';
 
-const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
+const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
