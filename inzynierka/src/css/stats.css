@@ -680,6 +680,79 @@ background: #317c43;
 .layout{
   justify-content: end !important;
 }
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.notification-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; 
+}
+
+.notification-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  background: white;
+  width: 600px; 
+  height: 250px; 
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  padding: 20px;
+}
+.popupNotification{
+  width: 600px;
+  height: 125px;
+  overflow: hidden;
+}
+.notification-popup.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.notification-popup h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.notification-popup .notification-content {
+  margin-bottom: 20px;
+}
+
+.notification-popup .notification-controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.notification-close {
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
 @media (max-width: 700px) {
   .background,
   .background1

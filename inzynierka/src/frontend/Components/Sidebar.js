@@ -28,6 +28,7 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('cooldownTimestamp');
+        localStorage.removeItem('showPopup');
         navigate('/');
     };
 

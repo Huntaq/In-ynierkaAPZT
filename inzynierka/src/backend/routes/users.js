@@ -54,7 +54,17 @@ router.get('/:id/routes_with_usernames', (req, res) => {
     res.json(results);
   });
 });
+router.get('/:id/admin', (req, res) => {
 
+      const sqlAllUsers = 'SELECT id, username, email,age,gender,is_banned,email_notifications,push_notifications FROM users';
+      db.query(sqlAllUsers, (err, users) => {
+        if (err) {
+          console.error('Query error:', err);
+          return res.status(500).json({ error: 'DB error' });
+        }
+        res.json(users);
+      });
+});
 router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
 

@@ -33,9 +33,12 @@ const UserAcc = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupContent, setPopupContent] = useState({});
   const [popupVisible1, setPopupVisible1] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationPopupVisible, setNotificationPopupVisible] = useState(false);
   const popupRef = useRef(null);
   const navigate = useNavigate();
   const [showAdminButton, setShowAdminButton] = useState(false);
+  const [currentNotificationIndex, setCurrentNotificationIndex] = useState(0);
 
   const getTrophyLevel = (distance) => {
     if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
@@ -124,21 +127,42 @@ const UserAcc = () => {
             calculateStreaks(routesData);
 
             const runningDistance = routesData
-                .filter(route => route.transport_mode_id === 1)
-                .reduce((acc, route) => acc + route.distance_km, 0);
-              const cyclingDistance = routesData
-                .filter(route => route.transport_mode_id === 2)
-                .reduce((acc, route) => acc + route.distance_km, 0);
+              .filter(route => route.transport_mode_id === 1)
+              .reduce((acc, route) => acc + route.distance_km, 0);
+            const cyclingDistance = routesData
+              .filter(route => route.transport_mode_id === 2)
+              .reduce((acc, route) => acc + route.distance_km, 0);
 
-              const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
-              const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
-              const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
+            const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
+            const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
+            const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
 
-              setRunningDistance(runningDistance);
-              setCyclingDistance(cyclingDistance);
-              setCo2Saved(totalCo2Saved);
-              setCaloriesBurned(totalCaloriesBurned);
-              setMoneySaved(totalMoneySaved);
+            setRunningDistance(runningDistance);
+            setCyclingDistance(cyclingDistance);
+            setCo2Saved(totalCo2Saved);
+            setCaloriesBurned(totalCaloriesBurned);
+            setMoneySaved(totalMoneySaved);
+
+            const showPopup = localStorage.getItem('showPopup') === 'true';
+
+
+
+            if (showPopup) {
+              const notificationsResponse = await fetch(`http://localhost:5000/api/notifications/popup`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                },
+              });
+
+              if (notificationsResponse.ok) {
+                const notificationsData = await notificationsResponse.json();
+                setNotifications(notificationsData);
+                setNotificationPopupVisible(notificationsData.length > 0);
+              } else {
+                setError('Błąd podczas pobierania powiadomień');
+              }
+            }
           } else {
             setError('Błąd podczas pobierania tras użytkownika');
           }
@@ -151,9 +175,8 @@ const UserAcc = () => {
       setLoading(false);
     };
 
-
     fetchUserData();
-  }, []);
+  }, [navigate]);
   const runningTrophy = getTrophyLevel(runningDistance);
   const cyclingTrophy = getTrophyLevel(cyclingDistance);
 
@@ -162,8 +185,7 @@ const UserAcc = () => {
   const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
 
   const handleTrophyClick = (trophyType) => {
-    console.log(`Clicked on ${trophyType} trophy`);
-    
+
     let content;
     switch (trophyType) {
       case 'running':
@@ -212,14 +234,25 @@ const UserAcc = () => {
     setPopupContent(content);
     setPopupVisible(true);
   };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setNotificationPopupVisible(false);
+        localStorage.setItem('showPopup', 'false');
+      }
+    };
   
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [popupRef, notificationPopupVisible]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupVisible && popupRef.current && !popupRef.current.contains(event.target)) {
         setPopupVisible(false);
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [popupVisible]);
@@ -306,8 +339,19 @@ const UserAcc = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+  const showNextNotification = () => {
+    setCurrentNotificationIndex((prevIndex) =>
+      (prevIndex + 1) % notifications.length
+    );
+  };
+
+  const showPreviousNotification = () => {
+    setCurrentNotificationIndex((prevIndex) =>
+      (prevIndex - 1 + notifications.length) % notifications.length
+    );
+  };
   return (
-    
+
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header
@@ -316,14 +360,14 @@ const UserAcc = () => {
         toggleTheme={toggleTheme}
         toggleSidebar={toggleSidebar}
       />
-      
+
       <div className='row layout'>
-      {showAdminButton && (
+        {showAdminButton && (
           <button onClick={() => navigate('/AdminPanel')} className="button admin">
             Admin
           </button>
         )}
-      <button className="button " onClick={() => setPopupVisible1(true)}>Layout</button>
+        <button className="button " onClick={() => setPopupVisible1(true)}>Layout</button>
 
         {popupVisible1 && (
           <SettingsPopup
@@ -332,11 +376,11 @@ const UserAcc = () => {
             onClose={() => setPopupVisible1(false)}
           />
         )}
-        
+
       </div>
       <div className='row'>
         {sections.map((section) => {
-          
+
           if (!section.visible) return null;
 
           switch (section.id) {
@@ -378,24 +422,37 @@ const UserAcc = () => {
                     <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
                   </div>
                   <div className='background2'>
-                  <h2>🏅 Your Trophies 🏅</h2>
-                  <TrophyList
-                    runningDistance={runningDistance}
-                    cyclingDistance={cyclingDistance}
-                    Co2Saved={Co2Saved}
-                    CaloriesBurned={CaloriesBurned}
-                    MoneySaved={MoneySaved}
-                    handleTrophyClick={handleTrophyClick}
-                  />
-                  {popupVisible && (
-                      <div className="popup1">
-                        <div className="popup1-content" ref={popupRef}>
-                          <p className='headerModalTrophy'>{popupContent.title}</p>
-                          <p>Level: {popupContent.level}</p>
-                          <p>{popupContent.detail}</p>
-                          <p>{popupContent.fact}</p>
+                    <h2>🏅 Your Trophies 🏅</h2>
+                    <TrophyList
+                      runningDistance={runningDistance}
+                      cyclingDistance={cyclingDistance}
+                      Co2Saved={Co2Saved}
+                      CaloriesBurned={CaloriesBurned}
+                      MoneySaved={MoneySaved}
+                      handleTrophyClick={handleTrophyClick}
+                    />
+                    {notifications.length > 0 && (
+                      <>
+                        <div className={`notification-overlay ${notificationPopupVisible ? 'visible' : ''}`}></div>
+                        <div className={`notification-popup ${notificationPopupVisible ? 'visible' : ''}`} ref={popupRef}>
+                          <div className="notification-content">
+                            <div className='row'>
+                            <h3>{notifications[currentNotificationIndex]?.header} </h3>
+                            </div>
+                            <div className='row popupNotification'>
+                            <p>{notifications[currentNotificationIndex]?.content}</p>
+                            </div>
+                          </div>
+                          <div className="notification-controls">
+                            <button className='button' onClick={showPreviousNotification} disabled={notifications.length <= 1}>
+                              Previous
+                            </button>
+                            <button  className='button'onClick={showNextNotification} disabled={notifications.length <= 1}>
+                              Next
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      </>
                     )}
                   </div>
                 </div>
@@ -416,6 +473,16 @@ const UserAcc = () => {
           }
         })}
       </div>
+      {popupVisible && (
+        <div className="popup1">
+          <div className="popup1-content" ref={popupRef}>
+            <p className='headerModalTrophy'>{popupContent.title}</p>
+            <p>Level: {popupContent.level}</p>
+            <p>{popupContent.detail}</p>
+            <p>{popupContent.fact}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
