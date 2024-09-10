@@ -207,10 +207,7 @@ const UserAcc = () => {
               for (const event of activeEvents) {
                 const isUserAdded = await userAlreadyAdded(event.id);
                 
-                if (isUserAdded) {
-                  // console.log(`User ID ${userId} already added to event "${event.title}".`);
-                  continue;
-                }
+                
   
                 const startDate = new Date(event.startDate);
                 const endDate = new Date(event.endDate);
@@ -232,7 +229,6 @@ const UserAcc = () => {
   
                 let progress = 0;
                 let neededDistance = event.distance || 0;
-  
                 if (event.type === 'run') {
                   progress = relevantRoutes
                     .filter(route => route.transport_mode_id === 1)  
@@ -246,6 +242,12 @@ const UserAcc = () => {
   
                 const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
                 progressMap[event.id] = progressPercentage;
+
+                if (isUserAdded) {
+                  // console.log(`User ID ${userId} already added to event "${event.title}".`);
+                  continue;
+                }
+
                 handleProgressUpdate(event, progressPercentage);
                 // console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
                 // console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
@@ -307,7 +309,7 @@ const UserAcc = () => {
   
         if (response.ok) {
           const data = await response.json();
-          // console.log(data.message);
+          console.log(data.message);
         } else {
           console.error('Error adding user ID to event');
         }

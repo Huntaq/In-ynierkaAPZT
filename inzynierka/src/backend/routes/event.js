@@ -10,13 +10,22 @@ const storage = new Storage({
   });
 
 const bucket = storage.bucket('img_inzynierka');
-
+router.get('/thropies', (req, res) => {
+    const sqlQuery = 'SELECT id, image, user_ids FROM events';
+    
+    db.query(sqlQuery, (err, results) => {
+      if (err) {
+        console.error('Błąd zapytania:', err);
+        return res.status(500).json({ error: 'Błąd bazy danych' });
+      }
+  
+      res.json(results);
+    });
+  });
 router.post('/', upload.single('image'), async (req, res) => {
     const { title, description, startDate, endDate, type, distance } = req.body;
     const file = req.file;
 
-    console.log('POST /api/event - Body:', req.body);
-    console.log('POST /api/event - File:', req.file);
 
     if (!title || !description || !startDate || !endDate || !type || !distance) {
         return res.status(400).json({ message: 'Wszystkie pola są wymagane' });
@@ -69,7 +78,6 @@ router.post('/', upload.single('image'), async (req, res) => {
                 console.error('Error inserting event into database:', err);
                 return res.status(500).json({ message: 'Błąd serwera' });
             }
-            console.log('Event inserted, ID:', result.insertId);
             res.status(201).json({ message: 'Wydarzenie zostało pomyślnie utworzone', eventId: result.insertId });
         });
     }

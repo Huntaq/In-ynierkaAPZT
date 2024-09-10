@@ -21,6 +21,7 @@ const Trophies = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupContent, setPopupContent] = useState({});
   const popupRef = useRef(null);
+  const [events, setEvents] = useState([]);
 
   const getTrophyLevel = (distance) => {
     if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
@@ -92,6 +93,33 @@ const Trophies = () => {
               setMoneySaved(totalMoneySaved);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
+            }
+            const eventsResponse = await fetch('http://localhost:5000/api/event/thropies', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'sessionKey': sessionKey,
+              },
+            });
+
+            if (eventsResponse.ok) {
+              const eventsData = await eventsResponse.json();
+
+
+              eventsData.forEach(event => {
+
+                const userIdsArray = event.user_ids ? event.user_ids.split(',') : [];
+
+              });
+
+              const filteredEvents = eventsData.filter(event => {
+                const userIdsArray = event.user_ids ? event.user_ids.split(',').map(id => parseInt(id, 10)) : [];
+                return userIdsArray.includes(id);
+              });
+
+              setEvents(filteredEvents);
+            } else {
+              setError('Błąd podczas pobierania danych wydarzeń');
             }
           } else {
             setError('Błąd podczas pobierania danych użytkownika');
@@ -196,13 +224,24 @@ const Trophies = () => {
   return (
     <div className='container'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header 
-        user={user} 
-        theme={theme} 
-        toggleTheme={toggleTheme} 
-        toggleSidebar={toggleSidebar} 
+      <Header
+        user={user}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        toggleSidebar={toggleSidebar}
       />
       <h2>🏅 Your Trophies 🏅</h2>
+      <div className="events-container">
+        {events.length > 0 && (
+          <ul className='UniqueThropies'>
+            {events.map(event => (
+              <li key={event.id} className='UniqueThropy'>
+                <img src={event.image} alt={event.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <div className="trophies-container testyy">
         <TrophyList
           runningDistance={runningDistance}
@@ -214,15 +253,15 @@ const Trophies = () => {
         />
       </div>
       {popupVisible && (
-  <div className="popup1">
-    <div className="popup1-content" ref={popupRef}>
-      <p className='headerModalTrophy'>{popupContent.title}</p>
-      <p>Level: {popupContent.level}</p>
-      <p>{popupContent.detail}</p>
-      <p>{popupContent.fact}</p>
-    </div>
-  </div>
-)}
+        <div className="popup1">
+          <div className="popup1-content" ref={popupRef}>
+            <p className='headerModalTrophy'>{popupContent.title}</p>
+            <p>Level: {popupContent.level}</p>
+            <p>{popupContent.detail}</p>
+            <p>{popupContent.fact}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
