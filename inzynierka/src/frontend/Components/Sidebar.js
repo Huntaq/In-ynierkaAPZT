@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
 import leaf from './leaf.png';
 
-const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
+const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -16,9 +16,6 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     const goToCalendar = () => {
         navigate('/Calendar', { state: { userRoutes: userRoutes || [] } });
     };
-    const goToProfile = () => {
-        navigate('/Profile', { state: { userRoutes: userRoutes || [] } });
-    };
     const goToSettings = () => {
         navigate('/Settings', { state: { userRoutes: userRoutes || [] } });
     };
@@ -30,8 +27,8 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
     };
     const handleLogout = () => {
         localStorage.removeItem('authToken');
-        localStorage.removeItem('id');
         localStorage.removeItem('cooldownTimestamp');
+        localStorage.removeItem('showPopup');
         navigate('/');
     };
 
@@ -49,19 +46,6 @@ const Sidebar = ({ user, isOpen, toggleSidebar, userRoutes }) => {
         <div className={sidebarClass}>
             <div className='row centerImg'>
                 <p  onClick={goToHome}><img src={leaf} alt='Earth' className='leaf-image inline' /></p>
-            
-                {/* <a href="/Profile" className='user-info inline margin-left1' style={{ textDecoration: 'none' }}>
-                    {user && user.profilePicture ? (
-                        <img 
-                            src={user.profilePicture} 
-                            alt="Profile" 
-                            className='user-icon' 
-                            style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
-                        />
-                    ) : (
-                        <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
-                    )}
-                </a> */}
                 <button className="close-btn" onClick={toggleSidebar}>X</button>
             </div>
             

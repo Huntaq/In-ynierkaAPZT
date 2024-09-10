@@ -29,10 +29,13 @@ const Profile = () => {
         try {
           const decodedToken = jwtDecode(token);
           const id = decodedToken.id;
+          const sessionKey = decodedToken.sessionKey;
+          
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
             },
           });
 
@@ -48,6 +51,7 @@ const Profile = () => {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
+                'sessionKey': sessionKey
               },
             });
 

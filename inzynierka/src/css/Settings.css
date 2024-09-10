@@ -1,11 +1,10 @@
 .Problem{
     background: white;
-    height: 300px;
+    height: 310px;
     width: 600px;
-    padding: 10px;
+    padding: 15px;
     border-radius: 7px;
     margin-left: 5px;
-    display: flex;
     align-items: center;
     box-shadow: 2px 2px 15px rgba(88, 88, 88, 0.2);
 }
@@ -14,6 +13,7 @@
     width: 100px;
     text-align: center;
     justify-content: center;
+    display: flex;
 }
 .none{
     text-decoration: none;
@@ -23,7 +23,118 @@
     font-weight: 400;
     line-height: normal;
 }
+.none:hover{
+    cursor: pointer;
+}
+.email-success {
+    color: #409A55;
+    font-weight: bold;
+  }
+  .email-error {
+    color: red;
+    font-weight: bold;
+  }
 .rest-content{
     margin-left: 150px;
 }
+.buttonSendEmail {
+    align-self: center;
+    max-width: 150px;
+    max-height: 40px;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 7px;
+    border: 1px solid #409A55;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 2px;
+    background: #409A55;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0 0 0 0 transparent;
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    }
+.buttonSendEmail:hover {
+  background: #317c43;
+}
+.input-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .input-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    padding: 0 4px;
+  }
+  .styled-input {
+    height: 180px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  .char-count {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #888;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .faq-item {
+    margin-bottom: 15px;
+  }
+  
+  .faq-item h3 {
+    margin: 0 0 5px;
+  }
+  .styled-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: -15px;
+  }
+  
   

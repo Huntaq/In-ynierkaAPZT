@@ -185,19 +185,6 @@ body.dark {
   align-items: center;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
-.background1 {
-  background: white;
-  height: 200px;
-  width: 45%;
-  min-width: 400px;
-  padding: 10px;
-  border-radius: 7px;
-  margin: auto;
-  margin-left: 5px;
-  display: flex;
-  align-items: center;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
-}
 .backgroundProfileInfo{
   background: white;
   height: 600px;
@@ -235,8 +222,34 @@ body.dark {
   align-items: center;
   justify-content: space-around;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap;
+  overflow: hidden;
+  overflow-y: scroll;  
+}
+.background1 {
+  background: white;
+  height: 200px;
+  width: 45%;
+  min-width: 400px;
+  padding: 10px;
+  border-radius: 7px;
+  margin: auto;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+.background2::-webkit-scrollbar {
+  width: 12px;
+  
 }
 
+
+.background2::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #f9a825, #ffcc80);
+  border-radius: 7px;
+  border: 3px solid white;
+}
 
   .inline{
     display: inline;
@@ -353,6 +366,9 @@ background: #a1a1a1;
 .buttonMode:hover {
 background: #317c43;
 }
+.admin{
+  margin-right: 10px;
+}
 .margin-right{
   margin-right:5px;
 }
@@ -464,7 +480,7 @@ background: #317c43;
   background-color: #8ac598 !important;
   width: 80% !important;
   height: 60% !important;
-  max-width: 100% !important;
+  max-width: 700px !important;
   padding: 20px;
   font-family: Arial, sans-serif;
   border: none !important;
@@ -506,7 +522,6 @@ background: #317c43;
   height: auto;
   background: none;
   border: none;
-  padding: 10px;
   text-align: center;
   cursor: pointer;
 }
@@ -529,6 +544,11 @@ background: #317c43;
 }
 .profile-container{
   display: flex;
+  align-items: center;
+  width: 33%;
+}
+.profileIconNightmode{
+  justify-content: end;
 }
 .react-calendar__tile--highlighted:hover {
   background-color: rgb(78, 165, 134) !important;
@@ -536,7 +556,6 @@ background: #317c43;
 }
 .react-calendar__tile--active {
   background-color: rgb(61, 106, 255) !important;
-  /* color: black !important; */
 }
 .toggle-switch {
   width: 60px;
@@ -632,7 +651,7 @@ background: #317c43;
 }
 .btncos{
   align-self: auto;
-    margin-left: 50px;
+  margin-left: 20px;
 }
 .row.ProfileNotify{
   color: #727272;
@@ -647,6 +666,93 @@ background: #317c43;
   margin-left: 15px;
   width: 670px;
 }
+.greeting-message {
+  font-weight: bold;
+  background: linear-gradient(180deg, #a8e063, #56ab2f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+.layout{
+  justify-content: end !important;
+}
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.notification-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; 
+}
+
+.notification-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  background: white;
+  width: 600px; 
+  height: 250px; 
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  padding: 20px;
+}
+.popupNotification{
+  width: 600px;
+  height: 125px;
+  overflow: hidden;
+}
+.notification-popup.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.notification-popup h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.notification-popup .notification-content {
+  margin-bottom: 20px;
+}
+
+.notification-popup .notification-controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.notification-close {
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
 @media (max-width: 700px) {
   .background,
   .background1

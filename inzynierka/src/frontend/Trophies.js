@@ -1,20 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../css/trophies.css';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
-import Footer from './Components/Footer';
 import { jwtDecode } from "jwt-decode";
+import TrophyList from './Components/TrophyList';
+
 const Trophies = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [runningDistance, setRunningDistance] = useState(0);
   const [cyclingDistance, setCyclingDistance] = useState(0);
+  const [Co2Saved, setCo2Saved] = useState(0);
+  const [CaloriesBurned, setCaloriesBurned] = useState(0);
+  const [MoneySaved, setMoneySaved] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
-  const [trophiesCount, setTrophiesCount] = useState(0);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupContent, setPopupContent] = useState({});
+  const popupRef = useRef(null);
+
+  const getTrophyLevel = (distance) => {
+    if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
+    if (distance >= 75) return { level: 4, color: 'silver', next: 100 - distance };
+    if (distance >= 50) return { level: 3, color: 'bronze', next: 75 - distance };
+    if (distance >= 20) return { level: 2, color: 'blue', next: 50 - distance };
+    if (distance >= 10) return { level: 1, color: 'green', next: 20 - distance };
+    return { level: 0, color: 'grey', next: 10 - distance };
+  };
+
+  const getTrophyLevelForStats = (value, thresholds) => {
+    if (value >= thresholds[4]) return { level: 5, color: 'gold', next: 0 };
+    if (value >= thresholds[3]) return { level: 4, color: 'silver', next: thresholds[4] - value };
+    if (value >= thresholds[2]) return { level: 3, color: 'bronze', next: thresholds[3] - value };
+    if (value >= thresholds[1]) return { level: 2, color: 'blue', next: thresholds[2] - value };
+    if (value >= thresholds[0]) return { level: 1, color: 'green', next: thresholds[1] - value };
+    return { level: 0, color: 'grey', next: thresholds[0] - value };
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -22,15 +46,15 @@ const Trophies = () => {
 
       if (token) {
         try {
-          // Dekodowanie tokena
           const decodedToken = jwtDecode(token);
           const id = decodedToken.id;
+          const sessionKey = decodedToken.sessionKey;
 
-          // Pobieranie danych użytkownika na podstawie ID
           const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
             },
           });
 
@@ -42,6 +66,7 @@ const Trophies = () => {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
+                'sessionKey': sessionKey
               },
             });
 
@@ -56,14 +81,15 @@ const Trophies = () => {
                 .filter(route => route.transport_mode_id === 2)
                 .reduce((acc, route) => acc + route.distance_km, 0);
 
+              const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
+              const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
+              const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
+
               setRunningDistance(runningDistance);
               setCyclingDistance(cyclingDistance);
-
-              // Obliczanie liczby zdobytych pucharków
-              const runningTrophy = runningDistance >= 100;
-              const cyclingTrophy = cyclingDistance >= 100;
-              const totalTrophies = (runningTrophy ? 1 : 0) + (cyclingTrophy ? 1 : 0);
-              setTrophiesCount(totalTrophies);
+              setCo2Saved(totalCo2Saved);
+              setCaloriesBurned(totalCaloriesBurned);
+              setMoneySaved(totalMoneySaved);
             } else {
               setError('Błąd podczas pobierania danych tras użytkownika');
             }
@@ -96,11 +122,73 @@ const Trophies = () => {
     localStorage.setItem('theme', theme);
   };
 
-  const hasRunningTrophy = runningDistance >= 100;
-  const hasCyclingTrophy = cyclingDistance >= 100;
+  const runningTrophy = getTrophyLevel(runningDistance);
+  const cyclingTrophy = getTrophyLevel(cyclingDistance);
 
-  const runningProgress = !hasRunningTrophy ? (100 - runningDistance).toFixed(2) : 0;
-  const cyclingProgress = !hasCyclingTrophy ? (100 - cyclingDistance).toFixed(2) : 0;
+  const co2Trophy = getTrophyLevelForStats(Co2Saved, [10, 20, 50, 75, 100]);
+  const caloriesTrophy = getTrophyLevelForStats(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
+  const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
+
+  const handleTrophyClick = (trophyType) => {
+    let content;
+    switch (trophyType) {
+      case 'running':
+        content = {
+          title: '🏃‍♂️ Running',
+          level: runningTrophy.level,
+          detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
+          fact: 'Running improves cardiovascular and lung health.',
+        };
+        break;
+      case 'cycling':
+        content = {
+          title: '🚴‍♂️ Cycling',
+          level: cyclingTrophy.level,
+          detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
+          fact: 'Cycling is great exercise for the lower body.',
+        };
+        break;
+      case 'co2':
+        content = {
+          title: '🌍 CO2 Savings',
+          level: co2Trophy.level,
+          detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
+          fact: 'Saving CO2 helps combat climate change.',
+        };
+        break;
+      case 'calories':
+        content = {
+          title: '🔥 Calories Burned',
+          level: caloriesTrophy.level,
+          detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
+          fact: 'Burning calories improves overall body fitness.',
+        };
+        break;
+      case 'money':
+        content = {
+          title: '💸 Money Saved',
+          level: moneyTrophy.level,
+          detail: `Money saved: ${MoneySaved.toFixed(2)} zł`,
+          fact: 'Saving money allows for future investments.',
+        };
+        break;
+      default:
+        content = {};
+    }
+    setPopupContent(content);
+    setPopupVisible(true);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupVisible && popupRef.current && !popupRef.current.contains(event.target)) {
+        setPopupVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [popupVisible]);
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -114,35 +202,27 @@ const Trophies = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      <h2>Your Trophies</h2>
-      <div className="trophies-container">
-        <p className="trophies-count">Total Trophies: {trophiesCount}</p>
-        <div className="trophy-list">
-          {hasRunningTrophy ? (
-            <div className="trophy">
-              <h3>🏅 First 100 km Running</h3>
-              <p>Congratulations! You've run your first 100 km!</p>
-            </div>
-          ) : (
-            <div className="trophy">
-              <h3>🏅 First 100 km Running</h3>
-              <p>You are {runningProgress} km away from your first 100 km running trophy.</p>
-            </div>
-          )}
-          {hasCyclingTrophy ? (
-            <div className="trophy">
-              <h3>🚴‍♂️ First 100 km Cycling</h3>
-              <p>Great job! You've cycled your first 100 km!</p>
-            </div>
-          ) : (
-            <div className="trophy">
-              <h3>🚴‍♂️ First 100 km Cycling</h3>
-              <p>You are {cyclingProgress} km away from your first 100 km cycling trophy.</p>
-            </div>
-          )}
-        </div>
+      <h2>🏅 Your Trophies 🏅</h2>
+      <div className="trophies-container testyy">
+        <TrophyList
+          runningDistance={runningDistance}
+          cyclingDistance={cyclingDistance}
+          Co2Saved={Co2Saved}
+          CaloriesBurned={CaloriesBurned}
+          MoneySaved={MoneySaved}
+          handleTrophyClick={handleTrophyClick}
+        />
       </div>
-      {/* <Footer/> */}
+      {popupVisible && (
+  <div className="popup1">
+    <div className="popup1-content" ref={popupRef}>
+      <p className='headerModalTrophy'>{popupContent.title}</p>
+      <p>Level: {popupContent.level}</p>
+      <p>{popupContent.detail}</p>
+      <p>{popupContent.fact}</p>
+    </div>
+  </div>
+)}
     </div>
   );
 };

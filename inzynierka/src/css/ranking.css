@@ -1,0 +1,79 @@
+.ranking {
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f0f0f0, #d0f0c0);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #8bc34a;
+  display: flex;
+  flex-direction: column;
+}
+
+.ranking ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: calc(5 * 60px + 10px); 
+  overflow: hidden;
+}
+
+.ranking p {
+  font-weight: bold;
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.ranking-item.first-place {
+  font-weight: bold;
+  background: linear-gradient(135deg, gold, #f0fa67);
+  border-radius: 5px;
+}
+
+.ranking-dropdown {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-item {
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: linear-gradient(135deg, #d0f0c0, #a8d5ba);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+.ranking-item:hover {
+  border-color: #8bc34a; 
+}
+
+.highlight {
+  background: linear-gradient(135deg, #ffeb3b, #ff9800);
+  border: 1px solid #ff9800; 
+  font-weight: bold;
+}
+
+.current-user {
+  margin-top: 20px;
+}
+
+.current-user .ranking-item {
+  background: linear-gradient(135deg, #ffd54f, #ffab40);
+}

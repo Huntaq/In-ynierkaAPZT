@@ -3,7 +3,6 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Modal from 'react-modal';
 import Header from './Components/Header';
-import Footer from './Components/Footer';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { jwtDecode } from "jwt-decode";
@@ -19,55 +18,57 @@ const Calendar1 = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dailyActivities, setDailyActivities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStreak, setCurrentStreak] = useState(0);
-  const [longestStreak, setLongestStreak] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-
       if (token) {
         try {
-
           const decodedToken = jwtDecode(token);
-          const id = decodedToken.id;
+          const userId = decodedToken.id;
+          const sessionKey = decodedToken.sessionKey;
           
-          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
+
+          const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
             },
           });
+
 
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
-
-            const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (routesResponse.ok) {
-              const routesData = await routesResponse.json();
-              setUserRoutes(routesData);
-              calculateStreaks(routesData);
-            } else {
-              setError('Błąd podczas pobierania danych tras użytkownika');
-            }
           } else {
             setError('Błąd podczas pobierania danych użytkownika');
+          }
+
+          const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'sessionKey': sessionKey
+            },
+          });
+
+
+          if (routesResponse.ok) {
+            const routesData = await routesResponse.json();
+            setUserRoutes(routesData);
+          } else {
+            setError('Błąd podczas pobierania tras użytkownika');
           }
         } catch (err) {
           setError('Wystąpił błąd podczas pobierania danych');
         }
       } else {
-        setError('Użytkownik nie jest zalogowany');
+        setError('Brak tokena uwierzytelniającego');
       }
       setLoading(false);
     };
+
 
     fetchUserData();
   }, []);
@@ -119,46 +120,6 @@ const Calendar1 = () => {
   const normalizeDate = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
-
-  const calculateStreaks = (routes) => {
-  const uniqueDates = Array.from(new Set(
-    routes.map(route => normalizeDate(new Date(route.date)).toDateString())
-  ));
-  const sortedDates = uniqueDates
-    .map(dateStr => new Date(dateStr))
-    .sort((a, b) => a - b)
-
-  console.log('Sorted dates:', sortedDates);
-
-  let currentStreakCount = 0;
-  let longestStreakCount = 0;
-  let previousDate = null;
-
-  sortedDates.forEach(date => {
-    if (previousDate === null) {
-      currentStreakCount = 1;
-    } else {
-      const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
-      if (dayDifference === 1) {
-        currentStreakCount += 1;
-      } else if (dayDifference > 1) {
-        currentStreakCount = 1;
-      }
-    }
-
-    longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
-    previousDate = date;
-
-    console.log(`Processing date: ${date.toDateString()}`);
-    console.log(`Day difference: ${(date - previousDate) / (1000 * 60 * 60 * 24)}`);
-    console.log(`Current streak count: ${currentStreakCount}`);
-    console.log(`Longest streak count: ${longestStreakCount}`);
-  });
-
-  setCurrentStreak(currentStreakCount);
-  setLongestStreak(longestStreakCount);
-};
-
   const getTransportModeName = (id) => {
     switch(id) {
       case 1:
@@ -200,7 +161,6 @@ const Calendar1 = () => {
         </div>
         
       </div>
-      {/* <Footer/> */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
