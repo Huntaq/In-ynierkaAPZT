@@ -116,18 +116,25 @@ router.delete('/:eventId', async (req, res) => {
   });
   
 
-router.get('/', async (req, res) => {
-
-  const sqlSelectEvents = 'SELECT * FROM events';
-
-  db.query(sqlSelectEvents, (err, results) => {
-    if (err) {
-      console.error('Error fetching events from database:', err);
-      return res.status(500).json({ message: 'Błąd serwera' });
-    }
-    res.status(200).json(results);
+  router.get('/', async (req, res) => {
+    const sqlSelectEvents = 'SELECT * FROM events';
+  
+    db.query(sqlSelectEvents, (err, results) => {
+      if (err) {
+        console.error('Error fetching events from database:', err);
+        return res.status(500).json({ message: 'Błąd serwera' });
+      }
+      
+      const processedResults = results.map(event => {
+        return {
+          ...event,
+          user_ids: event.user_ids ? event.user_ids.split(',') : []
+        };
+      });
+  
+      res.status(200).json(processedResults);
+    });
   });
-});
 router.patch('/:id/status', (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -143,6 +150,60 @@ router.patch('/:id/status', (req, res) => {
         return res.status(500).json({ error: 'DB error' });
       }
       res.json({ message: 'Event status updated' });
+    });
+  });
+
+  router.post('/:eventId/complete', (req, res) => {
+    const { userId } = req.body;
+    const { eventId } = req.params;
+  
+    const sqlCheckUser = `
+      SELECT user_ids FROM events WHERE id = ?
+    `;
+  
+    db.query(sqlCheckUser, [eventId], (err, results) => {
+      if (err) {
+        console.error('Query error:', err);
+        return res.status(500).json({ error: 'DB error' });
+      }
+  
+      const userIds = results[0].user_ids ? results[0].user_ids.split(',') : [];
+  
+      if (userIds.includes(userId)) {
+        return res.status(200).json({ message: 'User ID already added to event' });
+      }
+  
+      userIds.push(userId);
+      const updatedUserIds = userIds.join(',');
+  
+      const sqlUpdateEvent = `
+        UPDATE events
+        SET user_ids = ?
+        WHERE id = ?
+      `;
+  
+      db.query(sqlUpdateEvent, [updatedUserIds, eventId], (err) => {
+        if (err) {
+          console.error('Query error:', err);
+          return res.status(500).json({ error: 'DB error' });
+        }
+        res.status(200).json({ message: 'User ID added to event' });
+      });
+    });
+  });
+  router.get('/:id', (req, res) => {
+    const eventId = req.params.id;
+    const sql = 'SELECT * FROM events WHERE id = ?';
+  
+    db.query(sql, [eventId], (err, results) => {
+      if (err) {
+        console.error('Query error:', err);
+        return res.status(500).json({ error: 'DB error' });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      res.json(results[0]);
     });
   });
   

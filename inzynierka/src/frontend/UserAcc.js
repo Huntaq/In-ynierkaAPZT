@@ -155,70 +155,103 @@ const UserAcc = () => {
 
             if (eventsResponse.ok) {
               const data = await eventsResponse.json();
-              
+  
               const today = new Date();
               const todayString = today.toISOString().split('T')[0];
-              
+  
               const activeEvents = data.filter(event => {
                 const startDate = new Date(event.startDate);
                 const endDate = new Date(event.endDate);
-                
+  
                 startDate.setHours(0, 0, 0, 0);
                 endDate.setHours(23, 59, 59, 999);
-                
+  
                 const startDateString = startDate.toISOString().split('T')[0];
                 const endDateString = endDate.toISOString().split('T')[0];
-                
+  
                 return event.status === 'active' &&
                   startDateString <= todayString &&
                   endDateString >= todayString;
               });
-              
+  
               setEvents(activeEvents);
-              
+  
               const progressMap = {};
+  
+              const userAlreadyAdded = async (eventId) => {
+                // console.log(`Checking if user is already added to event ID: ${eventId}`);
+                const eventResponse = await fetch(`http://localhost:5000/api/event/${eventId}`, {
+                  method: 'GET',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'sessionKey': sessionKey
+                  },
+                });
               
-              activeEvents.forEach(event => {
+                if (eventResponse.ok) {
+                  const eventData = await eventResponse.json();
+                  // console.log(`Fetched event data for ID ${eventId}:`, eventData);
+              
+                  const userIds = eventData.user_ids ? eventData.user_ids.split(',') : [];
+                  // console.log(`User IDs for event ID ${eventId}:`, userIds);
+                  
+                  // console.log('User ID to check:', userId);
+                  // console.log('Includes:', userIds.includes(userId.toString())); 
+              
+                  return userIds.includes(userId.toString());
+                }
+                console.error(`Failed to fetch event data for ID ${eventId}`);
+                return false;
+              };
+  
+              for (const event of activeEvents) {
+                const isUserAdded = await userAlreadyAdded(event.id);
+                
+                if (isUserAdded) {
+                  // console.log(`User ID ${userId} already added to event "${event.title}".`);
+                  continue;
+                }
+  
                 const startDate = new Date(event.startDate);
                 const endDate = new Date(event.endDate);
                 startDate.setHours(0, 0, 0, 0);
                 endDate.setHours(23, 59, 59, 999);
-                
+  
                 const relevantRoutes = routesData.filter(route => {
                   const routeDate = new Date(route.date);
                   routeDate.setHours(0, 0, 0, 0);
                   return routeDate >= startDate && routeDate <= endDate;
                 });
-                
-                console.log(`Event: "${event.title}"`);
-                console.log(`Relevant Routes for ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}:`);
+  
+                // console.log(`Event: "${event.title}"`);
+                // console.log(`Relevant Routes for ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}:`);
                 relevantRoutes.forEach(route => {
                   const routeDate = new Date(route.date);
-                  console.log(`  Date: ${routeDate.toLocaleDateString()} - Distance: ${route.distance_km} km`);
+                  // console.log(`  Date: ${routeDate.toLocaleDateString()} - Distance: ${route.distance_km} km`);
                 });
-                
+  
                 let progress = 0;
                 let neededDistance = event.distance || 0;
-                
+  
                 if (event.type === 'run') {
                   progress = relevantRoutes
                     .filter(route => route.transport_mode_id === 1)  
                     .reduce((acc, route) => acc + route.distance_km, 0);
-                  
+  
                 } else if (event.type === 'bike') {
                   progress = relevantRoutes
                     .filter(route => route.transport_mode_id === 2)  
                     .reduce((acc, route) => acc + route.distance_km, 0);
                 }
-                
+  
                 const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
                 progressMap[event.id] = progressPercentage;
-                
-                console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
-                console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
-                
-              });
-              
+                handleProgressUpdate(event, progressPercentage);
+                // console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
+                // console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
+  
+              }
+  
               setProgressData(progressMap);
             } else {
               setError('Błąd podczas pobierania wydarzeń');
@@ -256,6 +289,33 @@ const UserAcc = () => {
 
     fetchUserData();
   }, [navigate]);
+
+  const handleProgressUpdate = async (event, progressPercentage) => {
+    if (progressPercentage === 100) {
+      try {
+        const token = localStorage.getItem('authToken');
+        const userId = jwtDecode(token).id;
+  
+        const response = await fetch(`http://localhost:5000/api/event/${event.id}/complete`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          // console.log(data.message);
+        } else {
+          console.error('Error adding user ID to event');
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+  };
   const runningTrophy = getTrophyLevel(runningDistance);
   const cyclingTrophy = getTrophyLevel(cyclingDistance);
 

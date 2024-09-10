@@ -335,6 +335,7 @@ const AdminPanel = () => {
                 <th>Distance (km)</th>
                 <th>Image</th>
                 <th>Status</th>
+                <th>User IDs</th>
                 <th>Change Status</th>
                 <th>Delete</th>
               </tr>
@@ -359,6 +360,7 @@ const AdminPanel = () => {
                     )}
                   </td>
                   <td>{event.status}</td>
+                  <td>{event.user_ids.join(', ')}</td>
                   <td>
                     <button onClick={() => handleToggleEventStatus(event.id, event.status)}>
                       {event.status === 'active' ? 'Deactivate' : 'Activate'}
