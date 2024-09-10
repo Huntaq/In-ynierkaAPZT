@@ -39,6 +39,9 @@ const UserAcc = () => {
   const navigate = useNavigate();
   const [showAdminButton, setShowAdminButton] = useState(false);
   const [currentNotificationIndex, setCurrentNotificationIndex] = useState(0);
+  const [events, setEvents] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [progressData, setProgressData] = useState({});
 
   const getTrophyLevel = (distance) => {
     if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
@@ -142,10 +145,86 @@ const UserAcc = () => {
             setCo2Saved(totalCo2Saved);
             setCaloriesBurned(totalCaloriesBurned);
             setMoneySaved(totalMoneySaved);
+            const eventsResponse = await fetch(`http://localhost:5000/api/event`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'sessionKey': sessionKey
+              },
+            });
 
+            if (eventsResponse.ok) {
+              const data = await eventsResponse.json();
+              
+              const today = new Date();
+              const todayString = today.toISOString().split('T')[0];
+              
+              const activeEvents = data.filter(event => {
+                const startDate = new Date(event.startDate);
+                const endDate = new Date(event.endDate);
+                
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(23, 59, 59, 999);
+                
+                const startDateString = startDate.toISOString().split('T')[0];
+                const endDateString = endDate.toISOString().split('T')[0];
+                
+                return event.status === 'active' &&
+                  startDateString <= todayString &&
+                  endDateString >= todayString;
+              });
+              
+              setEvents(activeEvents);
+              
+              const progressMap = {};
+              
+              activeEvents.forEach(event => {
+                const startDate = new Date(event.startDate);
+                const endDate = new Date(event.endDate);
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(23, 59, 59, 999);
+                
+                const relevantRoutes = routesData.filter(route => {
+                  const routeDate = new Date(route.date);
+                  routeDate.setHours(0, 0, 0, 0);
+                  return routeDate >= startDate && routeDate <= endDate;
+                });
+                
+                console.log(`Event: "${event.title}"`);
+                console.log(`Relevant Routes for ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}:`);
+                relevantRoutes.forEach(route => {
+                  const routeDate = new Date(route.date);
+                  console.log(`  Date: ${routeDate.toLocaleDateString()} - Distance: ${route.distance_km} km`);
+                });
+                
+                let progress = 0;
+                let neededDistance = event.distance || 0;
+                
+                if (event.type === 'run') {
+                  progress = relevantRoutes
+                    .filter(route => route.transport_mode_id === 1)  
+                    .reduce((acc, route) => acc + route.distance_km, 0);
+                  
+                } else if (event.type === 'bike') {
+                  progress = relevantRoutes
+                    .filter(route => route.transport_mode_id === 2)  
+                    .reduce((acc, route) => acc + route.distance_km, 0);
+                }
+                
+                const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
+                progressMap[event.id] = progressPercentage;
+                
+                console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
+                console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
+                
+              });
+              
+              setProgressData(progressMap);
+            } else {
+              setError('Błąd podczas pobierania wydarzeń');
+            }
+            
             const showPopup = localStorage.getItem('showPopup') === 'true';
-
-
 
             if (showPopup) {
               const notificationsResponse = await fetch(`http://localhost:5000/api/notifications/popup`, {
@@ -183,7 +262,13 @@ const UserAcc = () => {
   const co2Trophy = getTrophyLevelForStats(Co2Saved, [10, 20, 50, 75, 100]);
   const caloriesTrophy = getTrophyLevelForStats(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
   const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
+    }, 5000);
 
+    return () => clearInterval(interval);
+  }, [events.length]);
   const handleTrophyClick = (trophyType) => {
 
     let content;
@@ -241,7 +326,7 @@ const UserAcc = () => {
         localStorage.setItem('showPopup', 'false');
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [popupRef, notificationPopupVisible]);
@@ -350,6 +435,10 @@ const UserAcc = () => {
       (prevIndex - 1 + notifications.length) % notifications.length
     );
   };
+  const handleDotClick = (index) => {
+    setCurrentIndex(index);
+  };
+  
   return (
 
     <div className='container'>
@@ -378,6 +467,47 @@ const UserAcc = () => {
         )}
 
       </div>
+      
+      {events.length > 0 && (
+  <div className="unique-events-container">
+    {events.length > 0 && (
+      <div className="unique-event-item">
+        <div
+          className="unique-event-background"
+          style={{ backgroundImage: `url(${events[currentIndex].image})` }}
+        />
+        <div className="unique-event-header">
+          <h3 className="unique-event-title">{events[currentIndex].title}</h3>
+          <div className="progress-bar-container-wrapper">
+            <p className="progress-label">Progress</p>
+            <div className="progress-bar-container">
+              <div
+                className="progress-bar1"
+                style={{ width: `${progressData[events[currentIndex].id] || 0}%` }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="unique-event-content">
+          <p className="unique-event-description">{events[currentIndex].description}</p>
+        </div>
+        <div className="unique-event-footer">
+          <p className="unique-event-date"><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
+          <p className="unique-event-date"><strong>End Date:</strong> {new Date(events[currentIndex].endDate).toLocaleDateString()}</p>
+        </div>
+        <div className="unique-dots-container">
+          {events.map((_, index) => (
+            <span
+              key={index}
+              className={`unique-dot ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => handleDotClick(index)}
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+)}
       <div className='row'>
         {sections.map((section) => {
 
@@ -437,17 +567,17 @@ const UserAcc = () => {
                         <div className={`notification-popup ${notificationPopupVisible ? 'visible' : ''}`} ref={popupRef}>
                           <div className="notification-content">
                             <div className='row'>
-                            <h3>{notifications[currentNotificationIndex]?.header} </h3>
+                              <h3>{notifications[currentNotificationIndex]?.header} </h3>
                             </div>
                             <div className='row popupNotification'>
-                            <p>{notifications[currentNotificationIndex]?.content}</p>
+                              <p>{notifications[currentNotificationIndex]?.content}</p>
                             </div>
                           </div>
                           <div className="notification-controls">
                             <button className='button' onClick={showPreviousNotification} disabled={notifications.length <= 1}>
                               Previous
                             </button>
-                            <button  className='button'onClick={showNextNotification} disabled={notifications.length <= 1}>
+                            <button className='button' onClick={showNextNotification} disabled={notifications.length <= 1}>
                               Next
                             </button>
                           </div>

@@ -15,6 +15,17 @@ const AdminPanel = () => {
   const [notificationContent, setNotificationContent] = useState('');
   const [notificationHeader, setNotificationHeader] = useState('');
   const [notifications_popup, setNotifications_popup] = useState([]);
+  const [eventTitle, setEventTitle] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
+  const [eventType, setEventType] = useState('bike');
+  const [eventDistance, setEventDistance] = useState('');
+  const [events, setEvents] = useState([]);
+  const [eventsError, setEventsError] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [eventImage, setEventImage] = useState(null);
+
+
 
 
   useEffect(() => {
@@ -74,6 +85,20 @@ const AdminPanel = () => {
             } else {
               setError('Błąd podczas pobierania powiadomień');
             }
+            const eventsResponse = await fetch('http://localhost:5000/api/event', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'sessionKey': sessionKey
+              },
+            });
+
+            if (eventsResponse.ok) {
+              const eventsData = await eventsResponse.json();
+              setEvents(eventsData);
+            } else {
+              setEventsError('Błąd podczas pobierania wydarzeń');
+            }
           } else {
             localStorage.removeItem('authToken');
             localStorage.removeItem('cooldownTimestamp');
@@ -102,6 +127,7 @@ const AdminPanel = () => {
     localStorage.removeItem('cooldownTimestamp');
     navigate('/');
   };
+
   const handleNotificationSubmit = async () => {
     const token = localStorage.getItem('authToken');
 
@@ -160,15 +186,193 @@ const AdminPanel = () => {
     }
   };
 
+  const handleEventSubmit = async () => {
+    const token = localStorage.getItem('authToken');
+
+    if (!eventTitle.trim() || !eventDescription.trim() || !startDate || !endDate || !eventDistance || !eventImage) {
+      alert('All fields are required.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', eventTitle);
+    formData.append('description', eventDescription);
+    formData.append('startDate', startDate);
+    formData.append('endDate', endDate);
+    formData.append('type', eventType);
+    formData.append('distance', eventDistance);
+    formData.append('image', eventImage);
+
+    if (token) {
+      try {
+        const response = await fetch('http://localhost:5000/api/event', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+
+        if (response.ok) {
+          alert('Event created successfully');
+          setEventTitle('');
+          setEventDescription('');
+          setStartDate('');
+          setEndDate('');
+          setEventDistance('');
+          setEventImage(null);
+        } else {
+          console.error('Failed to create event');
+          alert('Failed to create event');
+        }
+      } catch (error) {
+        console.error('Error creating event:', error);
+        alert('Error creating event');
+      }
+    }
+  };
+  const handleToggleEventStatus = async (eventId, currentStatus) => {
+    const token = localStorage.getItem('authToken');
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+
+    if (token) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/event/${eventId}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        if (response.ok) {
+          setEvents(events.map(event =>
+            event.id === eventId ? { ...event, status: newStatus } : event
+          ));
+        } else {
+          alert('Error updating event status');
+        }
+      } catch (error) {
+        console.error('Error updating event status:', error);
+        alert('Error updating event status');
+      }
+    }
+  };
+  const handleDeleteEvent = async (eventId) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/event/${eventId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+  
+        if (response.ok) {
+          setEvents(events.filter(event => event.id !== eventId));
+        } else {
+          alert('Error deleting event');
+        }
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        alert('Error deleting event');
+      }
+    }
+  };
+  
+
+
+
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className='container'>
       <div className='row'>
-      <p>Admin Panel</p>
+        <p>Admin Panel</p>
         <button onClick={() => navigate('/UserAcc')} className="button">Admin</button>
         <button className="button a" onClick={handleLogout}>Logout</button>
+      </div>
+      <div className='row'><h3>Create Event</h3></div>
+      <div className='row'>
+        <div className="event-form">
+          <input type="text" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="Enter event title" className="input" />
+          <textarea value={eventDescription} onChange={(e) => setEventDescription(e.target.value)} placeholder="Enter event description" className="textarea" />
+          <div className='row'><p>Start Date</p></div>
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input" />
+          <div className='row'><p>End Date</p></div>
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="input"
+          />
+          <select value={eventType} onChange={(e) => setEventType(e.target.value)} className="input">
+            <option value="bike">Bike</option>
+            <option value="run">Running</option>
+          </select>
+          <input type="number" value={eventDistance} onChange={(e) => setEventDistance(e.target.value)} placeholder="Enter distance in km" className="input" />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setEventImage(e.target.files[0])}
+            className="input"
+          />
+          <button onClick={handleEventSubmit} className="button">Create</button>        </div>
+          <div className='row'><h3>Events</h3></div>
+        <div className="admin-table-container inline adminEvent">
+
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Type</th>
+                <th>Distance (km)</th>
+                <th>Image</th>
+                <th>Status</th>
+                <th>Change Status</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map(event => (
+                <tr key={event.id}>
+                  <td>{event.id}</td>
+                  <td>{event.title}</td>
+                  <td>{event.description}</td>
+                  <td>{new Date(event.startDate).toLocaleDateString()}</td>
+                  <td>{new Date(event.endDate).toLocaleDateString()}</td>
+                  <td>{event.type}</td>
+                  <td>{event.distance}</td>
+                  <td>
+                    {event.image && (
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="event-image"
+                      />
+                    )}
+                  </td>
+                  <td>{event.status}</td>
+                  <td>
+                    <button onClick={() => handleToggleEventStatus(event.id, event.status)}>
+                      {event.status === 'active' ? 'Deactivate' : 'Activate'}
+                    </button>
+                  </td>
+                  <td>
+                  <button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {eventsError && <p>{eventsError}</p>}
+        </div>
       </div>
       <div className='row'>
         <div className="search-container">

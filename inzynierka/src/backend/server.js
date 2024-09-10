@@ -6,6 +6,7 @@ const userRoutes = require('./routes/users');
 const profilePictureRoutes = require('./routes/profilePicture');
 const rankingRouter = require('./routes/ranking');
 const notificationRouter = require('./routes/notifications');
+const eventRouter = require('./routes/event');
 require('dotenv').config();
 
 
@@ -20,6 +21,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/profilePicture', profilePictureRoutes);
 app.use('/api/ranking', rankingRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/event', eventRouter);
 app.get('/api/protected', authRoutes.authenticateToken, (req, res) => {
   res.json({ user: req.user });
 });

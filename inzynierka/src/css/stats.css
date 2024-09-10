@@ -753,6 +753,137 @@ background: #317c43;
   border: none;
 }
 
+.unique-events-container {
+  position: relative;
+  max-width: 1200px !important;
+  width: 58.5% !important;
+  margin: 0 auto;
+}
+
+.unique-event-item {
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: transparent;
+  height: 150px;
+  width: 100%;
+  border: 1px solid black;
+}
+
+.unique-event-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  transition: background-image 0.8s ease-in;
+}
+
+.unique-event-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px;
+}
+
+.unique-event-title {
+  font-size: 1.5em;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.progress-bar-container-wrapper {
+  background: #5ca86e;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
+  width: 50%;
+  text-align: center;
+}
+
+.progress-label {
+  font-size: 0.9em;
+  margin: 0;
+}
+
+.progress-bar-container {
+  border: 1px solid black;
+  background-color: #f3f3f3;
+  border-radius: 20px;
+  height: 20px;
+  width: 90%;
+  margin: 5px 0;
+  overflow: hidden;
+  align-self: center;
+}
+
+.progress-bar1 {
+  background-color: #007bff !important;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+.unique-event-content {
+  position: relative;
+  z-index: 1;
+  color: black;
+}
+
+.unique-event-description {
+  font-size: 1em;
+  margin: 0;
+  padding: 10px;
+}
+
+.unique-event-footer {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unique-event-date {
+  font-size: 0.9em;
+  margin: 0;
+}
+
+.unique-dots-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+}
+
+.unique-dot {
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: black;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.unique-dot.active {
+  background-color: #007bff;
+}
+
+
 @media (max-width: 700px) {
   .background,
   .background1
