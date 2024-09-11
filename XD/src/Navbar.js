@@ -27,6 +27,11 @@ const NavBar = () => {
         onPress={() => navigation.navigate('Settings')}>
         <Text style={styles.buttonText}>Settings</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => navigation.navigate('Logowanie')}>
+        <Text style={styles.buttonText}>logowania-test</Text>
+      </TouchableOpacity>
     </View>
   );
 };

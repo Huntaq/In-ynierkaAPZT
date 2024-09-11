@@ -24,7 +24,7 @@ const CustomMap = () => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
-  const [lastRecordedPosition, setLastRecordedPosition] = useState(null); // New state
+  const [lastRecordedPosition, setLastRecordedPosition] = useState(null); 
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -49,20 +49,20 @@ const CustomMap = () => {
           if (isTracking) {
             const newCoordinate = { latitude, longitude };
 
-            // Update only if the distance from last recorded position exceeds 200 meters
+            
             if (lastRecordedPosition) {
               const distance = haversine(lastRecordedPosition, newCoordinate, { unit: 'meter' });
               if (distance >= 200) {
                 setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
 
-                // Update distanceTravelled
+                
                 setDistanceTravelled((prevDistance) => prevDistance + distance);
 
-                // Update last recorded position
+                
                 setLastRecordedPosition(newCoordinate);
               }
             } else {
-              // If it's the first coordinate, set it as the last recorded position
+             
               setLastRecordedPosition(newCoordinate);
               setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
             }
@@ -114,7 +114,7 @@ const CustomMap = () => {
     setRouteCoordinates([]);
     setDistanceTravelled(0);
     setTimeElapsed(0);
-    setLastRecordedPosition(null); // Reset last recorded position
+    setLastRecordedPosition(null); 
     console.log('Start pressed');
   };
 
@@ -139,7 +139,7 @@ const CustomMap = () => {
   };
 
   const calculateCO2Savings = () => {
-    const co2PerKm = 120; // g CO2/km
+    const co2PerKm = 120; 
     return (distanceTravelled * co2PerKm).toFixed(2);
   };
 
