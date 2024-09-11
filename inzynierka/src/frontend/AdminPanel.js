@@ -24,7 +24,7 @@ const AdminPanel = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [eventImage, setEventImage] = useState(null);
-
+  const [showEvent, setShowEvent] = useState(false);
 
 
 
@@ -127,7 +127,9 @@ const AdminPanel = () => {
     localStorage.removeItem('cooldownTimestamp');
     navigate('/');
   };
-
+  const toggleEvent = () => {
+    setShowEvent(prev => !prev);
+  };
   const handleNotificationSubmit = async () => {
     const token = localStorage.getItem('authToken');
 
@@ -297,6 +299,13 @@ const AdminPanel = () => {
         <button onClick={() => navigate('/UserAcc')} className="button">Admin</button>
         <button className="button a" onClick={handleLogout}>Logout</button>
       </div>
+      <div className='row'>
+      <button onClick={toggleEvent} className="button">
+        {showEvent ? "Hide" : "Show"}
+      </button>
+      </div>
+      {showEvent && (
+        <>
       <div className='row'><h3>Create Event</h3></div>
       <div className='row'>
         <div className="event-form">
@@ -348,9 +357,12 @@ const AdminPanel = () => {
             </p>
           </div>
         </div>
+      </div>
+      </>
+)}
 
-
-        <div className='row'><h3>Events</h3></div>
+      <div className='row EventsTable'>
+      <div className='row'><h3>Events</h3></div>
         <div className="admin-table-container inline adminEvent">
 
           <table className="admin-table">
