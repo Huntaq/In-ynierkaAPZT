@@ -179,7 +179,7 @@ const UserAcc = () => {
               const progressMap = {};
   
               const userAlreadyAdded = async (eventId) => {
-                // console.log(`Checking if user is already added to event ID: ${eventId}`);
+                console.log(`Checking if user is already added to event ID: ${eventId}`);
                 const eventResponse = await fetch(`http://localhost:5000/api/event/${eventId}`, {
                   method: 'GET',
                   headers: {
@@ -190,13 +190,13 @@ const UserAcc = () => {
               
                 if (eventResponse.ok) {
                   const eventData = await eventResponse.json();
-                  // console.log(`Fetched event data for ID ${eventId}:`, eventData);
+                  console.log(`Fetched event data for ID ${eventId}:`, eventData);
               
                   const userIds = eventData.user_ids ? eventData.user_ids.split(',') : [];
-                  // console.log(`User IDs for event ID ${eventId}:`, userIds);
+                  console.log(`User IDs for event ID ${eventId}:`, userIds);
                   
-                  // console.log('User ID to check:', userId);
-                  // console.log('Includes:', userIds.includes(userId.toString())); 
+                  console.log('User ID to check:', userId);
+                  console.log('Includes:', userIds.includes(userId.toString())); 
               
                   return userIds.includes(userId.toString());
                 }
@@ -220,11 +220,11 @@ const UserAcc = () => {
                   return routeDate >= startDate && routeDate <= endDate;
                 });
   
-                // console.log(`Event: "${event.title}"`);
-                // console.log(`Relevant Routes for ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}:`);
+                console.log(`Event: "${event.title}"`);
+                console.log(`Relevant Routes for ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}:`);
                 relevantRoutes.forEach(route => {
                   const routeDate = new Date(route.date);
-                  // console.log(`  Date: ${routeDate.toLocaleDateString()} - Distance: ${route.distance_km} km`);
+                  console.log(`  Date: ${routeDate.toLocaleDateString()} - Distance: ${route.distance_km} km`);
                 });
   
                 let progress = 0;
@@ -244,13 +244,13 @@ const UserAcc = () => {
                 progressMap[event.id] = progressPercentage;
 
                 if (isUserAdded) {
-                  // console.log(`User ID ${userId} already added to event "${event.title}".`);
+                  console.log(`User ID ${userId} already added to event "${event.title}".`);
                   continue;
                 }
 
                 handleProgressUpdate(event, progressPercentage);
-                // console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
-                // console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
+                console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
+                console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
   
               }
   

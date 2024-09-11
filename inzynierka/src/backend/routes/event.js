@@ -214,6 +214,5 @@ router.patch('/:id/status', (req, res) => {
       res.json(results[0]);
     });
   });
-  
 
 module.exports = router;
