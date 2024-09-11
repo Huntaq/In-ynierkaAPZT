@@ -419,12 +419,12 @@ const UserAcc = () => {
     const sortedDates = uniqueDates
       .map(dateStr => new Date(dateStr))
       .sort((a, b) => a - b);
-
     let longestStreakCount = 0;
     let currentStreakCount = 0;
     let previousDate = null;
 
     sortedDates.forEach((date, index) => {
+      if (date > new Date()) return; 
       if (previousDate === null) {
         currentStreakCount = 1;
       } else {
@@ -435,7 +435,6 @@ const UserAcc = () => {
           currentStreakCount = 1;
         }
       }
-
       longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
       previousDate = date;
     });
@@ -448,14 +447,14 @@ const UserAcc = () => {
       const lastActivityDate = sortedDates[sortedDates.length - 1];
       const dayDifferenceWithYesterday = (yesterday - lastActivityDate) / (1000 * 60 * 60 * 24);
       const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
-
+      
       if (dayDifferenceWithYesterday > 1 && dayDifferenceWithToday > 1) {
         currentStreakCount = 0;
       }
     } else {
       currentStreakCount = 0;
     }
-
+    
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
   };

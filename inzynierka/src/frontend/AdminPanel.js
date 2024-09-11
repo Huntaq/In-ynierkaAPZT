@@ -271,7 +271,7 @@ const AdminPanel = () => {
             'Content-Type': 'application/json'
           },
         });
-  
+
         if (response.ok) {
           setEvents(events.filter(event => event.id !== eventId));
         } else {
@@ -283,7 +283,7 @@ const AdminPanel = () => {
       }
     }
   };
-  
+
 
 
 
@@ -319,8 +319,38 @@ const AdminPanel = () => {
             onChange={(e) => setEventImage(e.target.files[0])}
             className="input"
           />
-          <button onClick={handleEventSubmit} className="button">Create</button>        </div>
-          <div className='row'><h3>Events</h3></div>
+          <button onClick={handleEventSubmit} className="button">Create</button>
+        </div>
+        <div className='row'>Event Preview</div>
+        <div className="event-preview unique-event-item">
+          <div
+            className="unique-event-background"
+            style={eventImage ? { backgroundImage: `url(${URL.createObjectURL(eventImage)})` } : {}}
+          />
+          <div className="unique-event-header">
+            <h3 className="unique-event-title">{eventTitle || "Event Title"}</h3>
+            <div className="progress-bar-container-wrapper">
+              <p className="progress-label">Preview Progress</p>
+              <div className="progress-bar-container">
+                <div className="progress-bar1" style={{ width: '0%' }} />
+              </div>
+            </div>
+          </div>
+          <div className="unique-event-content">
+            <p className="unique-event-description">{eventDescription || "Event description goes here."}</p>
+          </div>
+          <div className="unique-event-footer">
+            <p className="unique-event-date">
+              <strong>Start Date:</strong> {startDate || "Not set"}
+            </p>
+            <p className="unique-event-date">
+              <strong>End Date:</strong> {endDate || "Not set"}
+            </p>
+          </div>
+        </div>
+
+
+        <div className='row'><h3>Events</h3></div>
         <div className="admin-table-container inline adminEvent">
 
           <table className="admin-table">
@@ -367,7 +397,7 @@ const AdminPanel = () => {
                     </button>
                   </td>
                   <td>
-                  <button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
+                    <button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
                   </td>
                 </tr>
               ))}
