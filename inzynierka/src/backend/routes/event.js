@@ -175,9 +175,13 @@ router.patch('/:id/status', (req, res) => {
         return res.status(500).json({ error: 'DB error' });
       }
   
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Event not found' });
+      }
+  
       const userIds = results[0].user_ids ? results[0].user_ids.split(',') : [];
   
-      if (userIds.includes(userId)) {
+      if (userIds.includes(userId.toString())) {
         return res.status(200).json({ message: 'User ID already added to event' });
       }
   
