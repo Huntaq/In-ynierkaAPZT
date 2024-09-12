@@ -11,7 +11,7 @@ const storage = new Storage({
 
 const bucket = storage.bucket('img_inzynierka');
 router.get('/thropies', (req, res) => {
-    const sqlQuery = 'SELECT id, image, user_ids FROM events';
+    const sqlQuery = 'SELECT id, title, image, user_ids FROM events';
     
     db.query(sqlQuery, (err, results) => {
       if (err) {
@@ -61,7 +61,6 @@ router.post('/', upload.single('image'), async (req, res) => {
                     console.error('Error inserting event into database:', err);
                     return res.status(500).json({ message: 'Błąd serwera' });
                 }
-                console.log('Event inserted, ID:', result.insertId);
                 res.status(201).json({ message: 'Wydarzenie zostało pomyślnie utworzone', eventId: result.insertId });
             });
         });
@@ -86,7 +85,6 @@ router.post('/', upload.single('image'), async (req, res) => {
 router.delete('/:eventId', async (req, res) => {
     const eventId = req.params.eventId;
   
-    console.log('DELETE /api/event/:eventId - Event ID:', eventId);
   
     const sqlSelectEvent = 'SELECT image FROM events WHERE id = ?';
     db.query(sqlSelectEvent, [eventId], async (err, results) => {
@@ -106,9 +104,7 @@ router.delete('/:eventId', async (req, res) => {
       const file = bucket.file(fileName);
       try {
         await file.delete();
-        console.log('File deleted from Google Cloud Storage:', fileName);
       } catch (deleteError) {
-        console.error('Error deleting file from Google Cloud Storage:', deleteError);
       }
   
       const deleteEventQuery = 'DELETE FROM events WHERE id = ?';
@@ -117,7 +113,6 @@ router.delete('/:eventId', async (req, res) => {
           console.error('Error deleting event from database:', err);
           return res.status(500).json({ message: 'Błąd podczas usuwania wydarzenia' });
         }
-        console.log('Event deleted, ID:', eventId);
         res.status(200).json({ message: 'Wydarzenie zostało pomyślnie usunięte' });
       });
     });

@@ -344,7 +344,7 @@ const AdminPanel = () => {
 						<div
 							className="modal-overlay"
 							onClick={() => setShowEvent(false)}></div>{" "}
-					
+
 						<div className="modalAdmin">
 							<div className="row" id="Modal">
 								<h3>Create Event</h3>
@@ -354,7 +354,7 @@ const AdminPanel = () => {
 								className="close-button">
 								Close
 							</button>{" "}
-							
+
 							<div className="row">
 								<div className="event-form">
 									<input
@@ -409,11 +409,11 @@ const AdminPanel = () => {
 										onChange={(e) => setEventImage(e.target.files[0])}
 										className="input"
 									/>
-                  <div className="row">
-									<button onClick={handleEventSubmit} className="button">
-										Create
-									</button>
-                  </div>
+									<div className="row">
+										<button onClick={handleEventSubmit} className="button">
+											Create
+										</button>
+									</div>
 								</div>
 								<div className="row">Event Preview</div>
 								<div className="event-preview unique-event-item">
@@ -422,10 +422,10 @@ const AdminPanel = () => {
 										style={
 											eventImage
 												? {
-														backgroundImage: `url(${URL.createObjectURL(
-															eventImage
-														)})`,
-												  }
+													backgroundImage: `url(${URL.createObjectURL(
+														eventImage
+													)})`,
+												}
 												: {}
 										}
 									/>
@@ -486,7 +486,7 @@ const AdminPanel = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{events.map((event) => (
+						{[...events].reverse().map((event) => (
 								<tr key={event.id}>
 									<td>{event.id}</td>
 									<td>{event.title}</td>
@@ -570,9 +570,8 @@ const AdminPanel = () => {
 									<td>{user.email}</td>
 									<td>{user.age}</td>
 									<td
-										className={`gender-cell ${
-											user.gender === "M" ? "male" : "female"
-										}`}>
+										className={`gender-cell ${user.gender === "M" ? "male" : "female"
+											}`}>
 										{user.gender}
 									</td>
 									<td>{user.is_banned ? "Yes" : "No"}</td>
