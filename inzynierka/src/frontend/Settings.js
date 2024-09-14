@@ -4,6 +4,7 @@ import '../css/Settings.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import emailjs from 'emailjs-com';
+import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -17,6 +18,7 @@ const Settings = () => {
   const [emailStatus, setEmailStatus] = useState(null);
   const [showFAQ, setShowFAQ] = useState(false);
   const maxLength = 300;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -39,8 +41,12 @@ const Settings = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            localStorage.removeItem('authToken');
+            navigate('/');
           }
         } catch (err) {
           setError('Wystąpił błąd podczas pobierania danych');

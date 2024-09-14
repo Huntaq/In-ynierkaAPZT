@@ -909,6 +909,14 @@ background: #317c43;
   border: 2px solid black;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
+.Banned{
+  justify-content: center;
+}
+.BannedTitle{
+  justify-content: center;
+  font-weight: bold;
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
 @media (max-width: 700px) {
   .background,
   .background1

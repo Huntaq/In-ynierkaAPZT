@@ -110,9 +110,13 @@ const UserAcc = () => {
             if (userData[0].id === 48) {
               setShowAdminButton(true);
             }
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
           } else {
             localStorage.removeItem('authToken');
             localStorage.removeItem('cooldownTimestamp');
+            localStorage.removeItem('userSections');
             navigate('/');
           }
 
@@ -415,55 +419,71 @@ const UserAcc = () => {
   };
 
   const calculateStreaks = (routes) => {
+    const normalizeDate = (date) => {
+      const newDate = new Date(date);
+      newDate.setHours(0, 0, 0, 0);
+      return newDate;
+    };
+  
+    const today = normalizeDate(new Date());
+  
     const uniqueDates = Array.from(new Set(
       routes.map(route => normalizeDate(new Date(route.date)).toDateString())
-    ));
+    )).filter(dateStr => {
+      const routeDate = new Date(dateStr);
+      return routeDate <= today; 
+    });
+    
+  
     const sortedDates = uniqueDates
       .map(dateStr => new Date(dateStr))
       .sort((a, b) => a - b);
+    
+  
     let longestStreakCount = 0;
     let currentStreakCount = 0;
     let previousDate = null;
-
+  
     sortedDates.forEach((date, index) => {
-      if (date > new Date()) return; 
       if (previousDate === null) {
         currentStreakCount = 1;
       } else {
         const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
+  
         if (dayDifference === 1) {
           currentStreakCount += 1;
         } else if (dayDifference > 1) {
           currentStreakCount = 1;
         }
       }
+  
       longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
       previousDate = date;
+  
+      
     });
-
-    const today = new Date();
+  
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-
+  
     if (sortedDates.length > 0) {
       const lastActivityDate = sortedDates[sortedDates.length - 1];
       const dayDifferenceWithYesterday = (yesterday - lastActivityDate) / (1000 * 60 * 60 * 24);
       const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
+  
       
-      if (dayDifferenceWithYesterday > 1 && dayDifferenceWithToday > 1) {
+  
+      if (dayDifferenceWithYesterday >= 1 && dayDifferenceWithToday >= 1) {
         currentStreakCount = 0;
       }
     } else {
       currentStreakCount = 0;
     }
-    
+  
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
   };
 
-  const normalizeDate = (date) => {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
@@ -505,6 +525,7 @@ const UserAcc = () => {
   return (
 
     <div className='container'>
+      
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header
         user={user}

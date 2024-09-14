@@ -10,8 +10,9 @@ import Calendar1 from './Calendar';
 import Profile from './Profile';
 import Settings from './Settings';
 import Rankings from './Rankings';
-import Statistics from './Statistics'
+import Statistics from './Statistics';
 import AdminPanel from './AdminPanel';
+import Banned from './Banned';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/Rankings" element={<PrivateRoute element={<Rankings />} />} />
           <Route path="/Statistics" element={<PrivateRoute element={<Statistics />} />} />
           <Route path="/AdminPanel" element={<PrivateRoute element={<AdminPanel />} />} />
+          <Route path="/Banned" element={<PrivateRoute element={<Banned />} />} />
         </Routes>
     </Router>
   );

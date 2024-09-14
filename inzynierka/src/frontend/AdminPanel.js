@@ -27,104 +27,130 @@ const AdminPanel = () => {
 	const [showEvent, setShowEvent] = useState(false);
 
 	useEffect(() => {
-		const fetchUserData = async () => {
+		const fetchData = async () => {
 			const token = localStorage.getItem("authToken");
 			if (token) {
 				try {
 					const decodedToken = jwtDecode(token);
 					const userId = decodedToken.id;
 					const sessionKey = decodedToken.sessionKey;
-
+	
 					if (userId !== 48) {
 						localStorage.removeItem("authToken");
 						localStorage.removeItem("cooldownTimestamp");
 						navigate("/");
 						return;
 					}
-
-					const userResponse = await fetch(
-						`http://localhost:5000/api/users/${userId}`,
-						{
-							method: "GET",
-							headers: {
-								Authorization: `Bearer ${token}`,
-								sessionKey: sessionKey,
-							},
-						}
-					);
-
-					if (userResponse.ok) {
-						const userData = await userResponse.json();
-						setUser(userData[0]);
-
-						const allUsersResponse = await fetch(
-							`http://localhost:5000/api/users/${userId}/admin`,
-							{
-								method: "GET",
-								headers: {
-									Authorization: `Bearer ${token}`,
-									sessionKey: sessionKey,
-								},
-							}
-						);
-
-						if (allUsersResponse.ok) {
-							const usersData = await allUsersResponse.json();
-							setUsers(usersData);
-							setFilteredUsers(usersData);
-						} else {
-							setError("Błąd podczas pobierania listy użytkowników1");
-						}
-						const notificationsResponse = await fetch(
-							"http://localhost:5000/api/notifications/popup",
-							{
-								method: "GET",
-								headers: {
-									Authorization: `Bearer ${token}`,
-									sessionKey: sessionKey,
-								},
-							}
-						);
-
-						if (notificationsResponse.ok) {
-							const notificationsData = await notificationsResponse.json();
-							setNotifications_popup(notificationsData);
-						} else {
-							setError("Błąd podczas pobierania powiadomień");
-						}
-						const eventsResponse = await fetch(
-							"http://localhost:5000/api/event",
-							{
-								method: "GET",
-								headers: {
-									Authorization: `Bearer ${token}`,
-									sessionKey: sessionKey,
-								},
-							}
-						);
-
-						if (eventsResponse.ok) {
-							const eventsData = await eventsResponse.json();
-							setEvents(eventsData);
-						} else {
-							setEventsError("Błąd podczas pobierania wydarzeń");
-						}
-					} else {
-						localStorage.removeItem("authToken");
-						localStorage.removeItem("cooldownTimestamp");
-						navigate("/");
-					}
+	
+					const userData = await fetchUserData(token, sessionKey, userId);
+					setUser(userData);
+	
+					const usersData = await fetchAllUsers(token, sessionKey, userId);
+					setUsers(usersData);
+					setFilteredUsers(usersData);
+	
+					const notificationsData = await fetchNotifications(token, sessionKey);
+					setNotifications_popup(notificationsData);
+	
+					const eventsData = await fetchEvents(token, sessionKey);
+					setEvents(eventsData);
+	
 				} catch (err) {
-					setError("Wystąpił błąd podczas pobierania danych");
+					setError(err.message);
 				}
 			} else {
 				setError("Brak tokena uwierzytelniającego");
 			}
 			setLoading(false);
 		};
-
-		fetchUserData();
+	
+		fetchData();
 	}, [navigate]);
+
+	const fetchUserData = async (token, sessionKey, userId) => {
+    try {
+        const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                sessionKey: sessionKey,
+            },
+        });
+
+        if (userResponse.ok) {
+            const userData = await userResponse.json();
+            return userData[0];
+        } else {
+            localStorage.removeItem('authToken');
+            navigate('/');
+        }
+    } catch (err) {
+        throw new Error("Wystąpił błąd podczas pobierania danych użytkownika");
+    }
+};
+
+const fetchAllUsers = async (token, sessionKey, userId) => {
+    try {
+        const allUsersResponse = await fetch(`http://localhost:5000/api/users/${userId}/admin`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                sessionKey: sessionKey,
+            },
+        });
+
+        if (allUsersResponse.ok) {
+            const usersData = await allUsersResponse.json();
+            return usersData;
+        } else {
+            throw new Error("Błąd podczas pobierania listy użytkowników");
+        }
+    } catch (err) {
+        throw new Error("Wystąpił błąd podczas pobierania listy użytkowników");
+    }
+};
+
+const fetchNotifications = async (token, sessionKey) => {
+    try {
+        const notificationsResponse = await fetch("http://localhost:5000/api/notifications/popup", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                sessionKey: sessionKey,
+            },
+        });
+
+        if (notificationsResponse.ok) {
+            const notificationsData = await notificationsResponse.json();
+            return notificationsData;
+        } else {
+            throw new Error("Błąd podczas pobierania powiadomień");
+        }
+    } catch (err) {
+        throw new Error("Wystąpił błąd podczas pobierania powiadomień");
+    }
+};
+
+const fetchEvents = async (token, sessionKey) => {
+    try {
+        const eventsResponse = await fetch("http://localhost:5000/api/event", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                sessionKey: sessionKey,
+            },
+        });
+
+        if (eventsResponse.ok) {
+            const eventsData = await eventsResponse.json();
+            return eventsData;
+        } else {
+            throw new Error("Błąd podczas pobierania wydarzeń");
+        }
+    } catch (err) {
+        throw new Error("Wystąpił błąd podczas pobierania wydarzeń");
+    }
+};
 	useEffect(() => {
 		const filtered = users.filter(
 			(user) =>
@@ -250,6 +276,8 @@ const AdminPanel = () => {
 					setEndDate("");
 					setEventDistance("");
 					setEventImage(null);
+					const updatedEvents = await fetchEvents(token);
+        			setEvents(updatedEvents);
 				} else {
 					console.error("Failed to create event");
 					alert("Failed to create event");
@@ -319,7 +347,61 @@ const AdminPanel = () => {
 			}
 		}
 	};
+	const banUser = async (userId) => {
+		const token = localStorage.getItem("authToken");
+		if (token) {
+			try {
+				const response = await fetch(
+					`http://localhost:5000/api/ban/ban/${userId}`,
+					{
+						method: "POST",
+						headers: {
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
+				if (response.ok) {
+					const updatedBans = await fetchAllUsers(token);
+        			setUsers(updatedBans);
+				} else {
+					alert("Error Banning user");
+				}
+			} catch (error) {
+				console.error("Error Banning user:", error);
+				alert("Error Banning user");
+			}
+		}
+	};
+	
+	const unbanUser =  async (userId) => {
+		const token = localStorage.getItem("authToken");
+		if (token) {
+			try {
+				const response = await fetch(
+					`http://localhost:5000/api/ban/unban/${userId}`,
+					{
+						method: "POST",
+						headers: {
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (response.ok) {
+					const updatedBans = await fetchAllUsers(token);
+        			setUsers(updatedBans);
+				} else {
+					alert("Error UnBanning user");
+				}
+			} catch (error) {
+				console.error("Error UnBanning user:", error);
+				alert("Error UnBanning user");
+			}
+		}
+	};
 	if (loading) return <p>Ładowanie...</p>;
 	if (error) return <p>{error}</p>;
 
@@ -560,6 +642,7 @@ const AdminPanel = () => {
 								<th>Banned</th>
 								<th>Email Notifications</th>
 								<th>Push Notifications</th>
+								<th>Bans</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -577,6 +660,13 @@ const AdminPanel = () => {
 									<td>{user.is_banned ? "Yes" : "No"}</td>
 									<td>{user.email_notifications ? "Enabled" : "Disabled"}</td>
 									<td>{user.push_notifications ? "Enabled" : "Disabled"}</td>
+									<td>
+                                {user.is_banned ? (
+                                    <button onClick={() => unbanUser(user.id)}>Unban</button>
+                                ) : (
+                                    <button onClick={() => banUser(user.id)}>Ban</button>
+                                )}
+                            </td>
 								</tr>
 							))}
 						</tbody>

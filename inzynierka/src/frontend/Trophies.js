@@ -6,6 +6,7 @@ import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import TrophyList from './Components/TrophyList';
 import confetti from "canvas-confetti";
+import { useNavigate } from 'react-router-dom';
 
 const Trophies = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -24,6 +25,7 @@ const Trophies = () => {
   const popupRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const navigate = useNavigate();
 
   const triggerConfetti = () => {
     confetti({
@@ -77,6 +79,9 @@ const Trophies = () => {
             const userData = await userResponse.json();
             setUser(userData[0]);
 
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
             const routesResponse = await fetch(`http://localhost:5000/api/users/${id}/routes`, {
               method: 'GET',
               headers: {
@@ -106,7 +111,8 @@ const Trophies = () => {
               setCaloriesBurned(totalCaloriesBurned);
               setMoneySaved(totalMoneySaved);
             } else {
-              setError('Błąd podczas pobierania danych tras użytkownika');
+              localStorage.removeItem('authToken');
+              navigate('/');
             }
             const eventsResponse = await fetch('http://localhost:5000/api/event/thropies', {
               method: 'GET',
@@ -118,13 +124,6 @@ const Trophies = () => {
 
             if (eventsResponse.ok) {
               const eventsData = await eventsResponse.json();
-
-
-              // eventsData.forEach(event => {
-
-              //   const userIdsArray = event.user_ids ? event.user_ids.split(',') : [];
-
-              // });
 
               const filteredEvents = eventsData.filter(event => {
                 const userIdsArray = event.user_ids ? event.user_ids.split(',').map(id => parseInt(id, 10)) : [];
@@ -153,7 +152,7 @@ const Trophies = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-const handleTrophyEventClick = (event) => {
+  const handleTrophyEventClick = (event) => {
     setSelectedEvent(event);
     handleTrophyEventClickConfetti();
   };
@@ -238,9 +237,9 @@ const handleTrophyEventClick = (event) => {
         }
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -260,27 +259,27 @@ const handleTrophyEventClick = (event) => {
       />
       <h2>🏅 Your Trophies 🏅</h2>
       <div className="events-container">
-      {events.length > 0 && (
-        <ul className="UniqueThropies ">
-          {events.map(event => (
-            <li key={event.id} className="UniqueThropy HoverTrophy" onClick={() => handleTrophyEventClick(event)}>
-              <img src={event.image} alt={event.title} />
-            </li>
-          ))}
-        </ul>
-      )}
+        {events.length > 0 && (
+          <ul className="UniqueThropies ">
+            {events.map(event => (
+              <li key={event.id} className="UniqueThropy HoverTrophy" onClick={() => handleTrophyEventClick(event)}>
+                <img src={event.image} alt={event.title} />
+              </li>
+            ))}
+          </ul>
+        )}
 
-      {selectedEvent && (
-        <div className="modalEvent">
-          <div className="modal-contentEvent" ref={popupRef}>
-            <span className="close" onClick={handleCloseEventModal}>&times;</span>
-            <div className='row EventTitle'><p>! Congratiulations !</p></div>
-            <div className='row EventTitle'><p>Trophy earned by competing in</p></div>
-            <div className='row EventDesc'><p>{selectedEvent.title} Event!</p></div>
+        {selectedEvent && (
+          <div className="modalEvent">
+            <div className="modal-contentEvent" ref={popupRef}>
+              <span className="close" onClick={handleCloseEventModal}>&times;</span>
+              <div className='row EventTitle'><p>! Congratiulations !</p></div>
+              <div className='row EventTitle'><p>Trophy earned by competing in</p></div>
+              <div className='row EventDesc'><p>{selectedEvent.title} Event!</p></div>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
       <div className="trophies-container testyy">
         <TrophyList
           runningDistance={runningDistance}

@@ -5,6 +5,7 @@ import '../css/ranking.css';
 import Header from './Components/Header';
 import {jwtDecode} from "jwt-decode";
 import confetti from 'canvas-confetti';
+import { useNavigate } from 'react-router-dom';
 
 const Rankings = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -16,6 +17,7 @@ const Rankings = () => {
   const [user, setUser] = useState(null);
   const [rankingType, setRankingType] = useState('total_CO2');
   const [currentUserIndex, setCurrentUserIndex] = useState(-1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,8 +39,12 @@ const Rankings = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            localStorage.removeItem('authToken');
+            navigate('/');
           }
 
           const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes_with_usernames`, {
