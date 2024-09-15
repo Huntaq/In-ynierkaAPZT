@@ -740,8 +740,9 @@ background: #317c43;
   display: flex;
   justify-content: space-between;
 }
-
-
+.notification-popup.hidden {
+  display: none;
+}
 .notification-close {
   position: absolute;
   top: 10px; 

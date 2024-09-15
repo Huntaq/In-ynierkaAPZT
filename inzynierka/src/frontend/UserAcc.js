@@ -1,17 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '../css/stats.css';
-import Distance from './Components/Distance';
 import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import earthImage from './Components/earth.png';
 import meter from './Components/meter.png';
-import PLN from './Components/PLN';
-import Chart from './Components/Chart';
-import MonthSelector from './Components/MonthSelector';
 import { jwtDecode } from "jwt-decode";
 import SettingsPopup from './Components/SettingsPopup';
-import TrophyList from './Components/TrophyList';
 import { useNavigate } from 'react-router-dom';
+import Overview from './Components/Overview';
+import UniqueEvents from './Components/UniqueEvents';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
@@ -43,24 +40,24 @@ const UserAcc = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progressData, setProgressData] = useState({});
 
-  const getTrophyLevel = (distance) => {
-    if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
-    if (distance >= 75) return { level: 4, color: 'silver', next: 100 - distance };
-    if (distance >= 50) return { level: 3, color: 'bronze', next: 75 - distance };
-    if (distance >= 20) return { level: 2, color: 'blue', next: 50 - distance };
-    if (distance >= 10) return { level: 1, color: 'green', next: 20 - distance };
-    return { level: 0, color: 'grey', next: 10 - distance };
-  };
-
-  const getTrophyLevelForStats = (value, thresholds) => {
-    if (value >= thresholds[4]) return { level: 5, color: 'gold', next: 0 };
-    if (value >= thresholds[3]) return { level: 4, color: 'silver', next: thresholds[4] - value };
-    if (value >= thresholds[2]) return { level: 3, color: 'bronze', next: thresholds[3] - value };
-    if (value >= thresholds[1]) return { level: 2, color: 'blue', next: thresholds[2] - value };
-    if (value >= thresholds[0]) return { level: 1, color: 'green', next: thresholds[1] - value };
+  const calculateTrophyLevel = (value, thresholds) => {
+    const levels = [
+      { level: 5, color: 'gold' },
+      { level: 4, color: 'silver' },
+      { level: 3, color: 'bronze' },
+      { level: 2, color: 'blue' },
+      { level: 1, color: 'green' },
+      { level: 0, color: 'grey' }
+    ];
+  
+    for (let i = 0; i < thresholds.length; i++) {
+      if (value >= thresholds[i]) {
+        return { ...levels[i], next: thresholds[i + 1] ? thresholds[i + 1] - value : 0 };
+      }
+    }
+  
     return { level: 0, color: 'grey', next: thresholds[0] - value };
   };
-
 
   const defaultSections = [
     { id: 'co2', label: 'CO2 Saved', visible: true },
@@ -79,7 +76,7 @@ const UserAcc = () => {
     localStorage.setItem('userSections', JSON.stringify(sections));
   }, [sections]);
 
-  const toggleSectionVisibility = (id) => {
+  const toggleSectionVisibility1 = (id) => {
     setSections(prevSections =>
       prevSections.map(section =>
         section.id === id ? { ...section, visible: !section.visible } : section
@@ -149,6 +146,7 @@ const UserAcc = () => {
             setCo2Saved(totalCo2Saved);
             setCaloriesBurned(totalCaloriesBurned);
             setMoneySaved(totalMoneySaved);
+
             const eventsResponse = await fetch(`http://localhost:5000/api/event`, {
               method: 'GET',
               headers: {
@@ -159,31 +157,29 @@ const UserAcc = () => {
 
             if (eventsResponse.ok) {
               const data = await eventsResponse.json();
-  
               const today = new Date();
               const todayString = today.toISOString().split('T')[0];
-  
+
               const activeEvents = data.filter(event => {
                 const startDate = new Date(event.startDate);
                 const endDate = new Date(event.endDate);
-  
+
                 startDate.setHours(0, 0, 0, 0);
                 endDate.setHours(23, 59, 59, 999);
-  
+
                 const startDateString = startDate.toISOString().split('T')[0];
                 const endDateString = endDate.toISOString().split('T')[0];
-  
+
                 return event.status === 'active' &&
                   startDateString <= todayString &&
                   endDateString >= todayString;
               });
-  
+
               setEvents(activeEvents);
-  
+
               const progressMap = {};
-  
+
               const userAlreadyAdded = async (eventId) => {
-                // console.log(`Checking if user is already added to event ID: ${eventId}`);
                 const eventResponse = await fetch(`http://localhost:5000/api/event/${eventId}`, {
                   method: 'GET',
                   headers: {
@@ -191,78 +187,59 @@ const UserAcc = () => {
                     'sessionKey': sessionKey
                   },
                 });
-              
+
                 if (eventResponse.ok) {
                   const eventData = await eventResponse.json();
-                  // console.log(`Fetched event data for ID ${eventId}:`, eventData);
-              
+
                   const userIds = eventData.user_ids ? eventData.user_ids.split(',') : [];
-                  // console.log(`User IDs for event ID ${eventId}:`, userIds);
-                  
-                  // console.log('User ID to check:', userId);
-                  // console.log('Includes:', userIds.includes(userId.toString())); 
-              
+
                   return userIds.includes(userId.toString());
                 }
-                // console.error(`Failed to fetch event data for ID ${eventId}`);
                 return false;
               };
-  
+
               for (const event of activeEvents) {
                 const isUserAdded = await userAlreadyAdded(event.id);
-                
-                
-  
                 const startDate = new Date(event.startDate);
                 const endDate = new Date(event.endDate);
                 startDate.setHours(0, 0, 0, 0);
                 endDate.setHours(23, 59, 59, 999);
-  
+
                 const relevantRoutes = routesData.filter(route => {
                   const routeDate = new Date(route.date);
                   routeDate.setHours(0, 0, 0, 0);
                   return routeDate >= startDate && routeDate <= endDate;
                 });
-  
-                // console.log(`Event: "${event.title}"`);
-                // console.log(`Relevant Routes for ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}:`);
-                relevantRoutes.forEach(route => {
-                  const routeDate = new Date(route.date);
-                  // console.log(`  Date: ${routeDate.toLocaleDateString()} - Distance: ${route.distance_km} km`);
-                });
-  
+
                 let progress = 0;
                 let neededDistance = event.distance || 0;
                 if (event.type === 'run') {
                   progress = relevantRoutes
-                    .filter(route => route.transport_mode_id === 1)  
+                    .filter(route => route.transport_mode_id === 1)
                     .reduce((acc, route) => acc + route.distance_km, 0);
-  
+
                 } else if (event.type === 'bike') {
                   progress = relevantRoutes
-                    .filter(route => route.transport_mode_id === 2)  
+                    .filter(route => route.transport_mode_id === 2)
                     .reduce((acc, route) => acc + route.distance_km, 0);
                 }
-  
+
                 const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
                 progressMap[event.id] = progressPercentage;
 
                 if (isUserAdded) {
-                  // console.log(`User ID ${userId} already added to event "${event.title}".`);
                   continue;
                 }
 
                 handleProgressUpdate(event, progressPercentage);
-                // console.log(`Total Progress for "${event.title}": ${progress.toFixed(2)} km`);
-                // console.log(`Progress Percentage: ${progressPercentage.toFixed(2)}%`);
-  
+
               }
-  
+
               setProgressData(progressMap);
             } else {
               setError('Błąd podczas pobierania wydarzeń');
             }
-            
+
             const showPopup = localStorage.getItem('showPopup') === 'true';
 
             if (showPopup) {
@@ -292,7 +269,7 @@ const UserAcc = () => {
       }
       setLoading(false);
     };
-
+    
     fetchUserData();
   }, [navigate]);
 
@@ -301,7 +278,7 @@ const UserAcc = () => {
       try {
         const token = localStorage.getItem('authToken');
         const userId = jwtDecode(token).id;
-  
+
         const response = await fetch(`http://localhost:5000/api/event/${event.id}/complete`, {
           method: 'POST',
           headers: {
@@ -310,10 +287,10 @@ const UserAcc = () => {
           },
           body: JSON.stringify({ userId }),
         });
-  
+
         if (response.ok) {
           const data = await response.json();
-          console.log('Backend response:', data); 
+          console.log('Backend response:', data);
           console.log('Message from backend:', data.message);
         } else {
           const errorData = await response.json();
@@ -324,12 +301,11 @@ const UserAcc = () => {
       }
     }
   };
-  const runningTrophy = getTrophyLevel(runningDistance);
-  const cyclingTrophy = getTrophyLevel(cyclingDistance);
-
-  const co2Trophy = getTrophyLevelForStats(Co2Saved, [10, 20, 50, 75, 100]);
-  const caloriesTrophy = getTrophyLevelForStats(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
-  const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
+  const runningTrophy = calculateTrophyLevel(runningDistance, [10, 20, 50, 75, 100]);
+  const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 20, 50, 75, 100]);
+  const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
+  const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
+  const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
@@ -337,55 +313,46 @@ const UserAcc = () => {
 
     return () => clearInterval(interval);
   }, [events.length]);
-  const handleTrophyClick = (trophyType) => {
 
-    let content;
-    switch (trophyType) {
-      case 'running':
-        content = {
-          title: '🏃‍♂️ Running',
-          level: runningTrophy.level,
-          detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
-          fact: 'Running improves cardiovascular and lung health.',
-        };
-        break;
-      case 'cycling':
-        content = {
-          title: '🚴‍♂️ Cycling',
-          level: cyclingTrophy.level,
-          detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
-          fact: 'Cycling is great exercise for the lower body.',
-        };
-        break;
-      case 'co2':
-        content = {
-          title: '🌍 CO2 Savings',
-          level: co2Trophy.level,
-          detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
-          fact: 'Saving CO2 helps combat climate change.',
-        };
-        break;
-      case 'calories':
-        content = {
-          title: '🔥 Calories Burned',
-          level: caloriesTrophy.level,
-          detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
-          fact: 'Burning calories improves overall body fitness.',
-        };
-        break;
-      case 'money':
-        content = {
-          title: '💸 Money Saved',
-          level: moneyTrophy.level,
-          detail: `Money saved: ${MoneySaved.toFixed(2)} zł`,
-          fact: 'Saving money allows for future investments.',
-        };
-        break;
-      default:
-        content = {};
+
+  const trophyDetailsMap = {
+    running: {
+      title: '🏃‍♂️ Running',
+      trophy: runningTrophy,
+      detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
+      fact: 'Running improves cardiovascular and lung health.',
+    },
+    cycling: {
+      title: '🚴‍♂️ Cycling',
+      trophy: cyclingTrophy,
+      detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
+      fact: 'Cycling is great exercise for the lower body.',
+    },
+    co2: {
+      title: '🌍 CO2 Savings',
+      trophy: co2Trophy,
+      detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
+      fact: 'Reducing CO2 emissions helps slow climate change.',
+    },
+    calories: {
+      title: '🔥 Calories Burned',
+      trophy: caloriesTrophy,
+      detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
+      fact: 'Burning calories through exercise helps maintain a healthy weight.',
+    },
+    money: {
+      title: '💸 Money Saved',
+      trophy: moneyTrophy,
+      detail: `Money saved: ${MoneySaved.toFixed(2)} PLN`,
+      fact: 'Saving money by using eco-friendly transport options.',
     }
-    setPopupContent(content);
-    setPopupVisible(true);
+  };
+  const handleTrophyClick = (trophyType) => {
+    const content = trophyDetailsMap[trophyType];
+    if (content) {
+      setPopupContent(content);
+      setPopupVisible(true);
+    }
   };
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -424,62 +391,62 @@ const UserAcc = () => {
       newDate.setHours(0, 0, 0, 0);
       return newDate;
     };
-  
+
     const today = normalizeDate(new Date());
-  
+
     const uniqueDates = Array.from(new Set(
       routes.map(route => normalizeDate(new Date(route.date)).toDateString())
     )).filter(dateStr => {
       const routeDate = new Date(dateStr);
-      return routeDate <= today; 
+      return routeDate <= today;
     });
-    
-  
+
+
     const sortedDates = uniqueDates
       .map(dateStr => new Date(dateStr))
       .sort((a, b) => a - b);
-    
-  
+
+
     let longestStreakCount = 0;
     let currentStreakCount = 0;
     let previousDate = null;
-  
+
     sortedDates.forEach((date, index) => {
       if (previousDate === null) {
         currentStreakCount = 1;
       } else {
         const dayDifference = (date - previousDate) / (1000 * 60 * 60 * 24);
-  
+
         if (dayDifference === 1) {
           currentStreakCount += 1;
         } else if (dayDifference > 1) {
           currentStreakCount = 1;
         }
       }
-  
+
       longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
       previousDate = date;
-  
-      
+
+
     });
-  
+
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-  
+
     if (sortedDates.length > 0) {
       const lastActivityDate = sortedDates[sortedDates.length - 1];
       const dayDifferenceWithYesterday = (yesterday - lastActivityDate) / (1000 * 60 * 60 * 24);
       const dayDifferenceWithToday = (today - lastActivityDate) / (1000 * 60 * 60 * 24);
-  
-      
-  
+
+
+
       if (dayDifferenceWithYesterday >= 1 && dayDifferenceWithToday >= 1) {
         currentStreakCount = 0;
       }
     } else {
       currentStreakCount = 0;
     }
-  
+
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
   };
@@ -521,19 +488,13 @@ const UserAcc = () => {
   const handleDotClick = (index) => {
     setCurrentIndex(index);
   };
-  
+
   return (
 
     <div className='container'>
-      
-      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header
-        user={user}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        toggleSidebar={toggleSidebar}
-      />
 
+      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
+      <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
       <div className='row layout'>
         {showAdminButton && (
           <button onClick={() => navigate('/AdminPanel')} className="button admin">
@@ -543,150 +504,43 @@ const UserAcc = () => {
         <button className="button " onClick={() => setPopupVisible1(true)}>Layout</button>
 
         {popupVisible1 && (
-          <SettingsPopup
-            sections={sections}
-            toggleSectionVisibility={toggleSectionVisibility}
-            onClose={() => setPopupVisible1(false)}
-          />
+          <SettingsPopup sections={sections}toggleSectionVisibility1={toggleSectionVisibility1}onClose={() => setPopupVisible1(false)}/>
         )}
-
       </div>
-      
-      {events.length > 0 && (
-  <div className="unique-events-container">
-    {events.length > 0 && (
-      <div className="unique-event-item">
-        <div
-          className="unique-event-background"
-          style={{ backgroundImage: `url(${events[currentIndex].image})` }}
-        />
-        <div className="unique-event-header">
-          <h3 className="unique-event-title">{events[currentIndex].title}</h3>
-          <div className="progress-bar-container-wrapper">
-            <p className="progress-label">Progress</p>
-            <div className="progress-bar-container">
-              <div
-                className="progress-bar1"
-                style={{ width: `${progressData[events[currentIndex].id] || 0}%` }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="unique-event-content">
-          <p className="unique-event-description">{events[currentIndex].description}</p>
-        </div>
-        <div className="unique-event-footer">
-          <p className="unique-event-date"><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
-          <p className="unique-event-date"><strong>End Date:</strong> {new Date(events[currentIndex].endDate).toLocaleDateString()}</p>
-        </div>
-        <div className="unique-dots-container">
-          {events.map((_, index) => (
-            <span
-              key={index}
-              className={`unique-dot ${index === currentIndex ? 'active' : ''}`}
-              onClick={() => handleDotClick(index)}
-            />
-          ))}
-        </div>
-      </div>
-    )}
-  </div>
-)}
-      <div className='row'>
-        {sections.map((section) => {
-
-          if (!section.visible) return null;
-
-          switch (section.id) {
-            case 'co2':
-              return (
-                <div className='row' key={section.id}>
-                  <div className='backgroundInfo'>
-                    <p className='textStyleActivity'>CO2 Saved</p>
-                    <Distance totalCO2={totalCO2.toFixed(2)} />
-                  </div>
-                  <div className='background'>
-                    <p className='Co2Info'>You have saved as much CO₂ as would be produced by driving approximately {savedKm.toFixed(0)} kilometers by car.</p>
-                    <img src={earthImage} alt='Earth' className='earth-image' />
-                  </div>
-                </div>
-              );
-            case 'pln':
-              return (
-                <div className='row' key={section.id}>
-                  <div className='backgroundInfo'>
-                    <p className='textStyleActivity'>PLN Saved</p>
-                    <PLN totalMoney={totalMoney.toFixed(2)} />
-                  </div>
-                  <div className='background1'>
-                    <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
-                    <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
-                  </div>
-                </div>
-              );
-            case 'streak':
-              return (
-                <div className='row' key={section.id}>
-                  <div className='backgroundInfo'>
-                    <p className='textStyleActivity'>Current Streak</p>
-                    <div className='row'>
-                      <p className='StreakInfo'>{currentStreak} </p>
-                      <img src={meter} alt='Earth' className='meterimage inline' />
-                    </div>
-                    <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
-                  </div>
-                  <div className='background2'>
-                    <h2>🏅 Your Trophies 🏅</h2>
-                    <TrophyList
-                      runningDistance={runningDistance}
-                      cyclingDistance={cyclingDistance}
-                      Co2Saved={Co2Saved}
-                      CaloriesBurned={CaloriesBurned}
-                      MoneySaved={MoneySaved}
-                      handleTrophyClick={handleTrophyClick}
-                    />
-                    {notifications.length > 0 && (
-                      <>
-                        <div className={`notification-overlay ${notificationPopupVisible ? 'visible' : ''}`}></div>
-                        <div className={`notification-popup ${notificationPopupVisible ? 'visible' : ''}`} ref={popupRef}>
-                          <div className="notification-content">
-                            <div className='row'>
-                              <h3>{notifications[currentNotificationIndex]?.header} </h3>
-                            </div>
-                            <div className='row popupNotification'>
-                              <p>{notifications[currentNotificationIndex]?.content}</p>
-                            </div>
-                          </div>
-                          <div className="notification-controls">
-                            <button className='button' onClick={showPreviousNotification} disabled={notifications.length <= 1}>
-                              Previous
-                            </button>
-                            <button className='button' onClick={showNextNotification} disabled={notifications.length <= 1}>
-                              Next
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              );
-            case 'Test':
-              return (
-                <div className='row' key={section.id}>
-                  <div className='backgroundInfo'>
-                    <p>Test1</p>
-                  </div>
-                  <div className='background1'>
-                    <p>Test2</p>
-                  </div>
-                </div>
-              );
-            default:
-              return null;
-          }
-        })}
-      </div>
+      <UniqueEvents
+        events={events}
+        currentIndex={currentIndex}
+        progressData={progressData}
+        handleDotClick={handleDotClick}
+      />
+      <Overview
+        sections={sections}
+        totalCO2={totalCO2}
+        savedKm={savedKm}
+        earthImage={earthImage}
+        totalMoney={totalMoney}
+        handleMonthChange={handleMonthChange}
+        handleTransportChange={handleTransportChange}
+        month={month}
+        year={year}
+        transportMode={transportMode}
+        userRoutes={userRoutes}
+        currentStreak={currentStreak}
+        longestStreak={longestStreak}
+        meter={meter}
+        runningDistance={runningDistance}
+        cyclingDistance={cyclingDistance}
+        Co2Saved={Co2Saved}
+        CaloriesBurned={CaloriesBurned}
+        MoneySaved={MoneySaved}
+        handleTrophyClick={handleTrophyClick}
+        notifications={notifications}
+        notificationPopupVisible={notificationPopupVisible}
+        popupRef={popupRef}
+        currentNotificationIndex={currentNotificationIndex}
+        showPreviousNotification={showPreviousNotification}
+        showNextNotification={showNextNotification}
+      />
       {popupVisible && (
         <div className="popup1">
           <div className="popup1-content" ref={popupRef}>
