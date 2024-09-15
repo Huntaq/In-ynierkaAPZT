@@ -37,27 +37,6 @@
     border-color: #007bff;
     outline: none;
   }
-  .button {
-    position: absolute;
-    font-size: 36px;
-    max-width: 150px;
-    max-height: 40px;
-    padding: 10px 20px;
-    border-radius: 7px;
-    border: 1px solid #409A55;
-    font-size: 14px;
-    font-weight: 600;
-    background: #409A55;
-    color: white;
-    -webkit-transition: all 0.2s ease-in;
-    -moz-transition: all 0.2s ease-in;
-    transition: all 0.2s ease-in;
-
-    }
-
-.button:hover {
-  background: #317c43;
-}
 
   .error {
     color: red;

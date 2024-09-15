@@ -8,22 +8,22 @@ const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
     const location = useLocation();
 
     const goToTrophies = () => {
-        navigate('/Trophies', { state: { userRoutes: userRoutes || [] } });
+        navigate('/Trophies' );
     };
     const goToHome = () => {
-        navigate('/UserAcc', { state: { userRoutes: userRoutes || [] } });
+        navigate('/UserAcc' );
     };
     const goToCalendar = () => {
-        navigate('/Calendar', { state: { userRoutes: userRoutes || [] } });
+        navigate('/Calendar');
     };
     const goToSettings = () => {
-        navigate('/Settings', { state: { userRoutes: userRoutes || [] } });
+        navigate('/Settings');
     };
     const goToRankings = () => {
-        navigate('/Rankings', { state: { userRoutes: userRoutes || [] } });
+        navigate('/Rankings');
     };
     const goToStatistics = () => {
-        navigate('/Statistics', { state: { userRoutes: userRoutes || [] } });
+        navigate('/Statistics');
     };
     const handleLogout = () => {
         localStorage.removeItem('authToken');

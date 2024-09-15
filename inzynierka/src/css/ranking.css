@@ -65,8 +65,9 @@
 }
 
 .highlight {
-  background: linear-gradient(135deg, #ffeb3b, #ff9800);
-  border: 1px solid #ff9800; 
+  background: rgb(98,40,194);
+background: linear-gradient(90deg, rgba(98,40,194,1) 0%, rgba(147,129,255,1) 35%, rgba(162,217,245,1) 93%);
+  border: 1px solid #6228c2; 
   font-weight: bold;
 }
 
@@ -74,6 +75,7 @@
   margin-top: 20px;
 }
 
-.current-user .ranking-item {
-  background: linear-gradient(135deg, #ffd54f, #ffab40);
-}
+/* .current-user .ranking-item {
+  background: rgb(48,0,128);
+background: linear-gradient(90deg, rgba(48,0,128,1) 0%, rgba(147,129,255,1) 35%, rgba(162,217,245,1) 93%);
+} */

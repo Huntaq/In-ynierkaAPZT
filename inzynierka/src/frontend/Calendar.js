@@ -6,6 +6,7 @@ import Header from './Components/Header';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 Modal.setAppElement('#root');
 
 const Calendar1 = () => {
@@ -18,6 +19,7 @@ const Calendar1 = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dailyActivities, setDailyActivities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -41,8 +43,12 @@ const Calendar1 = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            localStorage.removeItem('authToken');
+            navigate('/');
           }
 
           const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {

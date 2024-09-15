@@ -5,6 +5,7 @@ import '../css/statistics.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const Statistics = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -13,7 +14,8 @@ const Statistics = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
-
+  const navigate = useNavigate();
+  
   const calculateMetrics = (routes) => {
     const now = new Date();
     const startOfWeekDate = startOfWeek(now, { weekStartsOn: 1 });
@@ -112,8 +114,12 @@ const Statistics = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            localStorage.removeItem('authToken');
+            navigate('/');
           }
 
           const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {

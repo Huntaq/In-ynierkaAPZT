@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import '../../css/SettingsPopup.css';
 
-const SettingsPopup = ({ sections, toggleSectionVisibility, onClose }) => {
+const SettingsPopup = ({ sections, toggleSectionVisibility1, onClose }) => {
     const popupRef = useRef(null);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ const SettingsPopup = ({ sections, toggleSectionVisibility, onClose }) => {
                         <input
                             type='checkbox'
                             checked={section.visible}
-                            onChange={() => toggleSectionVisibility(section.id)}
+                            onChange={() => toggleSectionVisibility1(section.id)}
                         />
                         {section.label}
                     </div>

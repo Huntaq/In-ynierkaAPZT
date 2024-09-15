@@ -58,7 +58,7 @@ const Register = () => {
         let isValid = true;
 
         if (!validateName(name)) {
-            setNameError('Invalid name');
+            setNameError('Nickname must contain only letters');
             isValid = false;
         } else {
             setNameError('');

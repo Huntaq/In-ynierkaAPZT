@@ -3,8 +3,8 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import '../css/profile.css';
 import Header from './Components/Header';
-import Footer from './Components/Footer';
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -20,6 +20,7 @@ const Profile = () => {
   const [emailNotification, setEmailNotification] = useState('yes');
   const [pushNotification, setPushNotification] = useState('yes');
   const [remainingCooldown, setRemainingCooldown] = useState(60);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -31,7 +32,7 @@ const Profile = () => {
           const id = decodedToken.id;
           const sessionKey = decodedToken.sessionKey;
           
-          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
+          const userResponse = await fetch(`http://localhost:5000/api/users/${id}/profile`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -42,6 +43,9 @@ const Profile = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
+            if (userData[0].is_banned === 1) {
+              navigate('/Banned');
+            }
             setProfilePicture(userData[0].profilePicture);
 
             setEmailNotification(userData[0].email_notifications === 1 ? 'yes' : 'no');
@@ -59,10 +63,12 @@ const Profile = () => {
               const routesData = await routesResponse.json();
               setUserRoutes(routesData);
             } else {
-              setError('Błąd podczas pobierania danych tras użytkownika');
+              localStorage.removeItem('authToken');
+            navigate('/');
             }
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            localStorage.removeItem('authToken');
+            navigate('/');
           }
         } catch (err) {
           setError('Wystąpił błąd podczas pobierania danych');
@@ -398,7 +404,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      {/* <Footer/> */}
     </div>
   );
 };
