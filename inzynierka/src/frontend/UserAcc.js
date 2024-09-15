@@ -105,7 +105,7 @@ const UserAcc = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
-            if (userData[0].id === 48) {
+            if (userData[0].id === 48 || userData[0].id === 52)  {
               setShowAdminButton(true);
             }
             if (userData[0].is_banned === 1) {

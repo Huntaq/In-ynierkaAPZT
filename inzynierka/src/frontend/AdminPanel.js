@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import SidebarAdmin from './Components/SidebarAdmin';
 import "../css/adminPanel.css";
 
 const AdminPanel = () => {
@@ -25,6 +26,7 @@ const AdminPanel = () => {
 	const [endDate, setEndDate] = useState("");
 	const [eventImage, setEventImage] = useState(null);
 	const [showEvent, setShowEvent] = useState(false);
+	const [sidebarOpen, setSidebarOpen] = useState(true);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -35,7 +37,7 @@ const AdminPanel = () => {
 					const userId = decodedToken.id;
 					const sessionKey = decodedToken.sessionKey;
 	
-					if (userId !== 48) {
+					if (userId !== 48 && userId !== 52) {
 						localStorage.removeItem("authToken");
 						localStorage.removeItem("cooldownTimestamp");
 						navigate("/");
@@ -402,23 +404,29 @@ const fetchEvents = async (token, sessionKey) => {
 			}
 		}
 	};
+	const toggleSidebar = () => {
+		setSidebarOpen(!sidebarOpen);
+	  };
 	if (loading) return <p>Ładowanie...</p>;
 	if (error) return <p>{error}</p>;
 
 	return (
 		<div className="container">
+
+		<SidebarAdmin isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} />
 			<div className="row">
-				<p>Admin Panel</p>
+			<button className="button btncos" onClick={toggleSidebar}>☰</button>
 				<button onClick={() => navigate("/UserAcc")} className="button">
-					Admin
+					Back to User Account
 				</button>
 				<button className="button a" onClick={handleLogout}>
 					Logout
 				</button>
+				
 			</div>
 			<div className="row">
 				<button onClick={() => setShowEvent(true)} className="button">
-					Open Modal
+					Create Event
 				</button>
 
 				{showEvent && (
@@ -630,7 +638,7 @@ const fetchEvents = async (token, sessionKey) => {
 				</div>
 			</div>
 			<div className="row">
-				<div className="admin-table-container inline">
+				<div className="admin-table-container inline" id="access-to-users">
 					<table className="admin-table">
 						<thead>
 							<tr>
@@ -672,7 +680,8 @@ const fetchEvents = async (token, sessionKey) => {
 						</tbody>
 					</table>
 				</div>
-				<div className="admin-table-container inline">
+				<div className="row"></div>
+				<div className="admin-table-container inline" id="create-notifications">
 					<table className="admin-table">
 						<thead>
 							<tr>

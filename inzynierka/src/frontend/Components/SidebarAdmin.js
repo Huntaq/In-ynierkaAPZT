@@ -3,27 +3,27 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
 import leaf from './leaf.png';
 
-const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
+const SidebarAdmin = ({isOpen, toggleSidebar, userRoutes }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const goToTrophies = () => {
-        navigate('/Trophies' );
+        
     };
     const goToHome = () => {
-        navigate('/UserAcc' );
+        
     };
     const goToCalendar = () => {
-        navigate('/Calendar');
+        
     };
     const goToSettings = () => {
-        navigate('/Settings');
+        
     };
     const goToRankings = () => {
-        navigate('/Rankings');
+        
     };
     const goToStatistics = () => {
-        navigate('/Statistics');
+        
     };
     const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -52,11 +52,9 @@ const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
             <nav className='navCenter'>
                 <ul>
                     <li className='T Home' onClick={goToHome}>Overview</li>
-                    <li className='T Statistics' onClick={goToStatistics}>Statistics</li>
-                    <li className='T Rankings' onClick={goToRankings}>Rankings</li>
-                    <li className='T Trophies' onClick={goToTrophies}>Trophies</li>
-                    <li className='T Calendar' onClick={goToCalendar}>Calendar</li>
-                    <li className='T Settings' onClick={goToSettings}>Settings</li>
+                    <li className='T Statistics' onClick={goToStatistics}>Users</li>
+                    <li className='T Rankings' onClick={goToRankings}>Events</li>
+                    <li className='T Trophies' onClick={goToTrophies}>Notifictions</li>
                     <li className="logout" onClick={handleLogout}><a href=".">Logout</a></li>
                 </ul>
             </nav>
@@ -64,4 +62,4 @@ const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
     );
 };
 
-export default Sidebar;
+export default SidebarAdmin;
