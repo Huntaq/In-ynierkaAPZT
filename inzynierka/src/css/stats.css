@@ -914,6 +914,9 @@ background: #317c43;
   font-weight: bold;
   text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
+.AdminModal{
+  justify-content: center;
+}
 @media (max-width: 700px) {
   .background,
   .background1

@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import SidebarAdmin from './Components/SidebarAdmin';
 import "../css/adminPanel.css";
+import UserModalAdmin from "./Components/UserModalAdmin";
+import EventsModalAdmin from "./Components/EventsModalAdmin";
+import NotificationsModalAdmin from "./Components/NotificationsModalAdmin";
 
 const AdminPanel = () => {
 	const navigate = useNavigate();
@@ -27,6 +30,7 @@ const AdminPanel = () => {
 	const [eventImage, setEventImage] = useState(null);
 	const [showEvent, setShowEvent] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [activeModal, setActiveModal] = useState('');
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -162,11 +166,6 @@ const fetchEvents = async (token, sessionKey) => {
 		);
 		setFilteredUsers(filtered);
 	}, [searchUsername, searchId, users]);
-	const handleLogout = () => {
-		localStorage.removeItem("authToken");
-		localStorage.removeItem("cooldownTimestamp");
-		navigate("/");
-	};
 
 	const handleNotificationSubmit = async () => {
 		const token = localStorage.getItem("authToken");
@@ -193,9 +192,10 @@ const fetchEvents = async (token, sessionKey) => {
 					}
 				);
 
-				console.log("Notification Response Status:", response.status);
 
 				if (response.ok) {
+					const notificationsData = await fetchNotifications(token);
+					setNotifications_popup(notificationsData);
 					setNotificationContent("");
 					setNotificationHeader("");
 				} else {
@@ -407,330 +407,76 @@ const fetchEvents = async (token, sessionKey) => {
 	const toggleSidebar = () => {
 		setSidebarOpen(!sidebarOpen);
 	  };
+	  const toggleModal = (modal) => {
+        setActiveModal(modal);
+    };
 	if (loading) return <p>Ładowanie...</p>;
 	if (error) return <p>{error}</p>;
 
 	return (
 		<div className="container">
-
-		<SidebarAdmin isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} />
+		<SidebarAdmin isOpen={sidebarOpen}toggleSidebar={toggleSidebar}toggleModal={toggleModal} />
 			<div className="row">
 			<button className="button btncos" onClick={toggleSidebar}>☰</button>
 				<button onClick={() => navigate("/UserAcc")} className="button">
 					Back to User Account
 				</button>
-				<button className="button a" onClick={handleLogout}>
-					Logout
-				</button>
 				
 			</div>
-			<div className="row">
-				<button onClick={() => setShowEvent(true)} className="button">
-					Create Event
-				</button>
-
-				{showEvent && (
-					<>
-						<div
-							className="modal-overlay"
-							onClick={() => setShowEvent(false)}></div>{" "}
-
-						<div className="modalAdmin">
-							<div className="row" id="Modal">
-								<h3>Create Event</h3>
-							</div>
-							<button
-								onClick={() => setShowEvent(false)}
-								className="close-button">
-								Close
-							</button>{" "}
-
-							<div className="row">
-								<div className="event-form">
-									<input
-										type="text"
-										value={eventTitle}
-										onChange={(e) => setEventTitle(e.target.value)}
-										placeholder="Enter event title"
-										className="input"
-									/>
-									<textarea
-										value={eventDescription}
-										onChange={(e) => setEventDescription(e.target.value)}
-										placeholder="Enter event description"
-										className="textarea"
-									/>
-									<div className="row">
-										<p>Start Date</p>
-									</div>
-									<input
-										type="date"
-										value={startDate}
-										onChange={(e) => setStartDate(e.target.value)}
-										className="input"
-									/>
-									<div className="row">
-										<p>End Date</p>
-									</div>
-									<input
-										type="date"
-										value={endDate}
-										onChange={(e) => setEndDate(e.target.value)}
-										className="input"
-									/>
-									<select
-										value={eventType}
-										onChange={(e) => setEventType(e.target.value)}
-										className="input">
-										<option value="bike">Bike</option>
-										<option value="run">Running</option>
-									</select>
-									<input
-										type="number"
-										value={eventDistance}
-										onChange={(e) => setEventDistance(e.target.value)}
-										placeholder="Enter distance in km"
-										className="input"
-									/>
-
-									<input
-										type="file"
-										accept="image/*"
-										onChange={(e) => setEventImage(e.target.files[0])}
-										className="input"
-									/>
-									<div className="row">
-										<button onClick={handleEventSubmit} className="button">
-											Create
-										</button>
-									</div>
-								</div>
-								<div className="row">Event Preview</div>
-								<div className="event-preview unique-event-item">
-									<div
-										className="unique-event-background"
-										style={
-											eventImage
-												? {
-													backgroundImage: `url(${URL.createObjectURL(
-														eventImage
-													)})`,
-												}
-												: {}
-										}
-									/>
-									<div className="unique-event-header">
-										<h3 className="unique-event-title">
-											{eventTitle || "Event Title"}
-										</h3>
-										<div className="progress-bar-container-wrapper">
-											<p className="progress-label">Preview Progress</p>
-											<div className="progress-bar-container">
-												<div
-													className="progress-bar1"
-													style={{ width: "0%" }}
-												/>
-											</div>
-										</div>
-									</div>
-									<div className="unique-event-content">
-										<p className="unique-event-description">
-											{eventDescription || "Event description goes here."}
-										</p>
-									</div>
-									<div className="unique-event-footer">
-										<p className="unique-event-date">
-											<strong>Start Date:</strong> {startDate || "Not set"}
-										</p>
-										<p className="unique-event-date">
-											<strong>End Date:</strong> {endDate || "Not set"}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</>
-				)}
-			</div>
-
-			<div className="row EventsTable">
-				<div className="row">
-					<h3>Events</h3>
-				</div>
-				<div className="admin-table-container inline adminEvent">
-					<table className="admin-table">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Title</th>
-								<th>Description</th>
-								<th>Start Date</th>
-								<th>End Date</th>
-								<th>Type</th>
-								<th>Distance (km)</th>
-								<th>Image</th>
-								<th>Status</th>
-								<th>User IDs</th>
-								<th>Change Status</th>
-								<th>Delete</th>
-							</tr>
-						</thead>
-						<tbody>
-						{[...events].reverse().map((event) => (
-								<tr key={event.id}>
-									<td>{event.id}</td>
-									<td>{event.title}</td>
-									<td>{event.description}</td>
-									<td>{new Date(event.startDate).toLocaleDateString()}</td>
-									<td>{new Date(event.endDate).toLocaleDateString()}</td>
-									<td>{event.type}</td>
-									<td>{event.distance}</td>
-									<td>
-										{event.image && (
-											<img
-												src={event.image}
-												alt={event.title}
-												className="event-image"
-											/>
-										)}
-									</td>
-									<td>{event.status}</td>
-									<td>{event.user_ids.join(", ")}</td>
-									<td>
-										<button
-											onClick={() =>
-												handleToggleEventStatus(event.id, event.status)
-											}>
-											{event.status === "active" ? "Deactivate" : "Activate"}
-										</button>
-									</td>
-									<td>
-										<button onClick={() => handleDeleteEvent(event.id)}>
-											Delete
-										</button>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-					{eventsError && <p>{eventsError}</p>}
-				</div>
-			</div>
-			<div className="row">
-				<div className="row">
-					<p> Userzy </p>
-				</div>
-				<div className="search-container">
-					<input
-						type="text"
-						placeholder="Username"
-						value={searchUsername}
-						onChange={(e) => setSearchUsername(e.target.value)}
-						className="search-input"
-					/>
-					<input
-						type="text"
-						placeholder="ID"
-						value={searchId}
-						onChange={(e) => setSearchId(e.target.value)}
-						className="search-input"
-					/>
-				</div>
-			</div>
-			<div className="row">
-				<div className="admin-table-container inline" id="access-to-users">
-					<table className="admin-table">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Username</th>
-								<th>Email</th>
-								<th>Age</th>
-								<th>Gender</th>
-								<th>Banned</th>
-								<th>Email Notifications</th>
-								<th>Push Notifications</th>
-								<th>Bans</th>
-							</tr>
-						</thead>
-						<tbody>
-							{filteredUsers.map((user) => (
-								<tr key={user.id}>
-									<td>{user.id}</td>
-									<td>{user.username}</td>
-									<td>{user.email}</td>
-									<td>{user.age}</td>
-									<td
-										className={`gender-cell ${user.gender === "M" ? "male" : "female"
-											}`}>
-										{user.gender}
-									</td>
-									<td>{user.is_banned ? "Yes" : "No"}</td>
-									<td>{user.email_notifications ? "Enabled" : "Disabled"}</td>
-									<td>{user.push_notifications ? "Enabled" : "Disabled"}</td>
-									<td>
-                                {user.is_banned ? (
-                                    <button onClick={() => unbanUser(user.id)}>Unban</button>
-                                ) : (
-                                    <button onClick={() => banUser(user.id)}>Ban</button>
-                                )}
-                            </td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-				<div className="row"></div>
-				<div className="admin-table-container inline" id="create-notifications">
-					<table className="admin-table">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Header</th>
-								<th>Content</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							{notifications_popup.map((notification) => (
-								<tr key={notification.id}>
-									<td>{notification.id}</td>
-									<td>{notification.header}</td>
-									<td>
-										{notification.content.length > 50
-											? `${notification.content.slice(0, 150)}...`
-											: notification.content}
-									</td>
-									<td>
-										<button
-											onClick={() => handleDeleteNotification(notification.id)}>
-											Delete
-										</button>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div className="row">
-				<div className="notification-form">
-					<input
-						type="text"
-						value={notificationHeader}
-						onChange={(e) => setNotificationHeader(e.target.value)}
-						placeholder="Enter notification header"
-					/>
-					<textarea
-						value={notificationContent}
-						onChange={(e) => setNotificationContent(e.target.value)}
-						placeholder="Enter notification content"
-					/>
-					<button onClick={handleNotificationSubmit} className="button">
-						Send
-					</button>
-				</div>
-			</div>
+			{activeModal === 'events' && (
+                <EventsModalAdmin
+				searchUsername={searchUsername}
+				setSearchUsername={setSearchUsername}
+				searchId={searchId}
+				setSearchId={setSearchId}
+				filteredUsers={filteredUsers}
+				banUser={banUser}
+				unbanUser={unbanUser}
+				showEvent={showEvent}
+				setShowEvent={setShowEvent}
+				eventTitle={eventTitle}
+				setEventTitle={setEventTitle}
+				eventDescription={eventDescription}
+				setEventDescription={setEventDescription}
+				startDate={startDate}
+				setStartDate={setStartDate}
+				endDate={endDate}
+				setEndDate={setEndDate}
+				eventType={eventType}
+				setEventType={setEventType}
+				eventDistance={eventDistance}
+				setEventDistance={setEventDistance}
+				eventImage={eventImage}
+				setEventImage={setEventImage}
+				handleEventSubmit={handleEventSubmit}
+				events={events}
+				handleToggleEventStatus={handleToggleEventStatus}
+				handleDeleteEvent={handleDeleteEvent}
+				eventsError={eventsError}
+			/>
+            )}
+			{activeModal === 'users' && (
+                <UserModalAdmin
+                    searchUsername={searchUsername}  
+                    setSearchUsername={setSearchUsername} 
+                    searchId={searchId}                
+                    setSearchId={setSearchId}        
+                    filteredUsers={filteredUsers}      
+                    banUser={banUser}                    
+                    unbanUser={unbanUser}                
+                />
+            )}
+			{activeModal === 'notifications' && (
+                <NotificationsModalAdmin
+				notifications_popup={notifications_popup}
+				notificationHeader={notificationHeader}
+				setNotificationHeader={setNotificationHeader}
+				notificationContent={notificationContent}
+				setNotificationContent={setNotificationContent}
+				handleNotificationSubmit={handleNotificationSubmit}
+				handleDeleteNotification={handleDeleteNotification}
+			/>
+            )}
 		</div>
 	);
 };

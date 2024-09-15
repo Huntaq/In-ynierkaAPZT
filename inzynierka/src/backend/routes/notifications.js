@@ -41,7 +41,6 @@ router.delete('/popup/:id', (req, res) => {
       console.error('Query error:', err);
       return res.status(500).json({ error: 'DB error' });
     }
-    console.log('Delete operation result:', result);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Notification not found' });
     }

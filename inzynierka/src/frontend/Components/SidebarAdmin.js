@@ -3,27 +3,21 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
 import leaf from './leaf.png';
 
-const SidebarAdmin = ({isOpen, toggleSidebar, userRoutes }) => {
+const SidebarAdmin = ({isOpen, toggleSidebar, toggleModal}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const goToTrophies = () => {
-        
+    const showOverview = () => {
+        toggleModal('overview');
     };
-    const goToHome = () => {
-        
+    const showUsers = () => {
+        toggleModal('users');
     };
-    const goToCalendar = () => {
-        
+    const showEvents = () => {
+        toggleModal('events');
     };
-    const goToSettings = () => {
-        
-    };
-    const goToRankings = () => {
-        
-    };
-    const goToStatistics = () => {
-        
+    const showNotifications = () => {
+        toggleModal('notifications');
     };
     const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -32,29 +26,21 @@ const SidebarAdmin = ({isOpen, toggleSidebar, userRoutes }) => {
         navigate('/');
     };
 
-    const sidebarClass = `sidebar ${isOpen ? 'open' : ''} ${
-        location.pathname === '/Trophies' ? 'trophies-page' :
-        location.pathname === '/UserAcc' ? 'home-page' :
-        location.pathname === '/Calendar' ? 'calendar-page' :
-        location.pathname === '/Settings' ? 'settings-page' :
-        location.pathname === '/Rankings' ? 'rankings-page' :
-        location.pathname === '/Statistics' ? 'statistics-page' :
-        ''
-    }`;
+    const sidebarClass = `sidebar ${isOpen ? 'open' : ''}`;
 
     return (
         <div className={sidebarClass}>
             <div className='row centerImg'>
-                <p  onClick={goToHome}><img src={leaf} alt='Earth' className='leaf-image inline' /></p>
+                <p  onClick={showOverview}><img src={leaf} alt='Earth' className='leaf-image inline' /></p>
                 <button className="close-btn" onClick={toggleSidebar}>X</button>
             </div>
             
             <nav className='navCenter'>
                 <ul>
-                    <li className='T Home' onClick={goToHome}>Overview</li>
-                    <li className='T Statistics' onClick={goToStatistics}>Users</li>
-                    <li className='T Rankings' onClick={goToRankings}>Events</li>
-                    <li className='T Trophies' onClick={goToTrophies}>Notifictions</li>
+                    <li className='T Home' onClick={showOverview}>Overview</li>
+                    <li className='T Statistics' onClick={showUsers}>Users</li>
+                    <li className='T Rankings' onClick={showEvents}>Events</li>
+                    <li className='T Trophies' onClick={showNotifications}>Notifictions</li>
                     <li className="logout" onClick={handleLogout}><a href=".">Logout</a></li>
                 </ul>
             </nav>
