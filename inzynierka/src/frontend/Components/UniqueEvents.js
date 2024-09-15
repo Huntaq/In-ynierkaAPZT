@@ -13,7 +13,6 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="unique-event-header">
           <h3 className="unique-event-title">{events[currentIndex].title}</h3>
           <div className="progress-bar-container-wrapper">
-            <p className="progress-label">Progress</p>
             <div className="progress-bar-container">
               <div
                 className="progress-bar1"

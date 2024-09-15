@@ -86,6 +86,7 @@ const UserAcc = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      const startTime = performance.now();
       const token = localStorage.getItem('authToken');
       if (token) {
         try {
@@ -268,6 +269,8 @@ const UserAcc = () => {
         setError('Brak tokena uwierzytelniającego');
       }
       setLoading(false);
+      const endTime = performance.now();
+      console.log(`Fetch and processing took ${endTime - startTime} ms`);
     };
     
     fetchUserData();

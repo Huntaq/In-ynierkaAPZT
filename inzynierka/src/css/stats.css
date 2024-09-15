@@ -801,9 +801,6 @@ background: #317c43;
 }
 
 .progress-bar-container-wrapper {
-  background: #5ca86e;
-  border-radius: 5px;
-  border: 1px solid black;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -829,7 +826,7 @@ background: #317c43;
 }
 
 .progress-bar1 {
-  background-color: #007bff !important;
+  background: #5ca86e;
   height: 100%;
   transition: width 0.3s ease-in-out;
 }
