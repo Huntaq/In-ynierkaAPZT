@@ -764,15 +764,22 @@ background: #317c43;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   margin-bottom: 20px;
-  border: 1px solid #ddd;
   border-radius: 5px;
   overflow: hidden;
   background-color: transparent;
   height: 150px;
-  width: 100%;
-  border: 1px solid black;
+  width: 50%;
 }
-
+.trophy-preview{
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: transparent;
+  height: 150px;
+  width: 150px;
+}
 .unique-event-background {
   position: absolute;
   top: 0;
@@ -842,11 +849,21 @@ background: #317c43;
   padding: 10px;
 }
 
+.event-preview, .unique-event-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.unique-event-content {
+  flex-grow: 1;
+}
+
 .unique-event-footer {
-  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: auto;
 }
 
 .unique-event-date {

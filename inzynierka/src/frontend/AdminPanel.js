@@ -32,6 +32,8 @@ const AdminPanel = () => {
 	const [showEvent, setShowEvent] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [activeModal, setActiveModal] = useState('');
+	const [currentStep, setCurrentStep] = useState(1);
+	const [trophyImage, setTrophyImage] = useState(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -246,7 +248,8 @@ const fetchEvents = async (token, sessionKey) => {
 			!startDate ||
 			!endDate ||
 			!eventDistance ||
-			!eventImage
+			!eventImage ||
+			!trophyImage
 		) {
 			alert("All fields are required.");
 			return;
@@ -260,6 +263,7 @@ const fetchEvents = async (token, sessionKey) => {
 		formData.append("type", eventType);
 		formData.append("distance", eventDistance);
 		formData.append("image", eventImage);
+		formData.append("trophyImage", trophyImage);
 
 		if (token) {
 			try {
@@ -279,6 +283,7 @@ const fetchEvents = async (token, sessionKey) => {
 					setEndDate("");
 					setEventDistance("");
 					setEventImage(null);
+					setTrophyImage(null);
 					const updatedEvents = await fetchEvents(token);
         			setEvents(updatedEvents);
 				} else {
@@ -426,6 +431,10 @@ const fetchEvents = async (token, sessionKey) => {
 			</div>
 			{activeModal === 'events' && (
                 <EventsModalAdmin
+				trophyImage={trophyImage}
+				setTrophyImage={setTrophyImage}
+				currentStep={currentStep}
+				setCurrentStep={setCurrentStep}
 				searchUsername={searchUsername}
 				setSearchUsername={setSearchUsername}
 				searchId={searchId}
