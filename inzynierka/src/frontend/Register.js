@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/register.css';
 
@@ -15,6 +15,8 @@ const Register = () => {
     const [emailError, setEmailError] = useState('');
     const [ageError, setAgeError] = useState('');
     const [genderError, setGenderError] = useState('');
+
+    const [successMessage, setSuccessMessage] = useState(''); 
 
     const validateName = (name) => /^[A-Za-z]{2,30}$/.test(name);
     const validatePassword = (password) => {
@@ -113,6 +115,12 @@ const Register = () => {
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
+            
+            setSuccessMessage('Rejestracja udana');
+            
+            setTimeout(() => {
+                navigate('/');
+            }, 3000);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -124,6 +132,14 @@ const Register = () => {
             <div className='row2 marginP'>
                 <h2 className='register'>Register</h2>
             </div>
+
+            
+            {successMessage && (
+                <div className='row2 success-message'>
+                    <p>{successMessage}</p>
+                </div>
+            )}
+
             <div className='row2'>
                 <p className='inline1 inputype1'>Nickname </p>
                 {nameError && <p className='error inline1'>{nameError}</p>}
