@@ -66,6 +66,7 @@ const EventsModalAdmin = ({
 
 
 							{currentStep === 1 && (
+								<>
 								<div className="row FormAdmin">
 									<div className="event-form">
 										<div className="input-box">
@@ -136,16 +137,17 @@ const EventsModalAdmin = ({
 											className="input"
 										/>
 										</div>
-										<div className="row">
-											<button
-												onClick={() => setCurrentStep(2)}
-												className="button-next"
-											>
-												Next
-											</button>
-										</div>
 									</div>
 								</div>
+								<div className="row ButtonRight">
+								<button
+									onClick={() => setCurrentStep(2)}
+									className="button-next"
+								>
+									Next
+								</button>
+							</div>
+							</>
 							)}
 
 							{currentStep === 2 && (

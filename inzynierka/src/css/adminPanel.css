@@ -282,3 +282,12 @@ font-style: normal;
 font-weight: 400;
 line-height: 150%; /* 24px */
 }
+.button-next:hover {
+Border: 1px solid var(--Gray-400, #BDC0C8);
+Background: var(--Gray-300, #D4D9DD);
+Color: var(--Gray-700, #495057);
+
+}
+.ButtonRight{
+  justify-content: right;
+}
