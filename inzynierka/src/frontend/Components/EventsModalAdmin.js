@@ -37,7 +37,7 @@ const EventsModalAdmin = ({
 
 						<div className="modalAdmin">
 							<div className="row modal-header">
-								<h3>Create Event</h3>
+								<h3 className="modal-title">Create Event</h3>
 								<div className="tabs">
 									<button
 										className={`tab ${currentStep === 1 ? 'active' : 'inactive'}`}
@@ -68,6 +68,7 @@ const EventsModalAdmin = ({
 							{currentStep === 1 && (
 								<div className="row FormAdmin">
 									<div className="event-form">
+										<div className="input-box">
 										<div>
 											<p>Title</p>
 										</div>
@@ -78,6 +79,8 @@ const EventsModalAdmin = ({
 											placeholder="Enter event title"
 											className="input"
 										/>
+										</div>
+										<div className="input-box">
 										<div>
 											<p>Description</p>
 										</div>
@@ -87,6 +90,8 @@ const EventsModalAdmin = ({
 											placeholder="Enter event description"
 											className="textarea"
 										/>
+										</div>
+										<div className="input-box">
 										<div>
 											<p>Duration</p>
 										</div>
@@ -105,6 +110,8 @@ const EventsModalAdmin = ({
 											className="inputAdmin"
 										/>
 										</div>
+										</div>
+										<div className="input-box">
 										<div>
 											<p>Type of activity</p>
 										</div>
@@ -116,6 +123,8 @@ const EventsModalAdmin = ({
 											<option value="bike">Bike</option>
 											<option value="run">Running</option>
 										</select>
+										</div>
+										<div className="input-box">
 										<div>
 											<p>Distance</p>
 										</div>
@@ -126,10 +135,11 @@ const EventsModalAdmin = ({
 											placeholder="Enter distance in km"
 											className="input"
 										/>
+										</div>
 										<div className="row">
 											<button
 												onClick={() => setCurrentStep(2)}
-												className="button"
+												className="button-next"
 											>
 												Next
 											</button>

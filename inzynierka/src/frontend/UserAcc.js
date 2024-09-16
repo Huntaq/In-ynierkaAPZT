@@ -495,7 +495,7 @@ const UserAcc = () => {
 
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-      <div className='row layout'>
+      <div className='row layout' >
         {showAdminButton && (
           <button onClick={() => navigate('/AdminPanel')} className="button admin">
             Admin
