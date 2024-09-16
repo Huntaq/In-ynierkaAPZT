@@ -1,0 +1,237 @@
+.trophies-container {
+  text-align: center;
+}
+
+.trophy-list {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  box-sizing: border-box; 
+  overflow: hidden;
+}
+
+.trophy {
+  border: 3px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  width: calc(25% - 20px);
+  max-width: 290px; 
+  min-width: 290px; 
+  height: 120px !important;
+  background-color: #f8f8f8;
+  box-sizing: border-box; 
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+  box-sizing: border-box;
+  justify-content: center;
+}
+.testyy{
+  width: 75%;
+}
+.trophy:hover {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.trophy:hover::before {
+  top: -100%;
+  left: -100%;
+  opacity: 1;
+}
+
+.trophy h3 {
+  margin: 0;
+  color: #333;
+  position: relative;
+  z-index: 2;
+}
+
+.trophy p {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+.trophy.level-1 {
+  background-color: #a8e6a1;
+  border-color: #78c26e;
+  background: linear-gradient(135deg, #a8e6a1, #78c26e);
+}
+
+.trophy.level-2 {
+  background-color: #a1c4fd;
+  border-color: #759bc8;
+  background: linear-gradient(135deg, #a1c4fd, #759bc8);
+}
+
+.trophy.level-3 {
+  background-color: #f5c28a;
+  border-color: #d19357;
+  background: linear-gradient(135deg, #f5c28a, #d19357);
+}
+
+.trophy.level-4 {
+  background-color: #c0c0c0;
+  border-color: #9c9c9c;
+  background: linear-gradient(135deg, #c0c0c0, #9c9c9c);
+}
+
+.trophy.level-5 {
+  background-color: #ffd700;
+  border-color: #e5ac00;
+  background: linear-gradient(135deg, #ffd700, #e5ac00);
+}
+
+.progress-bar {
+  width: 200px;
+  background-color: #e0e0e0;
+  border-radius: 25px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 8px;
+  background-color: #5ca7da;
+  border-radius: 25px;
+  transition: width 0.3s ease-in-out;
+}
+
+.trophy-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.trophy-title {
+  font-size: 1.2em;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.trophy-level {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  color: #666;
+}
+
+.popup1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup1-content {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 500px;
+  max-height: 80%;
+  width: 90%;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.popup1-content p {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.popup1-content .headerModalTrophy {
+  font-size: 2rem; 
+  color: #333;
+  margin-bottom: 20px;
+  font-family: 'Verdana', sans-serif;
+}
+.modalEvent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.HoverTrophy{
+  cursor: pointer;
+}
+.modal-contentEvent {
+  background: linear-gradient(180deg, #a8e063, #56ab2f);
+  padding: 20px;
+  border-radius: 10px;
+  width: 600px;
+  height: 300px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  align-content: center;
+  animation: slideIn 0.5s ease-out;
+}
+.EventTitle,
+ .EventDesc {
+  text-align: center;
+  justify-content: center;
+}
+.EventTitle p {
+  font-size: 24px;
+  font-style: italic;
+  font-weight: bold;
+  background:  white;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+.EventDesc p {
+  font-size: 20px;
+  font-weight: bold;
+  background: white;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+.close  {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 900px) {
+  .testyy{
+    width: 99%;
+  }
+  .trophy {
+    max-width: 220px; 
+    min-width: 220px; 
+  }
+}
+

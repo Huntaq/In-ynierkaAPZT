@@ -1,0 +1,85 @@
+.container2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
+  
+  .row2 {
+    display: block;
+    flex-direction: column;
+    width: 90%;
+    max-width: 400px;
+  }
+  .marginP{
+    margin-top: 5%;
+  }
+  .credentials {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputRegister{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 1px solid rgb(87, 87, 87);
+  }
+  p{
+    margin: 0;
+  }
+  
+  .inputRegister:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .error {
+    color: red;
+    float: right;
+}
+.error1 {
+  color: red;
+  float: right;
+  font-size: 12px;
+}
+.inline1{
+  display: inline;
+}
+.margin-top{
+  margin-top: 15px;
+}
+.inputype1{
+  color: rgb(87, 87, 87);
+  font-weight: bold;
+  font-size: 16px;
+}
+.float-right{
+  float: right;
+}
+.register{
+  color: rgb(87, 87, 87);
+  font-weight: bold;
+  font-size: 32px;
+}
+.input-container {
+  position: relative;
+}
+
+.show-password-button {
+  font-size: 10px;
+  color: white;
+  position: absolute;
+  right: 10px;
+  top: 63%;
+  transform: translateY(-50%);
+  background: #007bff;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 3px;
+  border: 1px solid rgb(61, 106, 255);
+}
