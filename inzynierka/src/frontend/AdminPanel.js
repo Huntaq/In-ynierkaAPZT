@@ -6,6 +6,7 @@ import "../css/adminPanel.css";
 import UserModalAdmin from "./Components/UserModalAdmin";
 import EventsModalAdmin from "./Components/EventsModalAdmin";
 import NotificationsModalAdmin from "./Components/NotificationsModalAdmin";
+import OverviewModalAdmin from "./Components/OverviewModalAdmin";
 
 const AdminPanel = () => {
 	const navigate = useNavigate();
@@ -465,6 +466,9 @@ const fetchEvents = async (token, sessionKey) => {
                     banUser={banUser}                    
                     unbanUser={unbanUser}                
                 />
+            )}
+			{activeModal === 'overview' && (
+                <OverviewModalAdmin/>
             )}
 			{activeModal === 'notifications' && (
                 <NotificationsModalAdmin

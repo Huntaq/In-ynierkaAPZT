@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/sidebar.css';
 import leaf from './leaf.png';
@@ -6,6 +6,14 @@ import leaf from './leaf.png';
 const SidebarAdmin = ({isOpen, toggleSidebar, toggleModal}) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+    useEffect(() => {
+        if (isFirstLoad) {
+            toggleModal('overview');
+            setIsFirstLoad(false); 
+        }
+    }, [isFirstLoad, toggleModal]);
 
     const showOverview = () => {
         toggleModal('overview');

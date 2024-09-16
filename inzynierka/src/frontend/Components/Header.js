@@ -38,7 +38,7 @@ const Header = ({ user, theme, toggleTheme, toggleSidebar }) => {
   const location = useLocation();
 
   return (
-    <div className='row'>
+    <div className='row HeaderBackground'>
        <div className='profile-container '>
         <button className="button btncos" onClick={toggleSidebar}>☰</button>
         
