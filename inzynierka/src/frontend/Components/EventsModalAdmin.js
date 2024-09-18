@@ -67,90 +67,91 @@ const EventsModalAdmin = ({
 
 							{currentStep === 1 && (
 								<>
-								<div className="row FormAdmin">
-									<div className="event-form">
-										<div className="input-box">
-										<div>
-											<p>Title</p>
-										</div>
-										<input
-											type="text"
-											value={eventTitle}
-											onChange={(e) => setEventTitle(e.target.value)}
-											placeholder="Enter event title"
-											className="input"
-										/>
-										</div>
-										<div className="input-box">
-										<div>
-											<p>Description</p>
-										</div>
-										<textarea
-											value={eventDescription}
-											onChange={(e) => setEventDescription(e.target.value)}
-											placeholder="Enter event description"
-											className="textarea"
-										/>
-										</div>
-										<div className="input-box">
-										<div>
-											<p>Duration</p>
-										</div>
-										<div className="InputAdmin">
-										<input
-											type="date"
-											value={startDate}
-											onChange={(e) => setStartDate(e.target.value)}
-											className="inputAdmin"
-										/>
-										
-										<input
-											type="date"
-											value={endDate}
-											onChange={(e) => setEndDate(e.target.value)}
-											className="inputAdmin"
-										/>
-										</div>
-										</div>
-										<div className="input-box">
-										<div>
-											<p>Type of activity</p>
-										</div>
-										<select
-											value={eventType}
-											onChange={(e) => setEventType(e.target.value)}
-											className="input"
-										>
-											<option value="bike">Bike</option>
-											<option value="run">Running</option>
-										</select>
-										</div>
-										<div className="input-box">
-										<div>
-											<p>Distance</p>
-										</div>
-										<input
-											type="number"
-											value={eventDistance}
-											onChange={(e) => setEventDistance(e.target.value)}
-											placeholder="Enter distance in km"
-											className="input"
-										/>
+									<div className="row FormAdmin">
+										<div className="event-form">
+											<div className="input-box">
+												<div>
+													<p>Title</p>
+												</div>
+												<input
+													type="text"
+													value={eventTitle}
+													onChange={(e) => setEventTitle(e.target.value)}
+													placeholder="Enter event title"
+													className="input"
+												/>
+											</div>
+											<div className="input-box">
+												<div>
+													<p>Description</p>
+												</div>
+												<textarea
+													value={eventDescription}
+													onChange={(e) => setEventDescription(e.target.value)}
+													placeholder="Enter event description"
+													className="textarea"
+												/>
+											</div>
+											<div className="input-box">
+												<div>
+													<p>Duration</p>
+												</div>
+												<div className="InputAdmin">
+													<input
+														type="date"
+														value={startDate}
+														onChange={(e) => setStartDate(e.target.value)}
+														className="inputAdmin"
+													/>
+
+													<input
+														type="date"
+														value={endDate}
+														onChange={(e) => setEndDate(e.target.value)}
+														className="inputAdmin"
+													/>
+												</div>
+											</div>
+											<div className="input-box">
+												<div>
+													<p>Type of activity</p>
+												</div>
+												<select
+													value={eventType}
+													onChange={(e) => setEventType(e.target.value)}
+													className="input"
+												>
+													<option value="bike">Bike</option>
+													<option value="run">Running</option>
+												</select>
+											</div>
+											<div className="input-box">
+												<div>
+													<p>Distance</p>
+												</div>
+												<input
+													type="number"
+													value={eventDistance}
+													onChange={(e) => setEventDistance(e.target.value)}
+													placeholder="Enter distance in km"
+													className="input"
+												/>
+											</div>
 										</div>
 									</div>
-								</div>
-								<div className="row ButtonRight">
-								<button
-									onClick={() => setCurrentStep(2)}
-									className="button-next"
-								>
-									Next
-								</button>
-							</div>
-							</>
+									<div className="row ButtonRight1">
+										<button
+											onClick={() => setCurrentStep(2)}
+											className="button-next"
+										>
+											Next
+										</button>
+									</div>
+								</>
 							)}
 
 							{currentStep === 2 && (
+								<>
 								<div className="row FormAdmin">
 									<div className="event-form">
 										<div className="row">
@@ -171,79 +172,87 @@ const EventsModalAdmin = ({
 											onChange={(e) => setTrophyImage(e.target.files[0])}
 											className="input"
 										/>
-										<div className="row">
-											<button
-												onClick={() => setCurrentStep(1)}
-												className="button"
-											>
-												Back
-											</button>
-											<button
-												onClick={() => setCurrentStep(3)}
-												className="button"
-											>
-												Next
-											</button>
-										</div>
 									</div>
+									
 								</div>
+								<div className="row ButtonRight">
+								<button
+									onClick={() => setCurrentStep(1)}
+									className="button-next"
+								>
+									Previous
+								</button>
+								<button
+									onClick={() => setCurrentStep(3)}
+									className="button-next"
+								>
+									Next
+								</button>
+							</div>
+							</>
 							)}
 
 							{currentStep === 3 && (
+								<>
 								<div className="row FormAdmin">
 									<div className="row">
 										<p>Event Preview</p>
 										<p>Trophy Preview</p>
 									</div>
 									<div className="row">
-									<div className="unique-event-item">
-										<div
-											className="unique-event-background"
-											style={
-												eventImage
-													? {
-														backgroundImage: `url(${URL.createObjectURL(eventImage)})`,
-													}
-													: {}
-											}
-										/>
-										<div className="unique-event-header">
-											<h3 className="unique-event-title">
-												{eventTitle || "Event Title"}
-											</h3>
+										<div className="unique-event-item">
+											<div
+												className="unique-event-background"
+												style={
+													eventImage
+														? {
+															backgroundImage: `url(${URL.createObjectURL(eventImage)})`,
+														}
+														: {}
+												}
+											/>
+											<div className="unique-event-header">
+												<h3 className="unique-event-title">
+													{eventTitle || "Event Title"}
+												</h3>
+											</div>
+											<div className="unique-event-footer">
+												<p className="unique-event-description">
+													{eventDescription || "Event description goes here."}
+												</p>
+											</div>
+
 										</div>
-										<div className="unique-event-footer">
-										<p className="unique-event-description">
-												{eventDescription || "Event description goes here."}
-											</p>
+										<div className="trophy-preview">
+											<div
+												className="unique-event-background"
+												style={
+													trophyImage
+														? {
+															backgroundImage: `url(${URL.createObjectURL(trophyImage)})`,
+														}
+														: {}
+												}
+											/>
 										</div>
-										
 									</div>
-									<div className="trophy-preview">
-									<div
-											className="unique-event-background"
-											style={
-												trophyImage
-													? {
-														backgroundImage: `url(${URL.createObjectURL(trophyImage)})`,
-													}
-													: {}
-											}
-										/>
-									</div>
-									</div>
-									<div className="row FormAdmin">
-										<button
-											onClick={() => setCurrentStep(2)}
-											className="button"
-										>
-											Back
-										</button>
-										<button onClick={handleEventSubmit} className="button">
-											Create
-										</button>
-									</div>
+									
 								</div>
+								<div className="row ButtonRight">
+								<button
+									onClick={() => setCurrentStep(2)}
+									className="button-next"
+								>
+									Previous
+								</button>
+								<button
+									onClick={handleEventSubmit}
+									className="button-next"
+								>
+									Create
+								</button>
+							</div>
+							</>
 							)}
 						</div>
 					</>
