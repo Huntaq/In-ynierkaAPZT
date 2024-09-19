@@ -141,22 +141,29 @@ const Rankings = () => {
   const getRankingItems = (type) => {
     const sortedRanking = [...ranking].sort((a, b) => b[type] - a[type]);
   
-    return sortedRanking.map((entry, index) => (
-      entry[type] !== undefined && (
-        <li
-          key={entry.user_id}
-          className={`ranking-item ${entry.user_id === user?.id ? 'highlight' : ''} ${index === 0 ? 'first-place' : ''}`}
-          onMouseEnter={index === 0 ? triggerConfetti : undefined} 
-        >
-          {index === 0 && <span role="img" aria-label="crown" className="crown-icon">👑</span>}
-          <span className="ranking-position">{index + 1}. </span>
-          <span className="user-info">
-            {usernameMap[entry.user_id] || 'Unknown User'} | {formatValue(entry[type], rankingType)}
-          </span>
-        </li>
-      )
-    ));
+    return sortedRanking.map((entry, index) => {
+      const isCurrentUser = entry.user_id === user?.id;
+      const isFirstPlace = index === 0;
+        
+      return (
+        entry[type] !== undefined && (
+          <li
+            key={entry.user_id}
+            className={`ranking-item ${isCurrentUser ? 'highlight' : ''} ${isFirstPlace ? 'first-place' : ''}`}
+            onMouseEnter={isCurrentUser && isFirstPlace ? triggerConfetti : undefined}
+          >
+            {isCurrentUser && isFirstPlace && <span role="img" aria-label="crown" className="crown-icon">👑</span>}
+            <span className="ranking-position">{index + 1}. </span>
+            <span className="user-info">
+              {usernameMap[entry.user_id] || 'Unknown User'} | {formatValue(entry[type], rankingType)}
+            </span>
+          </li>
+        )
+      );
+    });
   };
+  
+  
   
   
 
@@ -203,7 +210,7 @@ const Rankings = () => {
             {getRankingItems(rankingType)}
           </ul>
         </div>
-        {user && (
+        {user && currentUserIndex > 5 && (
           <div className="current-user">
             <p>You</p>
             <li
