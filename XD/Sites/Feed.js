@@ -11,16 +11,18 @@ const PostsList = ({ user_id }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`http://192.168.56.1:5000/api/posts/{user.id}`);
+        const response = await axios.get('http://192.168.56.1:5000/api/posts', { withCredentials: true });
+
+        console.log('Response:', response.data); // Loguj odpowiedź
         setPosts(response.data);
       } catch (err) {
+        console.error('Fetch posts error:', err); // Loguj dokładny błąd
         setError('Błąd podczas pobierania postów');
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchPosts();
   }, [user_id]);
 
@@ -37,13 +39,13 @@ const PostsList = ({ user_id }) => {
           renderItem={({ item }) => (
             <View style={styles.post}>
               <Text>Route ID: {item.route_id}</Text>
-              <Text>Date: {new Date(item.post_date).toLocaleDateString()}</Text>
               <Text>Content: {item.content}</Text>
-              <AddPost/>
+              
             </View>
           )}
         />
       )}
+      <AddPost/>
     </View>
   );
 };

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import axios from 'axios';
 
-const AddPost = ({ user_id }) => {
+const AddPost = () => {
+  const [user_id, setUserId] = useState(''); // Initialize user_id state
   const [route_id, setRouteId] = useState('');
   const [content, setContent] = useState('');
 
   const handleSubmit = async () => {
-    if (!user_id || route_id.trim() === '' || content.trim() === '') {
+    if (!user_id.trim() || route_id.trim() === '' || content.trim() === '') {
       Alert.alert('Błąd', 'Proszę wypełnić wszystkie pola.');
       return;
     }
@@ -21,6 +22,7 @@ const AddPost = ({ user_id }) => {
 
       if (response.status === 200) {
         Alert.alert('Sukces', 'Post został dodany');
+        setUserId(''); // Clear user_id after submission
         setRouteId('');
         setContent('');
       }
@@ -32,6 +34,13 @@ const AddPost = ({ user_id }) => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="User ID (Opcjonalne)"
+        value={user_id}
+        onChangeText={setUserId}
+        keyboardType="numeric"
+      />
       <TextInput
         style={styles.input}
         placeholder="Route ID"

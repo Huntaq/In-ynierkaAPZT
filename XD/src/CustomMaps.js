@@ -5,6 +5,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import haversine from 'haversine';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const CustomMap = () => {
   const navigation = useNavigation(); 
@@ -26,6 +27,39 @@ const CustomMap = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [lastRecordedPosition, setLastRecordedPosition] = useState(null); 
 
+  const formatDateForMySQL = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+  
+  const dateInMySQLFormat = formatDateForMySQL(new Date());
+  
+  const sendRouteToServer = async (routeData) => {
+    try {
+      const response = await axios.post('http://192.168.56.1:5000/api/routes', routeData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+  
+      const data = await response.json();
+      console.log('Route saved successfully:', data);
+    } catch (error) {
+      console.error('Error saving route:', error);
+      Alert.alert('Error', 'Unable to save route. Please try again.');
+    }
+  };
   useEffect(() => {
     const requestLocationPermission = async () => {
       const permission = Platform.OS === 'android' 
@@ -108,7 +142,38 @@ const CustomMap = () => {
 
     return () => clearInterval(interval);
   }, [isTracking]);
-
+  const handleSavePress = async () => {
+    try {
+      const routeData = {
+        user_id: '48',                // ID użytkownika (upewnij się, że jest poprawny)
+        transport_mode_id: '1', // ID trybu transportu (upewnij się, że jest poprawny)
+        distance_km: 5.6,             // Dystans (upewnij się, że jest liczbą)
+        
+        CO2: 100,                     // CO2 (upewnij się, że jest liczbą)
+        kcal: 200,                    // Kalorie (upewnij się, że jest liczbą)
+        duration: 3600,               // Czas trwania w sekundach (upewnij się, że jest liczbą)
+        money: 10.5,                  // Oszczędności (upewnij się, że jest liczbą)
+        is_private: false             // Prywatność (upewnij się, że jest booleanem)
+      };
+  
+      const response = await axios.post('http://192.168.56.1:5000/api/routes', routeData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.status === 200) {
+        console.log('Route saved successfully:', response.data);
+        Alert.alert('Success', 'Route has been saved successfully.');
+        setModalVisible(false);  // Close the modal on success
+      } else {
+        throw new Error('Failed to save route.');
+      }
+    } catch (error) {
+      console.error('Error saving route:', error);
+      Alert.alert('Error', 'Unable to save route. Please try again.');
+    }
+  };
   const handleStartPress = () => {
     setIsTracking(true);
     setRouteCoordinates([]);
@@ -214,45 +279,53 @@ const CustomMap = () => {
 
       {/* Modal Popup */}
       <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Trasa ukończona!</Text>
-            
-            {/* Minimapa z trasą */}
-            <MapView
-              style={styles.miniMap}
-              region={{
-                latitude: routeCoordinates.length > 0 ? routeCoordinates[0].latitude : 0,
-                longitude: routeCoordinates.length > 0 ? routeCoordinates[0].longitude : 0,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-            >
-              <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="red" />
-            </MapView>
-            
-            {/* Informacje */}
-            <Text style={styles.modalText}>Czas: {formatTime(timeElapsed)}</Text>
-            <Text style={styles.modalText}>Dystans: {distanceTravelled.toFixed(2)} km</Text>
-            <Text style={styles.modalText}>Zaoszczędzone pieniądze: {calculateSavings()} PLN</Text>
-            <Text style={styles.modalText}>Zaoszczędzone CO2: {calculateCO2Savings()} g</Text>
-            <Text style={styles.modalText}>Spalone kalorie: {calculateCaloriesBurned()} kcal</Text>
+  animationType="slide"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => setModalVisible(false)}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Trasa ukończona!</Text>
 
-            {/* Przycisk zamknięcia */}
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.buttonText}>Zamknij</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      {/* Minimapa z trasą */}
+      <MapView
+        style={styles.miniMap}
+        region={{
+          latitude: routeCoordinates.length > 0 ? routeCoordinates[0].latitude : 0,
+          longitude: routeCoordinates.length > 0 ? routeCoordinates[0].longitude : 0,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      >
+        <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="red" />
+      </MapView>
+
+      {/* Informacje */}
+      <Text style={styles.modalText}>Czas: {formatTime(timeElapsed)}</Text>
+      <Text style={styles.modalText}>Dystans: {distanceTravelled.toFixed(2)} km</Text>
+      <Text style={styles.modalText}>Zaoszczędzone pieniądze: {calculateSavings()} PLN</Text>
+      <Text style={styles.modalText}>Zaoszczędzone CO2: {calculateCO2Savings()} g</Text>
+      <Text style={styles.modalText}>Spalone kalorie: {calculateCaloriesBurned()} kcal</Text>
+
+      {/* Przycisk zamknięcia */}
+      <TouchableOpacity
+        style={[styles.button, styles.cancelButton]}
+        onPress={() => setModalVisible(false)}
+      >
+        <Text style={styles.buttonText}>Zamknij</Text>
+      </TouchableOpacity>
+
+      {/* Przycisk zapisz */}
+      <TouchableOpacity
+        style={[styles.button, styles.saveButton]}
+        onPress={handleSavePress}
+      >
+        <Text style={styles.buttonText}>Zapisz</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
     </View>
   );
 };
@@ -333,6 +406,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#32CD32',  // Example color for save button
+    marginTop: 10,
   },
   startButtonText: {
     fontSize: 18,

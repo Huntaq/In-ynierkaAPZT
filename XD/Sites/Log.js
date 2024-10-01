@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { UserContext } from '../src/UserContex';  
+import { UserContext } from '../src/UserContex';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +12,6 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const { setUser } = useContext(UserContext);  
 
-  
   const fetchData = async () => {
     if (username.trim() === '' || password.trim() === '') {
       setError('Please fill in both fields');
@@ -28,7 +27,7 @@ const LoginScreen = () => {
 
       if (response.status === 200) {
         setUser(response.data.user);  
-        navigation.navigate('Profile');
+        navigation.navigate('Home');
       }
     } catch (err) {
       setError(err.response ? err.response.data.message : err.message);
@@ -56,6 +55,10 @@ const LoginScreen = () => {
       <Button title="Login" onPress={fetchData} />
       {loading && <ActivityIndicator size="large" />}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      
+      {/* Dodanie przycisku do rejestracji */}
+      <Button title="Go to Registration" onPress={() => navigation.navigate('Registration')} />
+
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { UserContext } from '../src/UserContex'; 
-import NavBar from '../src/Navbar';
+import NavBarPro from '../src/NavbarProfil';
 
 const Profile = () => {
   const { user } = useContext(UserContext);
@@ -28,7 +28,7 @@ const Profile = () => {
           <Text style={styles.text}>Gender: {user.gender}</Text>
           <Text style={styles.text}>Is Banned: {user.is_banned ? 'Yes' : 'No'}</Text>
           <Text style={styles.text}>Email: {user.email}</Text>
-          <NavBar />
+          <NavBarPro />
         </>
       ) : (
         <Text style={styles.text}>No user data available</Text>

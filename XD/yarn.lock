@@ -1718,6 +1718,11 @@
   resolved "https://registry.npmjs.org/@react-native-community/geolocation/-/geolocation-3.3.0.tgz"
   integrity sha512-7DFeuotH7m7ImoXffN3TmlGSFn1XjvsaphPort0XZKipssYbdHiKhVVWG+jzisvDhcXikUc6nbUJgddVBL6RDg==
 
+"@react-native-picker/picker@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.8.0.tgz"
+  integrity sha512-nNU3T3DUi0NDmOEv34aGvV3tDybfIo4Di+1AaNceiImhRFD/dvBWIEgkVfOKUsC/biqv1Yo7td+2BrDL0gyZcw==
+
 "@react-native/assets-registry@0.74.87":
   version "0.74.87"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.74.87.tgz"
