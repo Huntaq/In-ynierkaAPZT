@@ -357,6 +357,7 @@ const fetchEvents = async (token, sessionKey) => {
 	};
 	const banUser = async (userId) => {
 		const token = localStorage.getItem("authToken");
+		
 		if (token) {
 			try {
 				const response = await fetch(
@@ -371,7 +372,10 @@ const fetchEvents = async (token, sessionKey) => {
 				);
 
 				if (response.ok) {
-					const updatedBans = await fetchAllUsers(token);
+					const decodedToken = jwtDecode(token);
+					const userId = decodedToken.id;
+					const sessionKey = decodedToken.sessionKey;
+					const updatedBans = await fetchAllUsers(token, sessionKey, userId);
         			setUsers(updatedBans);
 				} else {
 					alert("Error Banning user");
@@ -385,6 +389,7 @@ const fetchEvents = async (token, sessionKey) => {
 	
 	const unbanUser =  async (userId) => {
 		const token = localStorage.getItem("authToken");
+		
 		if (token) {
 			try {
 				const response = await fetch(
@@ -399,7 +404,10 @@ const fetchEvents = async (token, sessionKey) => {
 				);
 
 				if (response.ok) {
-					const updatedBans = await fetchAllUsers(token);
+					const decodedToken = jwtDecode(token);
+					const userId = decodedToken.id;
+					const sessionKey = decodedToken.sessionKey;
+					const updatedBans = await fetchAllUsers(token, sessionKey, userId);
         			setUsers(updatedBans);
 				} else {
 					alert("Error UnBanning user");

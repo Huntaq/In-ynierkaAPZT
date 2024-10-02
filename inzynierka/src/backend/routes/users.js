@@ -33,6 +33,40 @@ router.get('/:id', (req, res) => {
     }
   });
 });
+router.get('/:id/admin', (req, res) => {
+  const id = req.params.id; 
+  const sessionKey = req.headers['sessionkey']; 
+
+  if (!id) {
+    return res.status(400).json({ error: 'Id is required' });
+  }
+  const sqlUser = 'SELECT id, session_key FROM users WHERE id = ?';
+
+  db.query(sqlUser, [id], (err, results) => {
+    if (err) {
+      console.error('Query error:', err);
+      return res.status(500).json({ error: 'DB error' });
+    }
+     if (results.length > 0) {
+      const user = results[0];
+
+      if (user.session_key === sessionKey) {
+        const sqlAllUsers = 'SELECT id, username, email, age, gender, is_banned, email_notifications, push_notifications FROM users';
+        db.query(sqlAllUsers, (err, users) => {
+          if (err) {
+            console.error('Query error:', err);
+            return res.status(500).json({ error: 'DB error' });
+          }
+          res.json(users);
+        });
+      } else {
+        res.status(403).json({ error: 'No access' });
+      }
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  });
+});
 router.get('/:id/profile', (req, res) => {
   const id = req.params.id;
   const sessionKey = req.headers['sessionkey'];
@@ -85,17 +119,7 @@ router.get('/:id/routes_with_usernames', (req, res) => {
     res.json(results);
   });
 });
-router.get('/:id/admin', (req, res) => {
 
-      const sqlAllUsers = 'SELECT id, username, email,age,gender,is_banned,email_notifications,push_notifications FROM users';
-      db.query(sqlAllUsers, (err, users) => {
-        if (err) {
-          console.error('Query error:', err);
-          return res.status(500).json({ error: 'DB error' });
-        }
-        res.json(users);
-      });
-});
 router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
 
