@@ -111,13 +111,18 @@ const fetchAllUsers = async (token, sessionKey, userId) => {
         if (allUsersResponse.ok) {
             const usersData = await allUsersResponse.json();
             return usersData;
+        } else if (allUsersResponse.status === 403) {
+            localStorage.removeItem('authToken');
+            navigate('/');
         } else {
             throw new Error("Błąd podczas pobierania listy użytkowników");
         }
     } catch (err) {
+        console.error(err);
         throw new Error("Wystąpił błąd podczas pobierania listy użytkowników");
     }
 };
+
 
 const fetchNotifications = async (token, sessionKey) => {
     try {
