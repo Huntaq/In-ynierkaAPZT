@@ -14,6 +14,10 @@ const storage = new Storage({
 const bucket = storage.bucket('img_inzynierka');
 
 router.post('/', upload.single('file'), async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   if (!req.file) {
     return res.status(400).send('Brak pliku');
   }
@@ -67,6 +71,10 @@ router.post('/', upload.single('file'), async (req, res) => {
 });
 
 router.delete('/', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const userId = req.body.userId;
 
   const getUserQuery = 'SELECT profilePicture FROM users WHERE id = ?';

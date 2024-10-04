@@ -127,10 +127,17 @@ const Profile = () => {
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('userId', user.id);
-
+    const token = localStorage.getItem('authToken');
+    const decodedToken = jwtDecode(token);
+    const sessionKey = decodedToken.sessionKey;
+    
     const response = await fetch('http://localhost:5000/api/profilePicture', {
       method: 'POST',
       body: formData,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'sessionKey': sessionKey
+      },
     });
 
     const data = await response.json();
@@ -141,10 +148,16 @@ const Profile = () => {
   };
 
   const handleProfilePictureDelete = async () => {
+    const token = localStorage.getItem('authToken');
+    const decodedToken = jwtDecode(token);
+    const sessionKey = decodedToken.sessionKey;
+    
     const response = await fetch('http://localhost:5000/api/profilePicture', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'sessionKey': sessionKey
       },
       body: JSON.stringify({ userId: user.id }),
     });

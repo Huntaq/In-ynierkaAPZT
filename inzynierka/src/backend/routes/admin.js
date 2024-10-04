@@ -3,6 +3,10 @@ const db = require('../config/db');
 const router = express.Router();
 
 router.get('/', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const sql = 'SELECT COUNT(*) AS count FROM users';
 
     db.query(sql, (err, result) => {
@@ -15,6 +19,10 @@ router.get('/', (req, res) => {
     });
 });
 router.get('/this-week', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const sql = `
         SELECT COUNT(*) AS count
         FROM users
@@ -33,6 +41,10 @@ router.get('/this-week', (req, res) => {
 });
 
 router.get('/active-events', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const sql = `
         SELECT COUNT(*) AS count
         FROM events

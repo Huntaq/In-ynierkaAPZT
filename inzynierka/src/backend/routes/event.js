@@ -11,7 +11,11 @@ const storage = new Storage({
 
 const bucket = storage.bucket('img_inzynierka');
 router.get('/thropies', (req, res) => {
-    const sqlQuery = 'SELECT id, title, image,TrophyImage, user_ids FROM events';
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }  
+  const sqlQuery = 'SELECT id, title, image,TrophyImage, user_ids FROM events';
     
     db.query(sqlQuery, (err, results) => {
       if (err) {
@@ -23,6 +27,10 @@ router.get('/thropies', (req, res) => {
     });
   });
   router.post('/', upload.fields([{ name: 'image' }, { name: 'trophyImage' }]), async (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const { title, description, startDate, endDate, type, distance } = req.body;
     const files = req.files;
 
@@ -89,6 +97,10 @@ router.get('/thropies', (req, res) => {
 
 
 router.delete('/:eventId', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const eventId = req.params.eventId;
 
   const sqlSelectEvent = 'SELECT image, TrophyImage FROM events WHERE id = ?';
@@ -138,8 +150,14 @@ router.delete('/:eventId', async (req, res) => {
   
 
   router.get('/', async (req, res) => {
+    
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
+
     const sqlSelectEvents = 'SELECT * FROM events';
-  
+
     db.query(sqlSelectEvents, (err, results) => {
       if (err) {
         console.error('Error fetching events from database:', err);
@@ -156,8 +174,15 @@ router.delete('/:eventId', async (req, res) => {
       res.status(200).json(processedResults);
     });
   });
+
+
+
 router.patch('/:id/status', (req, res) => {
-    const { id } = req.params;
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    } 
+  const { id } = req.params;
     const { status } = req.body;
     
     if (!['active', 'inactive'].includes(status)) {
@@ -175,6 +200,10 @@ router.patch('/:id/status', (req, res) => {
   });
 
   router.post('/:eventId/complete', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const { userId } = req.body;
     const { eventId } = req.params;
   
@@ -217,6 +246,10 @@ router.patch('/:id/status', (req, res) => {
     });
   });
   router.get('/:id', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const eventId = req.params.id;
     const sql = 'SELECT * FROM events WHERE id = ?';
   

@@ -104,7 +104,6 @@ router.get('/:id/profile', (req, res) => {
 
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
-      console.error('Token verification error:', err);
       return res.status(403).json({ error: 'Invalid token' });
     }
 
@@ -132,6 +131,10 @@ router.get('/:id/profile', (req, res) => {
   });
 });
 router.get('/:id/routes_with_usernames', (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const userId = req.params.id;
 
   if (!userId) {
@@ -156,10 +159,17 @@ router.get('/:id/routes_with_usernames', (req, res) => {
 
 router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
-
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'Token is required' });
+  }
   if (!userId) {
     return res.status(400).json({ error: 'Id is required' });
   }
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
 
   const sql = 'SELECT * FROM user_routes WHERE user_id = ?';
 
@@ -171,7 +181,12 @@ router.get('/:id/routes', (req, res) => {
     res.json(results);
   });
 });
+});
 router.put('/:id/notifications', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const { email_notifications, push_notifications } = req.body;
   const userId = req.params.id;
 
