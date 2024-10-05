@@ -43,8 +43,7 @@ const AdminPanel = () => {
 					const decodedToken = jwtDecode(token);
 					const userId = decodedToken.id;
 					const sessionKey = decodedToken.sessionKey;
-	
-					if (userId !== 48 && userId !== 52) {
+					if (decodedToken.Admin !== 1) {
 						localStorage.removeItem("authToken");
 						localStorage.removeItem("cooldownTimestamp");
 						navigate("/");
