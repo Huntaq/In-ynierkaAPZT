@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AddPost from '../src/add_post';
+import NavBar from '../src/Navbar';
 
 const PostsList = ({ user_id }) => {
   const [posts, setPosts] = useState([]);
@@ -40,10 +41,12 @@ const PostsList = ({ user_id }) => {
             <View style={styles.post}>
               <Text>Route ID: {item.route_id}</Text>
               <Text>Content: {item.content}</Text>
-              
+              <NavBar/>
             </View>
+            
           )}
         />
+        
       )}
       <AddPost/>
     </View>

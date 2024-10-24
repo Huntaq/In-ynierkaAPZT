@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { UserContext } from '../src/UserContex';
+import { UserContext } from '../src/UserContex';  
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -10,15 +10,10 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigation = useNavigation();
-  const { setUser } = useContext(UserContext);  
-
-  const fetchData = async () => {
-    if (username.trim() === '' || password.trim() === '') {
-      setError('Please fill in both fields');
-      return;
-    }
-
+  const { setUser } = useContext(UserContext); 
+  const handleLogin = async () => {
     setLoading(true);
+    setError('');
     try {
       const response = await axios.post('http://192.168.56.1:5000/api/login', {
         username,
@@ -26,39 +21,41 @@ const LoginScreen = () => {
       });
 
       if (response.status === 200) {
-        setUser(response.data.user);  
-        navigation.navigate('Home');
+        const userData = response.data.user;  // Zakładam, że serwer zwraca dane użytkownika
+        console.log('Logged in user data:', userData);  // Loguj dane użytkownika do konsoli
+        setUser(userData);  // Ustaw dane użytkownika w kontekście
+        navigation.navigate('Home');  // Przekieruj na ekran główny
       }
     } catch (err) {
-      setError(err.response ? err.response.data.message : err.message);
+      setError(err.response ? err.response.data.message : 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleNavigateToRegister = () => {
+    navigation.navigate('Registration');  // Nawigacja do ekranu rejestracji
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
+        style={styles.input}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
-        style={styles.input}
-        autoCapitalize="none"  
       />
       <TextInput
+        style={styles.input}
         placeholder="Password"
+        secureTextEntry
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
       />
-      <Button title="Login" onPress={fetchData} />
-      {loading && <ActivityIndicator size="large" />}
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      <Button title="Login" onPress={handleLogin} />
       
-      {/* Dodanie przycisku do rejestracji */}
-      <Button title="Go to Registration" onPress={() => navigation.navigate('Registration')} />
-
+      <Text style={styles.registerText}>Don't have an account?</Text>
+      <Button title="Go to Register" onPress={() => navigation.navigate('RegistrationForm')} />
     </View>
   );
 };
@@ -67,19 +64,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: 16,
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
-  errorText: {
-    color: 'red',
-    marginTop: 10,
+  registerText: {
+    textAlign: 'center',
+    marginVertical: 12,
   },
 });
+
 
 export default LoginScreen;

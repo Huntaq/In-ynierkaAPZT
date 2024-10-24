@@ -15,7 +15,7 @@ const NavBarPro = () => {
       <TouchableOpacity 
         style={styles.button} 
         onPress={() => navigation.navigate('Events')}>
-        <Text style={styles.buttonText}>Feed</Text>
+        <Text style={styles.buttonText}>Events</Text>
       </TouchableOpacity>
       
       

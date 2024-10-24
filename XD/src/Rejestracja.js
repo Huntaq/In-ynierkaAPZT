@@ -1,23 +1,33 @@
-
-
-
-
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [gender, setGender] = useState(''); // 'male' or 'female'
+  const [gender, setGender] = useState('');
   const [age, setAge] = useState('');
+  
+  const navigation = useNavigation(); // Hook do nawigacji
+
+  // Password validation function
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return regex.test(password);
+  };
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      Alert.alert('Error', 'Password must be at least 8 characters long and contain a lowercase letter, an uppercase letter, a number, and a special character');
       return;
     }
 
@@ -38,6 +48,19 @@ const RegistrationForm = () => {
 
       if (response.status === 200) {
         Alert.alert('Success', 'Registration successful');
+        
+        // Resetowanie formularza
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setGender('');
+        setAge('');
+
+        // Przejście do ekranu logowania
+        navigation.navigate('Logowanie');
+      } else if (response.status === 409) {
+        Alert.alert('Error', response.data.message);
       } else {
         throw new Error('Registration failed');
       }
@@ -103,7 +126,7 @@ const RegistrationForm = () => {
         placeholder="Enter age"
         keyboardType="numeric"
       />
-
+      
       <Button title="Register" onPress={handleRegister} />
     </View>
   );

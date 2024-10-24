@@ -3,14 +3,20 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 
 
 const app = express();
 const port = 5000;
 
 
+
 app.use(cors());
 app.use(express.json());
+
+
 
 
 const db = mysql.createConnection({
@@ -26,6 +32,58 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: process.env.NODE_ENV === 'production' } // Secure only in production with HTTPS
 }));
+
+
+// Konfiguracja multer do przechowywania przesłanych plików
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = './uploads/profilePictures/';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const userId = req.session.userId; // Zakładamy, że sesja zawiera ID użytkownika
+    const ext = path.extname(file.originalname);
+    cb(null, `user_${userId}${ext}`); // Nazwa pliku np. user_123.jpg
+  }
+});
+
+// Inicjalizacja multer z użyciem storage
+const upload = multer({ storage: storage });
+
+// Endpoint do przesyłania zdjęcia profilowego
+app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const profilePicturePath = `/uploads/profilePictures/${req.file.filename}`;
+
+  // Aktualizacja w bazie danych
+  db.query(
+    'UPDATE users SET profilePicture = ? WHERE id = ?',
+    [profilePicturePath, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error updating profile picture in database:', err);
+        return res.status(500).json({ message: 'Error updating profile picture' });
+      }
+
+      res.json({
+        message: 'Profile picture updated successfully',
+        profilePicture: profilePicturePath
+      });
+    }
+  );
+});
+
+app.use('/uploads', express.static('uploads'));
+
+
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -49,10 +107,11 @@ app.post('/api/login', (req, res) => {
       }
 
       if (result) {
-        req.session.userId = user.id;
+        req.session.userId = user.id;  
         res.json({
           message: 'Login successful',
           user: {
+            id: user.id,  
             username: user.username,
             age: user.age,
             gender: user.gender,
@@ -68,7 +127,6 @@ app.post('/api/login', (req, res) => {
     });
   });
 });
-
 
 app.get('/api/posts', (req, res) => {
   const userId = req.session.userId;
@@ -106,7 +164,6 @@ app.post('/api/posts', (req, res) => {
       res.json({ message: 'Post added successfully' });
   });
 });
-
 app.post('/api/register', (req, res) => {
   const { username, password, email, age, gender } = req.body;
 
@@ -121,6 +178,12 @@ app.post('/api/register', (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
+  // Validate password (8 characters, 1 lowercase, 1 uppercase, 1 number, 1 special char)
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters long and contain a lowercase letter, an uppercase letter, a number, and a special character' });
+  }
+
   // Check if username or email already exists
   db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email], (err, results) => {
     if (err) {
@@ -129,7 +192,18 @@ app.post('/api/register', (req, res) => {
     }
 
     if (results.length > 0) {
-      return res.status(409).json({ message: 'Username or email already taken' });
+      // Check if both username and email exist
+      const existingUser = results[0];
+      let conflictMessage = '';
+      if (existingUser.username === username && existingUser.email === email) {
+        conflictMessage = 'Both username and email are already taken';
+      } else if (existingUser.username === username) {
+        conflictMessage = 'Username is already taken';
+      } else if (existingUser.email === email) {
+        conflictMessage = 'Email is already taken';
+      }
+
+      return res.status(409).json({ message: conflictMessage });
     }
 
     // Hash password
@@ -167,6 +241,7 @@ app.get('/api/events', (req, res) => {
     res.json(results);
   });
 });
+
 app.post('/api/friends', (req, res) => {
   const { user_id, friend_id } = req.body;
 
@@ -290,11 +365,30 @@ app.post('/api/routes', (req, res) => {
   );
 });
 
+app.get('/api/user_routes', (req, res) => {
+  // Pobieranie userId z sesji (zakładam, że użytkownik jest zalogowany i userId jest w sesji)
+  const userId = req.session.userId;
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  // Pobranie tras użytkownika z bazy danych
+  db.query('SELECT * FROM user_routes WHERE user_id = ?', [userId], (err, results) => {
+    if (err) {
+      console.error('Error fetching user routes:', err);
+      return res.status(500).json({ message: 'Error fetching routes from database' });
+    }
+
+    // Zwracamy trasy użytkownika w formacie JSON
+    res.json(results);
+  });
 });
 
 
 
 
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
