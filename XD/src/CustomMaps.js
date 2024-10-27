@@ -113,25 +113,25 @@ const CustomMap = () => {
       Alert.alert('Error', 'User is not logged in');
       return;
     }
-
+  
     try {
       const routeData = {
-        user_id: user.id,  
+        user_id: user.id,
         transport_mode_id: transportMode === 'Walking' ? '1' : transportMode === 'Cycling' ? '2' : '3',
         distance_km: (distanceTravelled / 1000).toFixed(2),
         CO2: calculateCO2Savings(),
         kcal: calculateCaloriesBurned(),
-        duration: timeElapsed,
+        duration: formatTime(timeElapsed),  // Wysyłanie czasu w formacie HH:MM:SS
         money: calculateSavings(),
         is_private: false
       };
-
+  
       const response = await axios.post('http://192.168.56.1:5000/api/routes', routeData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (response.status === 200) {
         console.log('Route saved successfully:', response.data);
         Alert.alert('Success', 'Route has been saved successfully.');
@@ -144,6 +144,7 @@ const CustomMap = () => {
       Alert.alert('Error', 'Unable to save route. Please try again.');
     }
   };
+  
 
   const handleStartPress = () => {
     setIsTracking(true);
@@ -160,11 +161,17 @@ const CustomMap = () => {
   };
 
   const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
     const seconds = time % 60;
-    return `${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+  
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
-
+  
   const handleTransportModeChange = (mode) => {
     setTransportMode(mode);
   };

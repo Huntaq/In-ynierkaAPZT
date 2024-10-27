@@ -1,54 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
-import AddPost from '../src/add_post';
-import NavBar from '../src/Navbar';
+import NavBar from '../src/Navbar'; // Zakładam, że NavBar jest poprawnym komponentem nawigacyjnym
 
-const PostsList = ({ user_id }) => {
-  const [posts, setPosts] = useState([]);
+const RoutesList = ({ user_id }) => {
+  const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchRoutes = async () => {
       try {
-        const response = await axios.get('http://192.168.56.1:5000/api/posts', { withCredentials: true });
+        const response = await axios.get('http://192.168.56.1:5000/api/user_routes', { withCredentials: true });
 
-        console.log('Response:', response.data); // Loguj odpowiedź
-        setPosts(response.data);
+        console.log('Response:', response.data); // Logowanie odpowiedzi
+        setRoutes(response.data);
       } catch (err) {
-        console.error('Fetch posts error:', err); // Loguj dokładny błąd
-        setError('Błąd podczas pobierania postów');
+        console.error('Fetch routes error:', err); // Logowanie błędu
+        setError('Błąd podczas pobierania tras');
       } finally {
         setLoading(false);
       }
     };
   
-    fetchPosts();
+    fetchRoutes();
   }, [user_id]);
 
   return (
     <View style={styles.container}>
+      
+      
       {loading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#0000ff" />  // Wyświetla spinner, gdy trwa ładowanie
       ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={styles.errorText}>{error}</Text>  // Wyświetla błąd, jeśli wystąpił
       ) : (
         <FlatList
-          data={posts}
-          keyExtractor={(item) => item.id.toString()}
+          data={routes}
+          
           renderItem={({ item }) => (
-            <View style={styles.post}>
-              <Text>Route ID: {item.route_id}</Text>
-              <Text>Content: {item.content}</Text>
-              <NavBar/>
+            <View style={styles.route}>
+              {/* Wyświetlanie szczegółów trasy */}
+              
+              <Text style={styles.text}>Transport Mode ID: {item.transport_mode_id}</Text>
+              <Text style={styles.text}>Distance: {item.distance_km} km</Text>
+              <Text style={styles.text}>CO2 Emissions: {item.CO2} kg</Text>
+              <Text style={styles.text}>Calories Burned: {item.kcal} kcal</Text>
+              <Text style={styles.text}>Duration: {item.duration} minutes</Text>
+              <Text style={styles.text}>Cost: ${item.money}</Text>
+              <Text style={styles.text}>Private: {item.is_private ? 'Yes' : 'No'}</Text>
+           
+              
+              
+              
             </View>
-            
           )}
         />
-        
-      )}
-      <AddPost/>
+      )}<NavBar />
     </View>
   );
 };
@@ -57,16 +65,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#fff',
   },
-  post: {
+  text: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: '#333',
+  },
+  route: {
     marginBottom: 20,
-    padding: 10,
+    padding: 15,
     borderColor: 'gray',
     borderWidth: 1,
+    borderRadius: 8,
   },
   errorText: {
+    fontSize: 16,
     color: 'red',
   },
 });
 
-export default PostsList;
+export default RoutesList;

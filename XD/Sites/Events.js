@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
-import { ProgressBar } from '@react-native-community/progress-bar-android'; // Poprawny import
+import { ProgressBar } from '@react-native-community/progress-bar-android';
 import axios from 'axios';
 
 const Events = () => {
@@ -8,40 +8,35 @@ const Events = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Użycie jednego useEffect dla pobrania eventów i tras użytkownika
   useEffect(() => {
-    // Pobranie eventów i tras użytkownika z serwera
     const fetchEventsAndRoutes = async () => {
       try {
-        const eventResponse = await axios.get('http://192.168.56.1:5000/api/events'); // Pobierz eventy
+        const eventResponse = await axios.get('http://192.168.56.1:5000/api/events');
         setEvents(eventResponse.data);
-
-        const routeResponse = await axios.get('http://192.168.56.1:5000/api/user_routes'); // Pobierz trasy użytkownika
+        
+        const routeResponse = await axios.get('http://192.168.56.1:5000/api/user_routes');
         setUserRoutes(routeResponse.data);
       } catch (error) {
-        console.error('Error fetching events or routes:', error);
+        console.error('Error fetching events or user routes:', error); 
       } finally {
         setLoading(false);
       }
     };
 
     fetchEventsAndRoutes();
-  }, []);
+  }, []); // Pusty array oznacza, że useEffect wykona się tylko raz przy załadowaniu komponentu
 
-  // Funkcja do obliczenia postępu użytkownika dla danego eventu w zależności od dat
   const calculateProgress = (event) => {
-    const { startDate, endDate, distance: eventDistance } = event;
-
-    // Filtruj trasy, które odbyły się w ramach dat eventu
+    const { startDate, endDate, distance } = event;
+    
     const userRoutesForEvent = userRoutes.filter(route => {
-      const routeDate = new Date(route.date); // Zakładamy, że `date` w trasach to pole typu string
+      const routeDate = new Date(route.date); 
       return routeDate >= new Date(startDate) && routeDate <= new Date(endDate);
     });
 
-    // Sumuj przebyte kilometry w ramach tego eventu
     const totalDistanceCovered = userRoutesForEvent.reduce((total, route) => total + route.distance_km, 0);
-
-    // Oblicz postęp (maksymalnie 100%)
-    return Math.min(totalDistanceCovered / eventDistance, 1); // Postęp nie może przekroczyć 100%
+    return Math.min(totalDistanceCovered / distance, 1);
   };
 
   if (loading) {
@@ -68,16 +63,8 @@ const Events = () => {
                 <Text style={styles.description}>{item.description}</Text>
                 <Text style={styles.type}>Type: {item.type}</Text>
                 <Text style={styles.distance}>Distance: {item.distance} km</Text>
-
-                {/* Wskaźnik postępu */}
-                <Text style={styles.progressText}>
-                  Progress: {(progress * 100).toFixed(2)}%
-                </Text>
-                <ProgressBar
-                  styleAttr="Horizontal" // Zmieniono na poprawną nazwę komponentu
-                  indeterminate={false}
-                  progress={progress}
-                />
+                <Text style={styles.progressText}>Progress: {(progress * 100).toFixed(2)}%</Text>
+                <ProgressBar styleAttr="Horizontal" indeterminate={false} progress={progress} />
               </View>
             );
           }}

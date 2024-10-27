@@ -229,7 +229,7 @@ app.post('/api/register', (req, res) => {
 
 
 app.get('/api/events', (req, res) => {
-  const query = 'SELECT id, title, description, type, distance, image FROM events';
+  const query = 'SELECT * FROM events';
 
   db.query(query, (err, results) => {
     if (err) {
