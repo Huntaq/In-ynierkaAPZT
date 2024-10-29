@@ -9,6 +9,7 @@ const notificationRouter = require('./routes/notifications');
 const eventRouter = require('./routes/event');
 const banRouter = require('./routes/ban');
 const adminRouter = require('./routes/admin');
+const friendsRouter = require('./routes/friends');
 require('dotenv').config();
 
 
@@ -26,6 +27,7 @@ app.use('/api/notifications', notificationRouter);
 app.use('/api/event', eventRouter);
 app.use('/api/ban', banRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/friends', friendsRouter);
 app.get('/api/protected', authRoutes.authenticateToken, (req, res) => {
   res.json({ user: req.user });
 });
