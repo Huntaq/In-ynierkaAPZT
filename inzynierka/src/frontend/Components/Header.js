@@ -56,11 +56,11 @@ const Header = ({ user, theme, toggleTheme, toggleSidebar }) => {
         <a href="/Profile" className='user-info inline' style={{ textDecoration: 'none' }}>
           {user && user.profilePicture ? (
             <img 
-              src={user.profilePicture} 
-              alt="Profile" 
-              className='user-icon' 
-              style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
-            />
+            src={`http://localhost/uploads/${user.profilePicture.split('/').pop()}`} 
+            alt="Profile" 
+            className='user-icon' 
+            style={{ borderRadius: '50%', width: '60px', height: '60px' }} 
+          />
           ) : (
             <div className='user-icon'>{user && user.username ? user.username[0] : 'U'}</div>
           )}

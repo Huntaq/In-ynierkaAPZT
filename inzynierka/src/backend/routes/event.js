@@ -1,15 +1,25 @@
 const express = require('express');
 const multer = require('multer');
 const db = require('../config/db');
-const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
-const storage = new Storage({
-    keyFilename: path.join(__dirname, '../config/windy-marker-431819-c0-262ab0058e6d.json'),
-  });
+// const upload = multer({ storage: multer.memoryStorage() });
 
-const bucket = storage.bucket('img_inzynierka');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads';
+    
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+      cb(null, file.originalname); 
+  },
+});
+
+const upload = multer({ storage });
+
+
+
 router.get('/thropies', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -26,6 +36,8 @@ router.get('/thropies', (req, res) => {
       res.json(results);
     });
   });
+
+
   router.post('/', upload.fields([{ name: 'image' }, { name: 'trophyImage' }]), async (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -38,42 +50,17 @@ router.get('/thropies', (req, res) => {
         return res.status(400).json({ message: 'Wszystkie pola są wymagane' });
     }
 
-    const uploadFile = (file) => {
-        return new Promise((resolve, reject) => {
-            const blob = bucket.file(file.originalname);
-            const blobStream = blob.createWriteStream({
-                resumable: false,
-                metadata: {
-                    contentType: file.mimetype,
-                    acl: [{ entity: 'allUsers', role: 'READER' }],
-                },
-            });
+   
 
-            blobStream.on('error', (err) => {
-                console.error('Error uploading file to Google Cloud Storage:', err);
-                reject('Błąd przesyłania pliku');
-            });
-
-            blobStream.on('finish', async () => {
-                await blob.makePublic();
-                const fileUrl = `https://storage.googleapis.com/${bucket.name}/${file.originalname}`;
-                resolve(fileUrl);
-            });
-
-            blobStream.end(file.buffer);
-        });
-    };
-
-    try {
         let imageUrl = null;
         let trophyImageUrl = null;
 
         if (files && files.image && files.image[0]) {
-            imageUrl = await uploadFile(files.image[0]);
+          imageUrl = `uploads/${files.image[0].originalname}`;
         }
-
+      
         if (files && files.trophyImage && files.trophyImage[0]) {
-            trophyImageUrl = await uploadFile(files.trophyImage[0]);
+          trophyImageUrl = `uploads/${files.trophyImage[0].originalname}`;
         }
 
         const sqlInsertEvent = `
@@ -89,10 +76,7 @@ router.get('/thropies', (req, res) => {
             res.status(201).json({ message: 'Wydarzenie zostało pomyślnie utworzone', eventId: result.insertId });
         });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Błąd przesyłania pliku' });
-    }
+    
 });
 
 
@@ -118,22 +102,24 @@ router.delete('/:eventId', async (req, res) => {
     const imageUrl = event.image;
     const trophyImageUrl = event.TrophyImage;
 
-
-    const fileName = imageUrl.split('/').pop();
-    const file = bucket.file(fileName);
-    try {
-      await file.delete();
-    } catch (deleteError) {
+    const fs = require('fs');
+    
+    if (imageUrl) {
+      const filePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/', imageUrl);
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting image file:', err);
+        }
+      });
     }
 
     if (trophyImageUrl) {
-      const trophyFileName = trophyImageUrl.split('/').pop();
-      const trophyFile = bucket.file(trophyFileName);
-      try {
-        await trophyFile.delete();
-      } catch (deleteError) {
-      }
-    } else {
+      const trophyFilePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/', trophyImageUrl);
+      fs.unlink(trophyFilePath, (err) => {
+        if (err) {
+          console.error('Error deleting trophy image file:', err);
+        }
+      });
     }
 
     const deleteEventQuery = 'DELETE FROM events WHERE id = ?';

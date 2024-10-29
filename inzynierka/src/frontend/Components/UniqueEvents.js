@@ -8,8 +8,11 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
       <div className="unique-event-item">
         <div
           className="unique-event-background"
-          style={{ backgroundImage: `url(${events[currentIndex].image})` }}
+          style={{
+            backgroundImage: `url(http://localhost/uploads/${events[currentIndex].image.split('/').pop()})`,
+          }}
         />
+
         <div className="unique-event-header">
           <h3 className="unique-event-title">{events[currentIndex].title}</h3>
           <div className="progress-bar-container-wrapper">

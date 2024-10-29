@@ -297,19 +297,19 @@ const EventsModalAdmin = ({
 									<td>
 										{event.image && (
 											<img
-												src={event.image}
-												alt={event.title}
-												className="event-image"
-											/>
+											src={`http://localhost/uploads/${event.image.split('/').pop()}`}
+											alt={event.title}
+											className="event-image"
+										  />
 										)}
 									</td>
 									<td>
 										{event.TrophyImage && (
 											<img
-												src={event.TrophyImage}
-												alt={event.TrophyImage}
-												className="event-image"
-											/>
+											src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`}
+											alt={event.TrophyImage}
+											className="event-image"
+										  />
 										)}
 									</td>
 									<td>{event.status}</td>
