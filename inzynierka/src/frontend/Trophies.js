@@ -263,7 +263,7 @@ const Trophies = () => {
           <ul className="UniqueThropies ">
             {events.map(event => (
               <li key={event.id} className="UniqueThropy HoverTrophy" onClick={() => handleTrophyEventClick(event)}>
-                <img src={event.image} alt={event.title} />
+                <img src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
               </li>
             ))}
           </ul>

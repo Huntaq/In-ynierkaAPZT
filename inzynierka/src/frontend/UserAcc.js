@@ -49,15 +49,19 @@ const UserAcc = () => {
       { level: 1, color: 'green' },
       { level: 0, color: 'grey' }
     ];
-  
+
     for (let i = 0; i < thresholds.length; i++) {
       if (value >= thresholds[i]) {
-        return { ...levels[i], next: thresholds[i + 1] ? thresholds[i + 1] - value : 0 };
+        return {
+          level: levels[i].level,
+          color: levels[i].color,
+          next: thresholds[i + 1] ? thresholds[i + 1] - value : 0,
+        };
       }
     }
-  
+
     return { level: 0, color: 'grey', next: thresholds[0] - value };
-  };
+};
 
   const defaultSections = [
     { id: 'co2', label: 'CO2 Saved', visible: true },
@@ -104,7 +108,7 @@ const UserAcc = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
-            if (userData[0].id === 48 || userData[0].id === 52)  {
+            if (decodedToken.Admin === 1)  {
               setShowAdminButton(true);
             }
             if (userData[0].is_banned === 1) {
@@ -318,31 +322,31 @@ const UserAcc = () => {
   const trophyDetailsMap = {
     running: {
       title: '🏃‍♂️ Running',
-      trophy: runningTrophy,
+      level: runningTrophy.level,
       detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
       fact: 'Running improves cardiovascular and lung health.',
     },
     cycling: {
       title: '🚴‍♂️ Cycling',
-      trophy: cyclingTrophy,
+      level: cyclingTrophy.level,
       detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
       fact: 'Cycling is great exercise for the lower body.',
     },
     co2: {
       title: '🌍 CO2 Savings',
-      trophy: co2Trophy,
+      level: co2Trophy.level,
       detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
       fact: 'Reducing CO2 emissions helps slow climate change.',
     },
     calories: {
       title: '🔥 Calories Burned',
-      trophy: caloriesTrophy,
+      level: caloriesTrophy.level,
       detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
       fact: 'Burning calories through exercise helps maintain a healthy weight.',
     },
     money: {
       title: '💸 Money Saved',
-      trophy: moneyTrophy,
+      level: moneyTrophy.level,
       detail: `Money saved: ${MoneySaved.toFixed(2)} PLN`,
       fact: 'Saving money by using eco-friendly transport options.',
     }
@@ -495,7 +499,7 @@ const UserAcc = () => {
 
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-      <div className='row layout'>
+      <div className='row layout' >
         {showAdminButton && (
           <button onClick={() => navigate('/AdminPanel')} className="button admin">
             Admin

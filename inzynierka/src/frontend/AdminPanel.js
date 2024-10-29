@@ -6,6 +6,7 @@ import "../css/adminPanel.css";
 import UserModalAdmin from "./Components/UserModalAdmin";
 import EventsModalAdmin from "./Components/EventsModalAdmin";
 import NotificationsModalAdmin from "./Components/NotificationsModalAdmin";
+import OverviewModalAdmin from "./Components/OverviewModalAdmin";
 
 const AdminPanel = () => {
 	const navigate = useNavigate();
@@ -31,6 +32,8 @@ const AdminPanel = () => {
 	const [showEvent, setShowEvent] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [activeModal, setActiveModal] = useState('');
+	const [currentStep, setCurrentStep] = useState(1);
+	const [trophyImage, setTrophyImage] = useState(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -40,8 +43,7 @@ const AdminPanel = () => {
 					const decodedToken = jwtDecode(token);
 					const userId = decodedToken.id;
 					const sessionKey = decodedToken.sessionKey;
-	
-					if (userId !== 48 && userId !== 52) {
+					if (decodedToken.Admin !== 1) {
 						localStorage.removeItem("authToken");
 						localStorage.removeItem("cooldownTimestamp");
 						navigate("/");
@@ -108,13 +110,18 @@ const fetchAllUsers = async (token, sessionKey, userId) => {
         if (allUsersResponse.ok) {
             const usersData = await allUsersResponse.json();
             return usersData;
+        } else if (allUsersResponse.status === 403) {
+            localStorage.removeItem('authToken');
+            navigate('/');
         } else {
             throw new Error("Błąd podczas pobierania listy użytkowników");
         }
     } catch (err) {
+        console.error(err);
         throw new Error("Wystąpił błąd podczas pobierania listy użytkowników");
     }
 };
+
 
 const fetchNotifications = async (token, sessionKey) => {
     try {
@@ -245,7 +252,8 @@ const fetchEvents = async (token, sessionKey) => {
 			!startDate ||
 			!endDate ||
 			!eventDistance ||
-			!eventImage
+			!eventImage ||
+			!trophyImage
 		) {
 			alert("All fields are required.");
 			return;
@@ -259,6 +267,7 @@ const fetchEvents = async (token, sessionKey) => {
 		formData.append("type", eventType);
 		formData.append("distance", eventDistance);
 		formData.append("image", eventImage);
+		formData.append("trophyImage", trophyImage);
 
 		if (token) {
 			try {
@@ -278,6 +287,7 @@ const fetchEvents = async (token, sessionKey) => {
 					setEndDate("");
 					setEventDistance("");
 					setEventImage(null);
+					setTrophyImage(null);
 					const updatedEvents = await fetchEvents(token);
         			setEvents(updatedEvents);
 				} else {
@@ -351,6 +361,7 @@ const fetchEvents = async (token, sessionKey) => {
 	};
 	const banUser = async (userId) => {
 		const token = localStorage.getItem("authToken");
+		
 		if (token) {
 			try {
 				const response = await fetch(
@@ -365,7 +376,10 @@ const fetchEvents = async (token, sessionKey) => {
 				);
 
 				if (response.ok) {
-					const updatedBans = await fetchAllUsers(token);
+					const decodedToken = jwtDecode(token);
+					const userId = decodedToken.id;
+					const sessionKey = decodedToken.sessionKey;
+					const updatedBans = await fetchAllUsers(token, sessionKey, userId);
         			setUsers(updatedBans);
 				} else {
 					alert("Error Banning user");
@@ -379,6 +393,7 @@ const fetchEvents = async (token, sessionKey) => {
 	
 	const unbanUser =  async (userId) => {
 		const token = localStorage.getItem("authToken");
+		
 		if (token) {
 			try {
 				const response = await fetch(
@@ -393,7 +408,10 @@ const fetchEvents = async (token, sessionKey) => {
 				);
 
 				if (response.ok) {
-					const updatedBans = await fetchAllUsers(token);
+					const decodedToken = jwtDecode(token);
+					const userId = decodedToken.id;
+					const sessionKey = decodedToken.sessionKey;
+					const updatedBans = await fetchAllUsers(token, sessionKey, userId);
         			setUsers(updatedBans);
 				} else {
 					alert("Error UnBanning user");
@@ -425,6 +443,10 @@ const fetchEvents = async (token, sessionKey) => {
 			</div>
 			{activeModal === 'events' && (
                 <EventsModalAdmin
+				trophyImage={trophyImage}
+				setTrophyImage={setTrophyImage}
+				currentStep={currentStep}
+				setCurrentStep={setCurrentStep}
 				searchUsername={searchUsername}
 				setSearchUsername={setSearchUsername}
 				searchId={searchId}
@@ -465,6 +487,9 @@ const fetchEvents = async (token, sessionKey) => {
                     banUser={banUser}                    
                     unbanUser={unbanUser}                
                 />
+            )}
+			{activeModal === 'overview' && (
+                <OverviewModalAdmin/>
             )}
 			{activeModal === 'notifications' && (
                 <NotificationsModalAdmin

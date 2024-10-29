@@ -3,6 +3,10 @@ const db = require('../config/db');
 const router = express.Router();
 
 router.post('/', (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const { content, header } = req.body;
 
   const sqlInsertNotification = 'INSERT INTO notifications_popup (content, header) VALUES (?, ?)';
@@ -16,6 +20,10 @@ router.post('/', (req, res) => {
   });
 });
 router.get('/popup', (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const sqlGetNotifications = 'SELECT id,content, header FROM notifications_popup';
 
   db.query(sqlGetNotifications, (err, results) => {
@@ -27,9 +35,11 @@ router.get('/popup', (req, res) => {
   });
 });
 router.delete('/popup/:id', (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const { id } = req.params;
-
-
   if (!id) {
     return res.status(400).json({ error: 'Invalid notification ID' });
   }

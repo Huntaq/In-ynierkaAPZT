@@ -113,7 +113,7 @@ router.post('/login', async (req, res) => {
             return res.status(500).json({ error: 'Błąd aktualizacji klucza sesji' });
           }
           
-          const token = jwt.sign({ id: user.id, username: user.username, sessionKey }, SECRET_KEY, { expiresIn: '1h' });
+          const token = jwt.sign({ id: user.id, username: user.username,Admin: user.is_Admin, sessionKey }, SECRET_KEY, { expiresIn: '12h' });
           res.json({ token });
         });
       } else {

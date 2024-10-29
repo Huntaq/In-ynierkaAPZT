@@ -13,6 +13,7 @@ import Rankings from './Rankings';
 import Statistics from './Statistics';
 import AdminPanel from './AdminPanel';
 import Banned from './Banned';
+import Friends from './Friends';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/Statistics" element={<PrivateRoute element={<Statistics />} />} />
           <Route path="/AdminPanel" element={<PrivateRoute element={<AdminPanel />} />} />
           <Route path="/Banned" element={<PrivateRoute element={<Banned />} />} />
+          <Route path="/Friends" element={<PrivateRoute element={<Friends />} />} />
         </Routes>
     </Router>
   );

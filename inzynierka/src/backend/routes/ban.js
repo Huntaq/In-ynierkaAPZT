@@ -3,6 +3,10 @@ const db = require('../config/db');
 const router = express.Router();
 
 router.post('/ban/:id', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const userId = parseInt(req.params.id, 10);
     const sql = 'UPDATE users SET is_banned = 1 WHERE id = ?';
     
@@ -16,6 +20,10 @@ router.post('/ban/:id', (req, res) => {
 });
 
 router.post('/unban/:id', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
     const userId = parseInt(req.params.id, 10);
     const sql = 'UPDATE users SET is_banned = 0 WHERE id = ?';
     

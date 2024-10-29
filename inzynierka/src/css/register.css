@@ -38,6 +38,17 @@
     outline: none;
   }
 
+  .success-message {
+    color: green; /* Zielony kolor tekstu */
+    font-weight: bold; /* Opcjonalnie: pogrubienie tekstu */
+    text-align: center; /* Wyśrodkowanie tekstu */
+    margin-top: 20px; /* Odstęp od góry */
+    background-color: #d4edda; /* Opcjonalnie: jasnozielone tło */
+    padding: 10px; /* Opcjonalnie: wewnętrzny odstęp */
+    border: 1px solid green; /* Opcjonalnie: zielona ramka */
+    border-radius: 5px; /* Zaokrąglone rogi */
+}
+
   .error {
     color: red;
     float: right;

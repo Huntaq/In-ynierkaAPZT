@@ -14,9 +14,6 @@ const UserModalAdmin = ({
     return (
         <>
         <div className="row AdminModal">
-				<div className="row">
-					<p> Userzy </p>
-				</div>
 				<div className="search-container">
 					<input
 						type="text"

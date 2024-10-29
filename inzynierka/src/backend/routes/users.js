@@ -1,45 +1,111 @@
 const express = require('express');
 const db = require('../config/db');
-
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
+  const token = req.headers['authorization']?.split(' ')[1];
   const sessionKey = req.headers['sessionkey'];
 
   if (!id) {
     return res.status(400).json({ error: 'Id is required' });
   }
+  if (!token) {
+    return res.status(401).json({ error: 'Token is required' });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
 
 
-  const sqlUser = 'SELECT id, username, is_banned, profilePicture, session_key FROM users WHERE id = ?';
+    const sqlUser = 'SELECT id, username, is_banned, profilePicture, session_key FROM users WHERE id = ?';
+
+    db.query(sqlUser, [id], (err, results) => {
+      if (err) {
+        console.error('Query error:', err);
+        return res.status(500).json({ error: 'DB error' });
+      }
+
+      if (results.length > 0) {
+        const user = results[0];
+
+        if (user.session_key === sessionKey) {
+          res.json(results);
+        } else {
+          res.status(403).json({ error: 'No access' });
+        }
+      } else {
+        res.status(404).json({ error: 'User not found' });
+      }
+    });
+  });
+});
+
+
+router.get('/:id/admin', (req, res) => {
+  const id = req.params.id; 
+  const token = req.headers['authorization']?.split(' ')[1];
+  const sessionKey = req.headers['sessionkey']; 
+
+  if (!id) {
+    return res.status(400).json({ error: 'Id is required' });
+  }
+  if (!token) {
+    return res.status(401).json({ error: 'Token is required' });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
+
+  const sqlUser = 'SELECT id, session_key FROM users WHERE id = ?';
 
   db.query(sqlUser, [id], (err, results) => {
     if (err) {
       console.error('Query error:', err);
       return res.status(500).json({ error: 'DB error' });
     }
-
-    if (results.length > 0) {
+     if (results.length > 0) {
       const user = results[0];
 
       if (user.session_key === sessionKey) {
-        res.json(results); 
+        const sqlAllUsers = 'SELECT id, username, email, age, gender, is_banned, email_notifications, push_notifications FROM users';
+        db.query(sqlAllUsers, (err, users) => {
+          if (err) {
+            console.error('Query error:', err);
+            return res.status(500).json({ error: 'DB error' });
+          }
+          res.json(users);
+        });
       } else {
-        res.status(403).json({ error: 'no access' });
+        res.status(403).json({ error: 'No access' });
       }
     } else {
-      res.status(404).json({ error: 'user not found' });
+      res.status(404).json({ error: 'User not found' });
     }
+  });
   });
 });
 router.get('/:id/profile', (req, res) => {
   const id = req.params.id;
+  const token = req.headers['authorization']?.split(' ')[1];
   const sessionKey = req.headers['sessionkey'];
 
   if (!id) {
     return res.status(400).json({ error: 'Id is required' });
   }
+  if (!token) {
+    return res.status(401).json({ error: 'Token is required' });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
 
 
   const sqlUser = 'SELECT id,age,gender,email, username,email_notifications,push_notifications, is_banned, profilePicture, session_key FROM users WHERE id = ?';
@@ -62,8 +128,13 @@ router.get('/:id/profile', (req, res) => {
       res.status(404).json({ error: 'user not found' });
     }
   });
+  });
 });
 router.get('/:id/routes_with_usernames', (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const userId = req.params.id;
 
   if (!userId) {
@@ -85,23 +156,20 @@ router.get('/:id/routes_with_usernames', (req, res) => {
     res.json(results);
   });
 });
-router.get('/:id/admin', (req, res) => {
 
-      const sqlAllUsers = 'SELECT id, username, email,age,gender,is_banned,email_notifications,push_notifications FROM users';
-      db.query(sqlAllUsers, (err, users) => {
-        if (err) {
-          console.error('Query error:', err);
-          return res.status(500).json({ error: 'DB error' });
-        }
-        res.json(users);
-      });
-});
 router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
-
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'Token is required' });
+  }
   if (!userId) {
     return res.status(400).json({ error: 'Id is required' });
   }
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
 
   const sql = 'SELECT * FROM user_routes WHERE user_id = ?';
 
@@ -113,7 +181,12 @@ router.get('/:id/routes', (req, res) => {
     res.json(results);
   });
 });
+});
 router.put('/:id/notifications', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is required' });
+    }
   const { email_notifications, push_notifications } = req.body;
   const userId = req.params.id;
 
