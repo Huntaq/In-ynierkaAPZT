@@ -1,0 +1,98 @@
+body {
+    font-family: 'Arial', sans-serif; 
+    margin: 0;
+    padding: 0;
+    background-color: #e9ecef;
+}
+
+.friends-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    padding: 20px;
+    min-height: 100vh; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.friend-username {
+    font-weight: bold;  
+    color: #007bff;   
+    background-color: rgba(173, 216, 230, 0.3);
+    padding: 2px 4px; 
+    border-radius: 4px;
+}
+.friends-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px; 
+    background-color: white; 
+    border-radius: 8px;
+    padding: 20px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.friends-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px; 
+}
+
+.friends-search-bar {
+    display: flex;
+    width: 100%; 
+    margin-bottom: 20px; 
+}
+
+.friends-search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.friends-search-button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px; 
+}
+
+.friends-search-results-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.friends-results-list {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+
+.friends-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.friends-invite-button,
+.friends-remove-button,
+.friends-accept-button,
+.friends-decline-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.friends-pending-actions {
+    display: flex;
+    gap: 10px;
+}

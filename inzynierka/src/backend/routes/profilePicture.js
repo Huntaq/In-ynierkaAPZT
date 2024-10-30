@@ -79,14 +79,12 @@ router.delete('/', async (req, res) => {
     }
 
     const currentProfilePicturePath = results[0]?.profilePicture;
-
     if (currentProfilePicturePath) {
-      fs.unlink(path.join(__dirname, 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads', path.basename(currentProfilePicturePath)), (err) => {
+      fs.unlink(path.join('C:/Users/Julas/Desktop/Xamp/htdocs/uploads', path.basename(currentProfilePicturePath)), (err) => {
         if (err) {
           console.error('Błąd podczas usuwania zdjęcia profilowego:', err);
           return res.status(500).send('Błąd podczas usuwania pliku');
         }
-        console.log('Zdjęcie profilowe zostało usunięte.');
 
         const updateQuery = 'UPDATE users SET profilePicture = NULL WHERE id = ?';
         db.query(updateQuery, [userId], (err) => {
