@@ -500,6 +500,12 @@ const UserAcc = () => {
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
       <div className='row layout' >
+      <UniqueEvents
+        events={events}
+        currentIndex={currentIndex}
+        progressData={progressData}
+        handleDotClick={handleDotClick}
+      />
         {showAdminButton && (
           <button onClick={() => navigate('/AdminPanel')} className="button admin">
             Admin
@@ -510,13 +516,9 @@ const UserAcc = () => {
         {popupVisible1 && (
           <SettingsPopup sections={sections}toggleSectionVisibility1={toggleSectionVisibility1}onClose={() => setPopupVisible1(false)}/>
         )}
+        
       </div>
-      <UniqueEvents
-        events={events}
-        currentIndex={currentIndex}
-        progressData={progressData}
-        handleDotClick={handleDotClick}
-      />
+      
       <Overview
         sections={sections}
         totalCO2={totalCO2}

@@ -1,0 +1,101 @@
+.friends-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.friends-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.search-button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+.search-results {
+    margin-bottom: 20px;
+}
+
+.search-results-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.results-list, .friends-list, .pending-friends-list, .accepted-friends-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.friend-item, .result-item, .pending-friend-item, .accepted-friend-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.friend-item:hover, .result-item:hover, .pending-friend-item:hover, .accepted-friend-item:hover {
+    background-color: #f0f0f0;
+}
+
+.pending-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.accept-button, .decline-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.accept-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.decline-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.accept-button:hover {
+    background-color: #218838;
+}
+
+.decline-button:hover {
+    background-color: #c82333;
+}
+
+.friends-subtitle {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
