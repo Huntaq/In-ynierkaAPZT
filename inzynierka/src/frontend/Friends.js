@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import "../css/friends.css"
 import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
+import UserProfileModal from './Components/UserProfileModal';
 const Friends = () => {
     const [invitedFriends, setInvitedFriends] = useState([]);
     const [pendingFriends, setPendingFriends] = useState([]);
@@ -17,6 +18,16 @@ const Friends = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+
+    const handleViewProfile = (userId) => {
+        setSelectedUserId(userId);
+    };
+
+    const closeModal = () => {
+        setSelectedUserId(null);
+    };
+
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('authToken');
@@ -34,7 +45,6 @@ const Friends = () => {
                             'sessionKey': sessionKey
                         },
                     });
-
 
                     if (userResponse.ok) {
                         const userData = await userResponse.json();
@@ -55,7 +65,6 @@ const Friends = () => {
             }
             setLoading(false);
         };
-
 
         fetchUserData();
     }, []);
@@ -90,7 +99,6 @@ const Friends = () => {
                 }
 
                 const data = await friendsResponse.json();
-                console.log(data)
                 const invited = data.filter(friend => friend.user_id === currentUserId && friend.status !== 'accepted')
                     .map(friend => ({
                         ...friend,
@@ -260,12 +268,12 @@ const Friends = () => {
     if (loading) return <p>Ładowanie...</p>;
     if (error) return <p>Błąd: {error}</p>;
     const handleInvite = async (friendId) => {
-        console.log(`Attempting to invite friend with ID: ${friendId} for user ID: ${userId}`);
-
+        const token = localStorage.getItem('authToken');
         try {
             const response = await fetch(`http://localhost:5000/api/friends/invite/${userId}`, {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
@@ -276,7 +284,6 @@ const Friends = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Invite sent:', data);
                 await fetchFriendsData();
                 setSearchResults(prevResults => prevResults.filter(user => user.id !== friendId));
 
@@ -350,20 +357,28 @@ const Friends = () => {
             <p>No friends awaiting response.</p>
         )}
 
-        <h3 className='friends-subtitle'>Friends:</h3>
-        {acceptedFriends.length > 0 ? (
-            <ul className='friends-accepted-list'>
-                {acceptedFriends.map(friend => (
-                    <ul key={`${friend.user_id}-${friend.friend_id}`} className='friends-accepted-item'>
-                        <span className='friend-username'>{friend.user_id === userId ? friend.friend_username : friend.user_username}</span>&nbsp; - &nbsp;
-                        <button onClick={() => handleRemove(friend.user_id === userId ? friend.friend_id : friend.user_id)} className='friends-remove-button'>Remove Friend</button>
-                    </ul>
-                ))}
-            </ul>
-        ) : (
-            <p>No accepted friends.</p>
-        )}
-    </div>
+<h3 className='friends-subtitle'>Friends:</h3>
+            {acceptedFriends.length > 0 ? (
+                <ul className='friends-accepted-list'>
+                    {acceptedFriends.map(friend => {
+                        const friendId = friend.user_id === userId ? friend.friend_id : friend.user_id;
+                        return (
+                            <ul key={`${friend.user_id}-${friend.friend_id}`} className='friends-accepted-item'>
+                                <span className='friend-username'>{friend.user_id === userId ? friend.friend_username : friend.user_username}</span>&nbsp; - &nbsp;
+                                <button onClick={() => handleRemove(friendId)} className='friends-remove-button'>Remove Friend</button>
+                                <button onClick={() => handleViewProfile(friendId)} className='friends-remove-button'>View Profile</button>
+                            </ul>
+                        );
+                    })}
+                </ul>
+            ) : (
+                <p>No accepted friends.</p>
+            )}
+
+            {selectedUserId && (
+                <UserProfileModal userId={selectedUserId} onClose={closeModal} />
+            )}
+        </div>
 </div>
     );
 };
