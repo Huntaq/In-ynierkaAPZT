@@ -113,11 +113,11 @@ router.post('/login', async (req, res) => {
   try {
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
       if (err) {
-        return res.status(500);
+        res.status(500).json('error');
       }
 
       if (results.length === 0) {
-        return res.status(400);
+        return res.status(400).json('error');
       }
 
       const user = results[0];
@@ -135,11 +135,11 @@ router.post('/login', async (req, res) => {
           res.json({ token });
         });
       } else {
-        return res.status(400);
+        return res.status(400).json('error');
       }
     });
   } catch (error) {
-    res.status(500);
+    res.status(500).json('error');
   }
 });
 
