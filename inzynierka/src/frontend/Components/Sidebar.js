@@ -49,14 +49,14 @@ const Sidebar = ({isOpen, toggleSidebar, userRoutes }) => {
                 <button className="close-btn" onClick={toggleSidebar}>X</button>
             </div>
             
-            <nav className='navCenter'>
+            <nav className='navCenter '>
                 <ul>
-                    <li className='T Home' onClick={goToHome}>Overview</li>
-                    <li className='T Statistics' onClick={goToStatistics}>Statistics</li>
-                    <li className='T Rankings' onClick={goToRankings}>Rankings</li>
-                    <li className='T Trophies' onClick={goToTrophies}>Trophies</li>
-                    <li className='T Calendar' onClick={goToCalendar}>Calendar</li>
-                    <li className='T Settings' onClick={goToSettings}>Settings</li>
+                    <li className='Home' onClick={goToHome}>Overview</li>
+                    <li className='Statistics' onClick={goToStatistics}>Statistics</li>
+                    <li className='Rankings' onClick={goToRankings}>Rankings</li>
+                    <li className='Trophies' onClick={goToTrophies}>Trophies</li>
+                    <li className='Calendar' onClick={goToCalendar}>Calendar</li>
+                    <li className='Settings' onClick={goToSettings}>Settings</li>
                     <li className="logout" onClick={handleLogout}><a href=".">Logout</a></li>
                 </ul>
             </nav>
