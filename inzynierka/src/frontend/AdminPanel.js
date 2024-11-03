@@ -30,7 +30,7 @@ const AdminPanel = () => {
 	const [endDate, setEndDate] = useState("");
 	const [eventImage, setEventImage] = useState(null);
 	const [showEvent, setShowEvent] = useState(false);
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [activeModal, setActiveModal] = useState('');
 	const [currentStep, setCurrentStep] = useState(1);
 	const [trophyImage, setTrophyImage] = useState(null);

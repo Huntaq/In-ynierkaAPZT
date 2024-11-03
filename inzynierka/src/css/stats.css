@@ -606,48 +606,6 @@ background: #317c43;
   margin-right: 30px;
   margin-top: 10px;
 }
-.home-page .Home{
-  background-color: #5ca86e !important; 
-}
-.home-page .Home:hover{
-  background-color: #409A55 !important;
-}
-.profile-page .Profile{
-  background-color: #5ca86e !important; 
-}
-.profile-page .Profile:hover{
-  background-color: #409A55 !important; 
-}
-.calendar-page .Calendar{
-  background-color: #5ca86e !important; 
-}
-.calendar-page .Calendar:hover{
-  background-color: #409A55 !important;
-}
-.trophies-page .Trophies{
-  background-color: #5ca86e !important; 
-}
-.trophies-page .Trophies:hover{
-  background-color: #409A55 !important; 
-}
-.settings-page .Settings{
-  background-color: #5ca86e !important; 
-}
-.settings-page .Settings:hover{
-  background-color: #409A55 !important; 
-}
-.rankings-page .Rankings{
-  background-color: #5ca86e !important; 
-}
-.rankings-page .Rankings:hover{
-  background-color: #409A55 !important; 
-}
-.statistics-page .Statistics{
-  background-color: #5ca86e !important; 
-}
-.statistics-page .Statistics:hover{
-  background-color: #409A55 !important; 
-}
 .btncos{
   align-self: auto;
   margin-left: 20px;

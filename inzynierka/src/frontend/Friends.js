@@ -13,7 +13,7 @@ const Friends = () => {
     const [error, setError] = useState(null);
     const [userId, setUserId] = useState(null);
     const [user, setUser] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
