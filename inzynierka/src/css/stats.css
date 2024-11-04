@@ -1,51 +1,28 @@
+/* 
+!!!Tu są rzeczy które muszą zostac!!!
+*/
+.toggle-thumb.light {
+  transform: translate(0px, -50%);
+}
+
+.toggle-thumb.dark {
+  transform: translate(25px, -50%);
+}
 body.light {
   color: #000000;
   background-color: rgb(241, 241, 241);
 }
-
 body.dark {
   color: #ffffff;
   background-color: gray;
 }
-.background.light{
-  background-color: white;
-}
-.background.dark{
-  background-color: purple;
-}
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
-    min-height: 100vh;
-}
+/* 
+!!!Tu są rzeczy które muszą zostac!!!
+*/
 
-.user-info {
-  display: flex;
-  align-items: center;
-}
-.user-icon {
-  margin: auto;
-  margin-top: 10px;
-  width: 60px;
-  height: 60px;
-  background-color: white;
-  color: #409A55;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
-}
 .profilePlacement:hover,
 .user-icon:hover,
-.toggle-switch:hover {
-  transform: scale(1.05);
-}
+
 .profilePlacement{
   margin: auto;
   margin-top: 10px;
@@ -556,46 +533,7 @@ background: #317c43;
 .react-calendar__tile--active {
   background-color: rgb(61, 106, 255) !important;
 }
-.toggle-switch {
-  width: 60px;
-  height: 10px;
-  background: linear-gradient(to right, #beddfa, #3f8fda);
-  border-radius: 50px;
-  padding: 3px;
-  cursor: pointer;
-  position: relative;
-  transition: background-color 0.3s ease;
-  overflow: visible;
-}
 
-.toggle-switch.light {
-  background: linear-gradient(to right, #beddfa, #3f8fda);
-}
-
-.toggle-switch.dark {
-  background: linear-gradient(to right, #beddfa, #3f8fda);
-}
-
-.toggle-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: transform 1.0s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.toggle-thumb.light {
-  transform: translate(3px, -50%);
-}
-
-.toggle-thumb.dark {
-  transform: translate(30px, -50%);
-}
 
 .leaf-icon {
   width: 24px;
@@ -711,23 +649,6 @@ background: #317c43;
   border: none;
 }
 
-.unique-events-container {
-  position: relative;
-  max-width: 1200px !important;
-  width: 58.5% !important;
-  margin: 0 auto;
-}
-
-.unique-event-item {
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
-  position: relative;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  overflow: hidden;
-  background-color: transparent;
-  height: 150px;
-  width: 50%;
-}
 .trophy-preview{
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -738,55 +659,10 @@ background: #317c43;
   height: 150px;
   width: 150px;
 }
-.unique-event-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
-  transition: background-image 0.8s ease-in;
-}
-
-.unique-event-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 10px;
-}
-
-.unique-event-title {
-  font-size: 1.5em;
-  margin: 0;
-  padding: 0;
-  flex: 1;
-}
-
-.progress-bar-container-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-left: 10px;
-  width: 50%;
-  text-align: center;
-}
 
 .progress-label {
   font-size: 0.9em;
   margin: 0;
-}
-
-.progress-bar-container {
-  border: 1px solid black;
-  background-color: #f3f3f3;
-  border-radius: 20px;
-  height: 20px;
-  width: 90%;
-  margin: 5px 0;
-  overflow: hidden;
-  align-self: center;
 }
 
 .progress-bar1 {

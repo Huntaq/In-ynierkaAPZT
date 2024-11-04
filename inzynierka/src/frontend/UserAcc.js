@@ -310,6 +310,7 @@ const UserAcc = () => {
   const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
   const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
   const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
@@ -351,6 +352,7 @@ const UserAcc = () => {
       fact: 'Saving money by using eco-friendly transport options.',
     }
   };
+
   const handleTrophyClick = (trophyType) => {
     const content = trophyDetailsMap[trophyType];
     if (content) {
@@ -380,6 +382,7 @@ const UserAcc = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [popupVisible]);
+
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
@@ -490,7 +493,7 @@ const UserAcc = () => {
 
   return (
 
-    <div className='container'>
+    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
 
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
