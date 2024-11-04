@@ -37,7 +37,7 @@ const Overview = ({
     const intervalId = setInterval(showNextNotification, 5000);
 
     return () => {
-      clearInterval(intervalId);
+      clearInterval(intervalId); 
     };
   }, [notifications.length]);
   return (
