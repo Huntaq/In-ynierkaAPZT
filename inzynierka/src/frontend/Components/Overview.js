@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import Distance from './Distance';
 import PLN from './PLN';
 import MonthSelector from './MonthSelector';
@@ -30,9 +30,16 @@ const Overview = ({
   notificationPopupVisible,
   popupRef,
   currentNotificationIndex,
-  showPreviousNotification,
-  showNextNotification
+  goToNotification,
+  showNextNotification,
 }) => {
+  useEffect(() => {
+    const intervalId = setInterval(showNextNotification, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [notifications.length]);
   return (
     <div className='row'>
       {sections.map((section) => {
@@ -90,31 +97,25 @@ const Overview = ({
                   />
                   {notifications.length > 0 && (
                     <>
-                      <div className={`notification-overlay ${notificationPopupVisible ? 'visible' : ''}`}></div>
-                      <div className={`notification-popup ${notificationPopupVisible ? 'visible' : 'hidden'}`} ref={popupRef}>
-                        <div className='notification-content'>
-                          <div className='row'>
-                            <h3>{notifications[currentNotificationIndex]?.header}</h3>
+                      <div className={`fixed h-full w-full top-0 bg-black opacity-50 left-0 z-50  transition-all  ease-in-out ${notificationPopupVisible ? 'visible' : 'invisible'}`}></div>
+                      <div className={`fixed border-[10px] border-[#409A55]  box-border transition-all  ease-in-out rounded h-[250px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 w-[600px] bg-white z-50 ${notificationPopupVisible ? 'visible' : 'invisible'}`} ref={popupRef}>
+                        <div>
+                          <div className='mt-[10px] justify-self-center'>
+                            <p className='font-bold text-[30px] text-[#409A55] uppercase'>{notifications[currentNotificationIndex]?.header}</p>
                           </div>
-                          <div className='row popupNotification'>
-                            <p>{notifications[currentNotificationIndex]?.content}</p>
+                          <div className='mt-[10px] justify-self-center'>
+                            <p className='text-[18px]'>{notifications[currentNotificationIndex]?.content}</p>
                           </div>
                         </div>
-                        <div className='notification-controls'>
-                          <button
-                            className='button'
-                            onClick={showPreviousNotification}
-                            disabled={notifications.length <= 1}
-                          >
-                            Previous
-                          </button>
-                          <button
-                            className='button'
-                            onClick={showNextNotification}
-                            disabled={notifications.length <= 1}
-                          >
-                            Next
-                          </button>
+                        <div className="absolute bottom-[20px] left-1/2 transform -translate-x-1/2 flex justify-center gap-[10px]">
+                          {notifications.map((_, index) => (
+                            <div
+                              key={index}
+                              onClick={() => goToNotification(index)}
+                              className={`w-[20px] h-[20px] rounded-full cursor-pointer transition-all ${index === currentNotificationIndex ? 'bg-[#409A55]' : 'bg-gray-300'
+                                }`}
+                            ></div>
+                          ))}
                         </div>
                       </div>
                     </>
