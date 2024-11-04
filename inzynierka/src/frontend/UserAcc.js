@@ -478,16 +478,11 @@ const UserAcc = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  const showNextNotification = () => {
-    setCurrentNotificationIndex((prevIndex) =>
-      (prevIndex + 1) % notifications.length
-    );
+  const goToNotification = (index) => {
+    setCurrentNotificationIndex(index);
   };
-
-  const showPreviousNotification = () => {
-    setCurrentNotificationIndex((prevIndex) =>
-      (prevIndex - 1 + notifications.length) % notifications.length
-    );
+  const showNextNotification = () => {
+    setCurrentNotificationIndex((prevIndex) => (prevIndex + 1) % notifications.length);
   };
   const handleDotClick = (index) => {
     setCurrentIndex(index);
@@ -544,7 +539,7 @@ const UserAcc = () => {
         notificationPopupVisible={notificationPopupVisible}
         popupRef={popupRef}
         currentNotificationIndex={currentNotificationIndex}
-        showPreviousNotification={showPreviousNotification}
+        goToNotification={goToNotification}
         showNextNotification={showNextNotification}
       />
       {popupVisible && (
