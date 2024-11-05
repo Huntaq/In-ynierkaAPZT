@@ -4,7 +4,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
   if (events.length === 0) return null;
 
   return (
-    <div className="relative w-[500px] h-[150px]  text-white m-auto shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
+    <div className="relative w-[500px] h-[150px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
       <div className="bg-none">
         <div
           className="absolute top-0 left-0 w-full h-full bg-cover rounded-[5px] transition ease-in duration-800"
@@ -23,18 +23,18 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
             </div>
           </div>
         </div>
-        <div className="unique-event-content">
-          <p className="unique-event-description text-white">{events[currentIndex].description}</p>
+        <div className="relative">
+          <p className="pl-[10px] text-white">{events[currentIndex].description}</p>
         </div>
-        <div className="unique-event-footer">
-          <p className="unique-event-date text-white z-40"><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
-          <p className="unique-event-date text-white z-40"><strong>End Date:</strong> {new Date(events[currentIndex].endDate).toLocaleDateString()}</p>
+        <div className="flex justify-between p-[10px] mt-[30px]">
+          <p className="text-white font-bold z-40"><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
+          <p className="text-white font-bold z-40 "><strong>End Date:</strong> {new Date(events[currentIndex].endDate).toLocaleDateString()}</p>
         </div>
-        <div className="unique-dots-container">
+        <div className="absolute flex justify-center top-[124px] left-[50%] translate-x-[-50%]">
           {events.map((_, index) => (
             <span
               key={index}
-              className={`unique-dot ${index === currentIndex ? 'active' : ''}`}
+              className={`m-[2px] w-[15px] h-[15px] bg-gray-300 rounded-[50%] border-[2px] border-gray-300 cursor-pointer unique-dot ${index === currentIndex ? 'active' : ''}`}
               onClick={() => handleDotClick(index)}
             />
           ))}
