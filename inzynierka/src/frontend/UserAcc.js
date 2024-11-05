@@ -61,7 +61,7 @@ const UserAcc = () => {
     }
 
     return { level: 0, color: 'grey', next: thresholds[0] - value };
-};
+  };
 
   const defaultSections = [
     { id: 'co2', label: 'CO2 Saved', visible: true },
@@ -108,7 +108,7 @@ const UserAcc = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData[0]);
-            if (decodedToken.Admin === 1)  {
+            if (decodedToken.Admin === 1) {
               setShowAdminButton(true);
             }
             if (userData[0].is_banned === 1) {
@@ -273,7 +273,7 @@ const UserAcc = () => {
       }
       setLoading(false);
     };
-    
+
     fetchUserData();
   }, [navigate]);
 
@@ -310,7 +310,7 @@ const UserAcc = () => {
   const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
   const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
   const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
@@ -497,26 +497,38 @@ const UserAcc = () => {
 
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-      <div className='row layout' >
-      <UniqueEvents
-        events={events}
-        currentIndex={currentIndex}
-        progressData={progressData}
-        handleDotClick={handleDotClick}
-      />
-        {showAdminButton && (
-          <button onClick={() => navigate('/AdminPanel')} className="button admin">
-            Admin
-          </button>
-        )}
-        <button className="button " onClick={() => setPopupVisible1(true)}>Layout</button>
+      <div className='flex justify-between w-full pr-[10px] pl-[10px] box-border '>
+        <div className="flex-[1]"></div>
 
-        {popupVisible1 && (
-          <SettingsPopup sections={sections}toggleSectionVisibility1={toggleSectionVisibility1}onClose={() => setPopupVisible1(false)}/>
-        )}
-        
+        <UniqueEvents
+          events={events}
+          currentIndex={currentIndex}
+          progressData={progressData}
+          handleDotClick={handleDotClick}
+        />
+
+        <div className="flex flex-[1] gap-[10px] justify-end mt-[20px]">
+          {showAdminButton && (
+            <button onClick={() => navigate('/AdminPanel')}className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white">
+              Admin
+            </button>
+          )}
+          
+          <button className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white"onClick={() => setPopupVisible1(true)}>
+            Layout
+          </button>
+
+          {popupVisible1 && (
+            <SettingsPopup
+              sections={sections}
+              toggleSectionVisibility1={toggleSectionVisibility1}
+              onClose={() => setPopupVisible1(false)}
+            />
+          )}
+        </div>
       </div>
-      
+
+
       <Overview
         sections={sections}
         totalCO2={totalCO2}

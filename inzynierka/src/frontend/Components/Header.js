@@ -37,16 +37,16 @@ const getGreetingMessage = (user, location) => {
 const Header = ({ user, theme, toggleTheme, toggleSidebar }) => {
   const location = useLocation();
   return (
-    <div className='flex items-center w-full justify-between mt-[20px] p-[10px] box-sizing'>
-      <div>
+    <div className='flex items-center w-full justify-between mt-[5px] p-[5px] box-border'>
+      <div className='flex-1 flex'>
         <button className=" w-[40px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white" onClick={toggleSidebar}>☰</button>
       </div>
       <div>
-        <div className='hidden sm:block content-center text-[#409A55] font-bold text-[36px]'>
+        <div className='flex-1 hidden sm:block content-center text-[#409A55] font-bold text-[36px]'>
           {getGreetingMessage(user, location)}
         </div>
       </div>
-      <div className='flex'>
+      <div className='flex-1 flex justify-end items-center gap-4'>
         <ToggleSwitch theme={theme} toggleTheme={toggleTheme} />
         <a href="/Profile" className='' >
           {user && user.profilePicture ? (

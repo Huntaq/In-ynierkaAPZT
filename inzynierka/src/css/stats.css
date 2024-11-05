@@ -16,6 +16,9 @@ body.dark {
   color: #ffffff;
   background-color: gray;
 }
+.unique-dot.active {
+  background-color: #8ac598;
+}
 /* 
 !!!Tu są rzeczy które muszą zostac!!!
 */
@@ -659,76 +662,15 @@ background: #317c43;
   height: 150px;
   width: 150px;
 }
-
 .progress-label {
   font-size: 0.9em;
   margin: 0;
-}
-
-.progress-bar1 {
-  background: #5ca86e;
-  height: 100%;
-  transition: width 0.3s ease-in-out;
-}
-
-.unique-event-content {
-  position: relative;
-  z-index: 1;
-  color: black;
-}
-
-.unique-event-description {
-  font-size: 1em;
-  margin: 0;
-  padding: 10px;
 }
 
 .event-preview, .unique-event-item {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.unique-event-content {
-  flex-grow: 1;
-}
-
-.unique-event-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
-.unique-event-date {
-  font-size: 0.9em;
-  margin: 0;
-}
-
-.unique-dots-container {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  z-index: 1;
-}
-
-.unique-dot {
-  width: 10px;
-  height: 10px;
-  margin: 0 5px;
-  border-radius: 50%;
-  background-color: black;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.unique-dot.active {
-  background-color: #007bff;
 }
 
 .UniqueThropies {
