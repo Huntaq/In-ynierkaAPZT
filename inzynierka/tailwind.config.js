@@ -17,6 +17,9 @@ module.exports = {
           '100%': { backgroundPosition: '0% 0%' },
         },
       },
+      screens: {
+        CustomSM: { max: '750px' },
+      },
     },
   },
   plugins: [],

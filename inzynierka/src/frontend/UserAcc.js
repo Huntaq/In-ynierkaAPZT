@@ -497,8 +497,8 @@ const UserAcc = () => {
 
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-      <div className='flex justify-between w-full pr-[10px] pl-[10px] box-border '>
-        <div className="flex-[1]"></div>
+      <div className='CustomSM:contents flex justify-between w-full pr-[10px] pl-[10px] box-border '>
+        <div className="CustomSM:hidden flex-[1]"></div>
 
         <UniqueEvents
           events={events}
@@ -507,7 +507,7 @@ const UserAcc = () => {
           handleDotClick={handleDotClick}
         />
 
-        <div className="flex flex-[1] gap-[10px] justify-end mt-[20px]">
+        <div className="max-h-[40px] w-full CustomSM:max-w-[500px] grid flex-[1] gap-[10px] justify-end mt-[20px]">
           {showAdminButton && (
             <button onClick={() => navigate('/AdminPanel')}className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white">
               Admin
@@ -517,7 +517,7 @@ const UserAcc = () => {
           <button className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white"onClick={() => setPopupVisible1(true)}>
             Layout
           </button>
-
+          </div>
           {popupVisible1 && (
             <SettingsPopup
               sections={sections}
@@ -525,7 +525,6 @@ const UserAcc = () => {
               onClose={() => setPopupVisible1(false)}
             />
           )}
-        </div>
       </div>
 
 

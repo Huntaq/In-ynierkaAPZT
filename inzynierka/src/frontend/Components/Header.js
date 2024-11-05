@@ -56,7 +56,7 @@ const Header = ({ user, theme, toggleTheme, toggleSidebar }) => {
               className='w-[60px] h-[60px] rounded-[50%] border-[3px] border-[#409A55] hover:scale-105'
             />
           ) : (
-            <div className=''>{user && user.username ? user.username[0] : 'U'}</div>
+            <div className='bg-white font-bold text-black content-center text-center w-[60px] h-[60px] rounded-[50%] border-[3px] border-[#409A55] hover:scale-105'>{user && user.username ? user.username[0] : 'U'}</div>
           )}
         </a>
       </div>
