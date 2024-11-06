@@ -497,7 +497,7 @@ const UserAcc = () => {
 
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-      <div className='CustomSM:contents flex justify-between w-full pr-[10px] pl-[10px] box-border '>
+      <div className='CustomSM:contents flex justify-between w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
         <div className="CustomSM:hidden flex-[1]"></div>
 
         <UniqueEvents
@@ -507,7 +507,7 @@ const UserAcc = () => {
           handleDotClick={handleDotClick}
         />
 
-        <div className="max-h-[40px] w-full CustomSM:max-w-[500px] grid flex-[1] gap-[10px] justify-end mt-[20px]">
+        <div className="CustomSM:mt-[10px] max-h-[90px] CustomXSM:max-w-[95%] w-full CustomSM:max-w-[600px] grid flex-[1] gap-[10px] justify-end ">
           {showAdminButton && (
             <button onClick={() => navigate('/AdminPanel')}className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white">
               Admin
