@@ -48,7 +48,7 @@ const Chart = ({ month, year, transportMode, userRoutes }) => {
   };
 
   return (
-    <div className="chart-container">
+    <div className="w-full h-full">
       <Line data={chartData} options={chartOptions} />
     </div>
   );
