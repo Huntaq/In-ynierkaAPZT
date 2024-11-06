@@ -1,6 +1,4 @@
-import React, { useEffect} from 'react';
-import Distance from './Distance';
-import PLN from './PLN';
+import React, { useEffect } from 'react';
 import MonthSelector from './MonthSelector';
 import Chart from './Chart';
 import TrophyList from './TrophyList';
@@ -37,7 +35,7 @@ const Overview = ({
     const intervalId = setInterval(showNextNotification, 5000);
 
     return () => {
-      clearInterval(intervalId); 
+      clearInterval(intervalId);
     };
   }, [notifications.length]);
   return (
@@ -51,7 +49,10 @@ const Overview = ({
               <div className='flex gap-[10px] m-[5px] box-sizing CustomXSM:block' key={section.id}>
                 <div className='m-auto overflow-y-auto max-w-[200px] min-h-[200px] w-full h-auto bg-white rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
                   <p className=''>CO2 Saved</p>
-                  <Distance totalCO2={totalCO2.toFixed(2)} />
+                  <div className='flex'>
+                    <p className=''>{totalCO2.toFixed(2)}</p>
+                    <p className=''>KG</p>
+                  </div>
                 </div>
                 <div className='max-w-[600px] w-full h-[200px] bg-blue-500 m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
                   <p className=''>
@@ -63,12 +64,15 @@ const Overview = ({
             );
           case 'pln':
             return (
-              <div className='row' key={section.id}>
-                <div className='backgroundInfo'>
-                  <p className='textStyleActivity'>PLN Saved</p>
-                  <PLN totalMoney={totalMoney.toFixed(2)} />
+              <div className='flex gap-[10px] m-[5px] box-sizing CustomXSM:block' key={section.id}>
+                <div className='m-auto overflow-y-auto max-w-[200px] min-h-[200px] w-full h-auto bg-white rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
+                  <p className=''>PLN Saved</p>
+                  <div className='flex'>
+                    <p className=''>{totalMoney.toFixed(2)}</p>
+                    <p className=''>PLN</p>
+                  </div>
                 </div>
-                <div className='background1'>
+                <div className='max-w-[600px] w-full h-[200px] bg-white m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
                   <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
                   <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
                 </div>
@@ -76,17 +80,17 @@ const Overview = ({
             );
           case 'streak':
             return (
-              <div className='row' key={section.id}>
-                <div className='backgroundInfo'>
-                  <p className='textStyleActivity'>Current Streak</p>
-                  <div className='row'>
-                    <p className='StreakInfo'>{currentStreak}</p>
-                    <img src={meter} alt='Earth' className='meterimage inline' />
+              <div className='flex gap-[10px] m-[5px] box-sizing CustomXSM:block' key={section.id}>
+                <div className='m-auto overflow-y-auto max-w-[200px] min-h-[200px] w-full h-auto bg-white rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
+                  <div className='flex'>
+                  <p className=''>Current Streak: </p>
+                  <p className=''>&nbsp; {currentStreak}</p>
                   </div>
-                  <p className='textStyleActivity'>Longest Streak 🔥: {longestStreak}</p>
+                    <img src={meter} alt='Earth' className='w-[80px] h-[80px]'/>
+                  <p className=''>Longest Streak 🔥: {longestStreak}</p>
                 </div>
-                <div className='background2'>
-                  <h2>🏅 Your Trophies 🏅</h2>
+                <div className='trohpies max-w-[600px] w-full overflow-auto max-h-[200px] h-[200px] bg-white  m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
+                  <h2 className='justify-self-center'>🏅 Your Trophies 🏅</h2>
                   <TrophyList
                     runningDistance={runningDistance}
                     cyclingDistance={cyclingDistance}
@@ -125,11 +129,11 @@ const Overview = ({
             );
           case 'Test':
             return (
-              <div className='row' key={section.id}>
-                <div className='backgroundInfo'>
-                  <p>Test1</p>
+              <div className='flex gap-[10px] m-[5px] box-sizing CustomXSM:block' key={section.id}>
+                <div className='m-auto overflow-y-auto max-w-[200px] min-h-[200px] w-full h-auto bg-white rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
+                <p>Test1</p>
                 </div>
-                <div className='background1'>
+                <div className='max-w-[600px] w-full h-[200px] bg-white m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
                   <p>Test2</p>
                 </div>
               </div>
