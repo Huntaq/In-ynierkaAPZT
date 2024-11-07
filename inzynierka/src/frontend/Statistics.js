@@ -134,13 +134,13 @@ const Statistics = () => {
             const routesData = await routesResponse.json();
             setUserRoutes(routesData);
           } else {
-            setError('Błąd podczas pobierania tras użytkownika');
+            setError('user_routes query/server error');
           }
         } catch (err) {
-          setError('Wystąpił błąd podczas pobierania danych');
+          setError('query/server error');
         }
       } else {
-        setError('Brak tokena uwierzytelniającego');
+        setError('Token is required');
       }
       setLoading(false);
     };

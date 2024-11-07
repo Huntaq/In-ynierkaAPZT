@@ -21,6 +21,13 @@ const Friends = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState(null);
 
+    useEffect(() => {
+
+        fetchFriendsData();
+        fetchUserData();
+
+    }, [navigate]);
+
     const handleViewProfile = (userId) => {
         setSelectedUserId(userId);
     };
@@ -29,57 +36,49 @@ const Friends = () => {
         setSelectedUserId(null);
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                try {
-                    const decodedToken = jwtDecode(token);
-                    const userId = decodedToken.id;
-                    const sessionKey = decodedToken.sessionKey;
-
-
-                    const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'sessionKey': sessionKey
-                        },
-                    });
-
-                    if (userResponse.ok) {
-                        const userData = await userResponse.json();
-                        setUser(userData[0]);
-                        if (userData[0].is_banned === 1) {
-                            navigate('/Banned');
-                        }
-                    } else {
-                        localStorage.removeItem('authToken');
-                        navigate('/');
-                    }
-
-                } catch (err) {
-                    setError('Wystąpił błąd podczas pobierania danych');
-                }
-            } else {
-                setError('Brak tokena uwierzytelniającego');
-            }
-            setLoading(false);
-        };
-
-        fetchUserData();
-    }, []);
-
-    useEffect(() => {
-        fetchFriendsData();
-    }, [navigate]);
-
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
     };
 
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    };
+
+    const fetchUserData = async () => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const userId = decodedToken.id;
+                const sessionKey = decodedToken.sessionKey;
+
+
+                const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'sessionKey': sessionKey
+                    },
+                });
+
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setUser(userData[0]);
+                    if (userData[0].is_banned === 1) {
+                        navigate('/Banned');
+                    }
+                } else {
+                    localStorage.removeItem('authToken');
+                    navigate('/');
+                }
+
+            } catch (err) {
+                setError('Wystąpił błąd podczas pobierania danych');
+            }
+        } else {
+            setError('Brak tokena uwierzytelniającego');
+        }
+        setLoading(false);
     };
 
     const fetchFriendsData = async () => {
@@ -235,7 +234,7 @@ const Friends = () => {
 
             setSearchResults(filteredUsers);
         } catch (error) {
-            console.error('Błąd podczas wyszukiwania użytkowników:', error);
+            console.error('error', error);
         }
     };
 
@@ -271,89 +270,89 @@ const Friends = () => {
 
     return (
         <div className='friends-container'>
-    <Header theme={theme} toggleTheme={toggleTheme} user={user} toggleSidebar={toggleSidebar} />
-    <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-    <div className='friends-content'>
-        <h2 className='friends-title'>Friends List</h2>
-        <div className='friends-search-bar'>
-            <input
-                type="text"
-                placeholder="User Nickname"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className='friends-search-input'
-            />
-            <button onClick={handleSearch} className='friends-search-button'>🔍</button>
-        </div>
+            <Header theme={theme} toggleTheme={toggleTheme} user={user} toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+            <div className='friends-content'>
+                <h2 className='friends-title'>Friends List</h2>
+                <div className='friends-search-bar'>
+                    <input
+                        type="text"
+                        placeholder="User Nickname"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className='friends-search-input'
+                    />
+                    <button onClick={handleSearch} className='friends-search-button'>🔍</button>
+                </div>
 
-        {searchResults.length > 0 && (
-            <div className='friends-search-results'>
-                <h3 className='friends-search-results-title'>Search Results:</h3>
-                <ul className='friends-results-list'>
-                    {searchResults.map(user => (
-                        <ul key={user.id} className='friends-result-item'>
-                            <span className='friend-username'>{user.username}</span>
-                            <button onClick={() => handleInvite(user.id)} className='friends-invite-button'>Invite</button>
+                {searchResults.length > 0 && (
+                    <div className='friends-search-results'>
+                        <h3 className='friends-search-results-title'>Search Results:</h3>
+                        <ul className='friends-results-list'>
+                            {searchResults.map(user => (
+                                <ul key={user.id} className='friends-result-item'>
+                                    <span className='friend-username'>{user.username}</span>
+                                    <button onClick={() => handleInvite(user.id)} className='friends-invite-button'>Invite</button>
+                                </ul>
+                            ))}
                         </ul>
-                    ))}
-                </ul>
-            </div>
-        )}
+                    </div>
+                )}
 
-        <h3 className='friends-subtitle'>Invited Friends:</h3>
-        {invitedFriends.length > 0 ? (
-            <ul className='friends-list'>
-                {invitedFriends.map(friend => (
-                    <ul key={`${friend.user_id}-${friend.friend_id}`} className='friends-item'>
-                        <span className='friend-username'>{friend.friend_username}</span> &nbsp;{friend.status}&nbsp; - &nbsp;
-                        <button onClick={() => handleRemove(friend.user_id === userId ? friend.friend_id : friend.user_id)} className='friends-remove-button'>Cancel Invite</button>
-                    </ul>
-                ))}
-            </ul>
-        ) : (
-            <p>No invited friends.</p>
-        )}
-
-        <h3 className='friends-subtitle'>Friends Awaiting Response:</h3>
-        {pendingFriends.length > 0 ? (
-            <ul className='friends-pending-list'>
-                {pendingFriends.map(friend => (
-                    <ul key={`${friend.user_id}-${friend.id}`} className='friends-pending-item'>
-                        <span className='friend-username'>{friend.user_username}</span>
-                        <div className='friends-pending-actions'>
-                            <button onClick={() => handleAccept(friend.user_id)} className='friends-accept-button'>Accept</button>
-                            <button onClick={() => handleRemove(friend.user_id)} className='friends-decline-button'>Decline</button>
-                        </div>
-                    </ul>
-                ))}
-            </ul>
-        ) : (
-            <p>No friends awaiting response.</p>
-        )}
-
-<h3 className='friends-subtitle'>Friends:</h3>
-            {acceptedFriends.length > 0 ? (
-                <ul className='friends-accepted-list'>
-                    {acceptedFriends.map(friend => {
-                        const friendId = friend.user_id === userId ? friend.friend_id : friend.user_id;
-                        return (
-                            <ul key={`${friend.user_id}-${friend.friend_id}`} className='friends-accepted-item'>
-                                <span className='friend-username'>{friend.user_id === userId ? friend.friend_username : friend.user_username}</span>&nbsp; - &nbsp;
-                                <button onClick={() => handleRemove(friendId)} className='friends-remove-button'>Remove Friend</button>
-                                <button onClick={() => handleViewProfile(friendId)} className='friends-remove-button'>View Profile</button>
+                <h3 className='friends-subtitle'>Invited Friends:</h3>
+                {invitedFriends.length > 0 ? (
+                    <ul className='friends-list'>
+                        {invitedFriends.map(friend => (
+                            <ul key={`${friend.user_id}-${friend.friend_id}`} className='friends-item'>
+                                <span className='friend-username'>{friend.friend_username}</span> &nbsp;{friend.status}&nbsp; - &nbsp;
+                                <button onClick={() => handleRemove(friend.user_id === userId ? friend.friend_id : friend.user_id)} className='friends-remove-button'>Cancel Invite</button>
                             </ul>
-                        );
-                    })}
-                </ul>
-            ) : (
-                <p>No accepted friends.</p>
-            )}
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No invited friends.</p>
+                )}
 
-            {selectedUserId && (
-                <UserProfileModal userId={selectedUserId} onClose={closeModal} />
-            )}
+                <h3 className='friends-subtitle'>Friends Awaiting Response:</h3>
+                {pendingFriends.length > 0 ? (
+                    <ul className='friends-pending-list'>
+                        {pendingFriends.map(friend => (
+                            <ul key={`${friend.user_id}-${friend.id}`} className='friends-pending-item'>
+                                <span className='friend-username'>{friend.user_username}</span>
+                                <div className='friends-pending-actions'>
+                                    <button onClick={() => handleAccept(friend.user_id)} className='friends-accept-button'>Accept</button>
+                                    <button onClick={() => handleRemove(friend.user_id)} className='friends-decline-button'>Decline</button>
+                                </div>
+                            </ul>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No friends awaiting response.</p>
+                )}
+
+                <h3 className='friends-subtitle'>Friends:</h3>
+                {acceptedFriends.length > 0 ? (
+                    <ul className='friends-accepted-list'>
+                        {acceptedFriends.map(friend => {
+                            const friendId = friend.user_id === userId ? friend.friend_id : friend.user_id;
+                            return (
+                                <ul key={`${friend.user_id}-${friend.friend_id}`} className='friends-accepted-item'>
+                                    <span className='friend-username'>{friend.user_id === userId ? friend.friend_username : friend.user_username}</span>&nbsp; - &nbsp;
+                                    <button onClick={() => handleRemove(friendId)} className='friends-remove-button'>Remove Friend</button>
+                                    <button onClick={() => handleViewProfile(friendId)} className='friends-remove-button'>View Profile</button>
+                                </ul>
+                            );
+                        })}
+                    </ul>
+                ) : (
+                    <p>No accepted friends.</p>
+                )}
+
+                {selectedUserId && (
+                    <UserProfileModal userId={selectedUserId} onClose={closeModal} />
+                )}
+            </div>
         </div>
-</div>
     );
 };
 

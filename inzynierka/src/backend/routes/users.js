@@ -3,6 +3,7 @@ const db = require('../config/db');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+//pobieranie danych zalogowanego usera / weryfikacja dostępu
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   const token = req.headers['authorization']?.split(' ')[1];
@@ -44,7 +45,7 @@ router.get('/:id', (req, res) => {
   });
 });
 
-
+//pobieranie danych o wszystkich userach dla admina
 router.get('/:id/admin', (req, res) => {
   const id = req.params.id; 
   const token = req.headers['authorization']?.split(' ')[1];
@@ -90,6 +91,8 @@ router.get('/:id/admin', (req, res) => {
   });
   });
 });
+
+//pobieranie dokładniejszych danych profilu uzytkownika
 router.get('/:id/profile', (req, res) => {
   const id = req.params.id;
   const token = req.headers['authorization']?.split(' ')[1];
@@ -130,6 +133,8 @@ router.get('/:id/profile', (req, res) => {
   });
   });
 });
+
+//pobieranie globanych statystyk userów do rankingu
 router.get('/:id/routes_with_usernames', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -142,7 +147,7 @@ router.get('/:id/routes_with_usernames', (req, res) => {
   }
 
   const sql = `
-    SELECT ur.*, u.username 
+    SELECT ur.user_id, ur.CO2, ur.kcal, ur.money, u.username 
     FROM user_routes ur
     JOIN users u ON ur.user_id = u.id
   `;
@@ -157,6 +162,7 @@ router.get('/:id/routes_with_usernames', (req, res) => {
   });
 });
 
+//pobieranie tras usera
 router.get('/:id/routes', (req, res) => {
   const userId = req.params.id;
   const token = req.headers['authorization']?.split(' ')[1];
@@ -182,6 +188,8 @@ router.get('/:id/routes', (req, res) => {
   });
 });
 });
+
+//zmienianie preferencji do otrzymywanych powiadomien w profilu
 router.put('/:id/notifications', async (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {

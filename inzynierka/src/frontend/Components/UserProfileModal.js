@@ -5,33 +5,34 @@ const UserProfileModal = ({ userId, onClose }) => {
 
     useEffect(() => {
 
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('authToken');
-
-            try {
-
-                const response = await fetch(`http://localhost:5000/api/friends/get/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    console.error("Error fetching data:", response.statusText);
-                    return;
-                }
-
-                const data = await response.json();
-                setUserData(data);
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
-
         fetchUserData();
+
     }, [userId]);
+
+    const fetchUserData = async () => {
+        const token = localStorage.getItem('authToken');
+
+        try {
+
+            const response = await fetch(`http://localhost:5000/api/friends/get/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                console.error("Error fetching data:", response.statusText);
+                return;
+            }
+
+            const data = await response.json();
+            setUserData(data);
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
 
     if (!userData) return null;
 

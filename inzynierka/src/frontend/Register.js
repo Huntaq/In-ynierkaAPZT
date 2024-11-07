@@ -125,7 +125,7 @@ const Register = () => {
                 return response.json();
             })
             .then(data => {
-                setSuccessMessage('Rejestracja udana');
+                setSuccessMessage('Register succesfull');
 
                 setTimeout(() => {
                     navigate('/');

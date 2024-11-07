@@ -81,14 +81,14 @@ const Rankings = () => {
 
             setRanking(parsedRanking);
           } else {
-            setError('Błąd podczas pobierania rankingu');
+            setError('ranking query/server error');
           }
 
         } catch (err) {
-          setError('Wystąpił błąd podczas pobierania danych');
+          setError('query/server error');
         }
       } else {
-        setError('Brak tokena uwierzytelniającego');
+        setError('Token is required');
       }
       setLoading(false);
     };
@@ -162,10 +162,6 @@ const Rankings = () => {
     });
   };
 
-
-
-
-
   const getUserValue = (type) => {
     const userEntry = ranking.find(entry => entry.user_id === user?.id);
     return userEntry ? userEntry[type] : 0;
@@ -173,6 +169,7 @@ const Rankings = () => {
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
+  
   const triggerConfetti = () => {
     confetti({
       particleCount: 100,
@@ -181,6 +178,7 @@ const Rankings = () => {
       colors: ['#ffeb3b', '#ff9800', '#f44336'],
     });
   };
+
   const usernameMap = userRoutes.reduce((map, route) => {
     map[route.user_id] = route.username;
     return map;

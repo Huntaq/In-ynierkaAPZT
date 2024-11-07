@@ -3,6 +3,7 @@ const db = require('../config/db');
 
 const router = express.Router();
 
+//pobieranie danych rankingu Co2 Kcal i zaoszczędzonych pieniędzy
 router.get('/ranking', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) {

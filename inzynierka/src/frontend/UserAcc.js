@@ -40,6 +40,12 @@ const UserAcc = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progressData, setProgressData] = useState({});
 
+  useEffect(() => {
+
+    fetchUserData();
+
+  }, [navigate]);
+
   const calculateTrophyLevel = (value, thresholds) => {
     const levels = [
       { level: 5, color: 'gold' },
@@ -88,40 +94,69 @@ const UserAcc = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        try {
-          const decodedToken = jwtDecode(token);
-          const userId = decodedToken.id;
-          const sessionKey = decodedToken.sessionKey;
+  const fetchUserData = async () => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.id;
+        const sessionKey = decodedToken.sessionKey;
 
-          const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'sessionKey': sessionKey
-            },
-          });
+        const userResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'sessionKey': sessionKey
+          },
+        });
 
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            setUser(userData[0]);
-            if (decodedToken.Admin === 1) {
-              setShowAdminButton(true);
-            }
-            if (userData[0].is_banned === 1) {
-              navigate('/Banned');
-            }
-          } else {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('cooldownTimestamp');
-            localStorage.removeItem('userSections');
-            navigate('/');
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          setUser(userData[0]);
+          if (decodedToken.Admin === 1) {
+            setShowAdminButton(true);
           }
+          if (userData[0].is_banned === 1) {
+            navigate('/Banned');
+          }
+        } else {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('cooldownTimestamp');
+          localStorage.removeItem('userSections');
+          navigate('/');
+        }
 
-          const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
+        const routesResponse = await fetch(`http://localhost:5000/api/users/${userId}/routes`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'sessionKey': sessionKey
+          },
+        });
+
+        if (routesResponse.ok) {
+          const routesData = await routesResponse.json();
+          setUserRoutes(routesData);
+          calculateStreaks(routesData);
+
+          const runningDistance = routesData
+            .filter(route => route.transport_mode_id === 1)
+            .reduce((acc, route) => acc + route.distance_km, 0);
+          const cyclingDistance = routesData
+            .filter(route => route.transport_mode_id === 2)
+            .reduce((acc, route) => acc + route.distance_km, 0);
+
+          const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
+          const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
+          const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
+
+          setRunningDistance(runningDistance);
+          setCyclingDistance(cyclingDistance);
+          setCo2Saved(totalCo2Saved);
+          setCaloriesBurned(totalCaloriesBurned);
+          setMoneySaved(totalMoneySaved);
+
+          const eventsResponse = await fetch(`http://localhost:5000/api/event`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -129,153 +164,120 @@ const UserAcc = () => {
             },
           });
 
-          if (routesResponse.ok) {
-            const routesData = await routesResponse.json();
-            setUserRoutes(routesData);
-            calculateStreaks(routesData);
+          if (eventsResponse.ok) {
+            const data = await eventsResponse.json();
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
 
-            const runningDistance = routesData
-              .filter(route => route.transport_mode_id === 1)
-              .reduce((acc, route) => acc + route.distance_km, 0);
-            const cyclingDistance = routesData
-              .filter(route => route.transport_mode_id === 2)
-              .reduce((acc, route) => acc + route.distance_km, 0);
+            const activeEvents = data.filter(event => {
+              const startDate = new Date(event.startDate);
+              const endDate = new Date(event.endDate);
 
-            const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
-            const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
-            const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
+              startDate.setHours(0, 0, 0, 0);
+              endDate.setHours(23, 59, 59, 999);
 
-            setRunningDistance(runningDistance);
-            setCyclingDistance(cyclingDistance);
-            setCo2Saved(totalCo2Saved);
-            setCaloriesBurned(totalCaloriesBurned);
-            setMoneySaved(totalMoneySaved);
+              const startDateString = startDate.toISOString().split('T')[0];
+              const endDateString = endDate.toISOString().split('T')[0];
 
-            const eventsResponse = await fetch(`http://localhost:5000/api/event`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'sessionKey': sessionKey
-              },
+              return event.status === 'active' &&
+                startDateString <= todayString &&
+                endDateString >= todayString;
             });
 
-            if (eventsResponse.ok) {
-              const data = await eventsResponse.json();
-              const today = new Date();
-              const todayString = today.toISOString().split('T')[0];
+            setEvents(activeEvents);
 
-              const activeEvents = data.filter(event => {
-                const startDate = new Date(event.startDate);
-                const endDate = new Date(event.endDate);
+            const progressMap = {};
 
-                startDate.setHours(0, 0, 0, 0);
-                endDate.setHours(23, 59, 59, 999);
-
-                const startDateString = startDate.toISOString().split('T')[0];
-                const endDateString = endDate.toISOString().split('T')[0];
-
-                return event.status === 'active' &&
-                  startDateString <= todayString &&
-                  endDateString >= todayString;
-              });
-
-              setEvents(activeEvents);
-
-              const progressMap = {};
-
-              const userAlreadyAdded = async (eventId) => {
-                const eventResponse = await fetch(`http://localhost:5000/api/event/${eventId}`, {
-                  method: 'GET',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'sessionKey': sessionKey
-                  },
-                });
-
-                if (eventResponse.ok) {
-                  const eventData = await eventResponse.json();
-
-                  const userIds = eventData.user_ids ? eventData.user_ids.split(',') : [];
-
-                  return userIds.includes(userId.toString());
-                }
-                return false;
-              };
-
-              for (const event of activeEvents) {
-                const isUserAdded = await userAlreadyAdded(event.id);
-                const startDate = new Date(event.startDate);
-                const endDate = new Date(event.endDate);
-                startDate.setHours(0, 0, 0, 0);
-                endDate.setHours(23, 59, 59, 999);
-
-                const relevantRoutes = routesData.filter(route => {
-                  const routeDate = new Date(route.date);
-                  routeDate.setHours(0, 0, 0, 0);
-                  return routeDate >= startDate && routeDate <= endDate;
-                });
-
-                let progress = 0;
-                let neededDistance = event.distance || 0;
-                if (event.type === 'run') {
-                  progress = relevantRoutes
-                    .filter(route => route.transport_mode_id === 1)
-                    .reduce((acc, route) => acc + route.distance_km, 0);
-
-                } else if (event.type === 'bike') {
-                  progress = relevantRoutes
-                    .filter(route => route.transport_mode_id === 2)
-                    .reduce((acc, route) => acc + route.distance_km, 0);
-                }
-
-                const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
-                progressMap[event.id] = progressPercentage;
-
-                if (isUserAdded) {
-                  continue;
-                }
-
-                handleProgressUpdate(event, progressPercentage);
-
-              }
-
-              setProgressData(progressMap);
-            } else {
-              setError('Błąd podczas pobierania wydarzeń');
-            }
-
-            const showPopup = localStorage.getItem('showPopup') === 'true';
-
-            if (showPopup) {
-              const notificationsResponse = await fetch(`http://localhost:5000/api/notifications/popup`, {
+            const userAlreadyAdded = async (eventId) => {
+              const eventResponse = await fetch(`http://localhost:5000/api/event/${eventId}`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `Bearer ${token}`,
+                  'sessionKey': sessionKey
                 },
               });
 
-              if (notificationsResponse.ok) {
-                const notificationsData = await notificationsResponse.json();
-                setNotifications(notificationsData);
-                setNotificationPopupVisible(notificationsData.length > 0);
-              } else {
-                setError('Błąd podczas pobierania powiadomień');
-              }
-            }
-          } else {
-            setError('Błąd podczas pobierania tras użytkownika');
-          }
-        } catch (err) {
-          setError('Wystąpił błąd podczas pobierania danych');
-        }
-      } else {
-        setError('Brak tokena uwierzytelniającego');
-      }
-      setLoading(false);
-    };
+              if (eventResponse.ok) {
+                const eventData = await eventResponse.json();
 
-    fetchUserData();
-  }, [navigate]);
+                const userIds = eventData.user_ids ? eventData.user_ids.split(',') : [];
+
+                return userIds.includes(userId.toString());
+              }
+              return false;
+            };
+
+            for (const event of activeEvents) {
+              const isUserAdded = await userAlreadyAdded(event.id);
+              const startDate = new Date(event.startDate);
+              const endDate = new Date(event.endDate);
+              startDate.setHours(0, 0, 0, 0);
+              endDate.setHours(23, 59, 59, 999);
+
+              const relevantRoutes = routesData.filter(route => {
+                const routeDate = new Date(route.date);
+                routeDate.setHours(0, 0, 0, 0);
+                return routeDate >= startDate && routeDate <= endDate;
+              });
+
+              let progress = 0;
+              let neededDistance = event.distance || 0;
+              if (event.type === 'run') {
+                progress = relevantRoutes
+                  .filter(route => route.transport_mode_id === 1)
+                  .reduce((acc, route) => acc + route.distance_km, 0);
+
+              } else if (event.type === 'bike') {
+                progress = relevantRoutes
+                  .filter(route => route.transport_mode_id === 2)
+                  .reduce((acc, route) => acc + route.distance_km, 0);
+              }
+
+              const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
+              progressMap[event.id] = progressPercentage;
+
+              if (isUserAdded) {
+                continue;
+              }
+
+              handleProgressUpdate(event, progressPercentage);
+
+            }
+
+            setProgressData(progressMap);
+          } else {
+            setError('events query/server error');
+          }
+
+          const showPopup = localStorage.getItem('showPopup') === 'true';
+
+          if (showPopup) {
+            const notificationsResponse = await fetch(`http://localhost:5000/api/notifications/popup`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+
+            if (notificationsResponse.ok) {
+              const notificationsData = await notificationsResponse.json();
+              setNotifications(notificationsData);
+              setNotificationPopupVisible(notificationsData.length > 0);
+            } else {
+              setError('notification query/server error');
+            }
+          }
+        } else {
+          setError('user_routes query/server error');
+        }
+      } catch (err) {
+        setError('query/server error');
+      }
+    } else {
+      setError('Token is required');
+    }
+    setLoading(false);
+  };
 
   const handleProgressUpdate = async (event, progressPercentage) => {
     if (progressPercentage === 100) {
@@ -294,17 +296,15 @@ const UserAcc = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Backend response:', data);
-          console.log('Message from backend:', data.message);
         } else {
           const errorData = await response.json();
-          console.error('Error adding user ID to event:', errorData);
         }
       } catch (err) {
-        console.error('Error:', err);
+        console.error('error ', err);
       }
     }
   };
+
   const runningTrophy = calculateTrophyLevel(runningDistance, [10, 20, 50, 75, 100]);
   const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 20, 50, 75, 100]);
   const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
@@ -318,7 +318,6 @@ const UserAcc = () => {
 
     return () => clearInterval(interval);
   }, [events.length]);
-
 
   const trophyDetailsMap = {
     running: {
@@ -360,7 +359,9 @@ const UserAcc = () => {
       setPopupVisible(true);
     }
   };
+
   useEffect(() => {
+    
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setNotificationPopupVisible(false);
@@ -408,11 +409,9 @@ const UserAcc = () => {
       return routeDate <= today;
     });
 
-
     const sortedDates = uniqueDates
       .map(dateStr => new Date(dateStr))
       .sort((a, b) => a - b);
-
 
     let longestStreakCount = 0;
     let currentStreakCount = 0;
@@ -433,7 +432,6 @@ const UserAcc = () => {
 
       longestStreakCount = Math.max(longestStreakCount, currentStreakCount);
       previousDate = date;
-
 
     });
 
@@ -457,7 +455,6 @@ const UserAcc = () => {
     setCurrentStreak(currentStreakCount);
     setLongestStreak(longestStreakCount);
   };
-
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
