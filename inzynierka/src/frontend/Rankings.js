@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
-import '../css/ranking.css';
 import Header from './Components/Header';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,14 +71,14 @@ const Rankings = () => {
 
           if (rankingResponse.ok) {
             const rankingData = await rankingResponse.json();
-            
+
             const parsedRanking = rankingData.map(entry => ({
               user_id: entry.user_id,
               total_CO2: parseFloat(entry.total_CO2) || 0,
               total_kcal: parseFloat(entry.total_kcal) || 0,
               total_money: parseFloat(entry.total_money) || 0,
             }));
-            
+
             setRanking(parsedRanking);
           } else {
             setError('Błąd podczas pobierania rankingu');
@@ -132,7 +131,7 @@ const Rankings = () => {
         return formattedValue;
     }
   };
-  
+
 
   const handleRankingTypeChange = (event) => {
     setRankingType(`total_${event.target.value}`);
@@ -140,21 +139,21 @@ const Rankings = () => {
 
   const getRankingItems = (type) => {
     const sortedRanking = [...ranking].sort((a, b) => b[type] - a[type]);
-  
+
     return sortedRanking.map((entry, index) => {
       const isCurrentUser = entry.user_id === user?.id;
       const isFirstPlace = index === 0;
-        
+
       return (
         entry[type] !== undefined && (
           <li
             key={entry.user_id}
-            className={`ranking-item ${isCurrentUser ? 'highlight' : ''} ${isFirstPlace ? 'first-place' : ''}`}
+            className={`w-full justify-center bg-white mb-[10px] p-[15px] rounded-[5px] flex box-border   ranking-item ${isCurrentUser ? 'highlight' : ''} ${isFirstPlace ? 'first-place' : ''}`}
             onMouseEnter={isCurrentUser && isFirstPlace ? triggerConfetti : undefined}
           >
-            {isCurrentUser && isFirstPlace && <span role="img" aria-label="crown" className="crown-icon">👑</span>}
-            <span className="ranking-position">{index + 1}. </span>
-            <span className="user-info">
+            {isCurrentUser && isFirstPlace && <span role="img" aria-label="crown" className="w-[20px] h-[20px] mr-[5px]">👑</span>}
+            <span className="">{index + 1}. </span>
+            <span className="">
               {usernameMap[entry.user_id] || 'Unknown User'} | {formatValue(entry[type], rankingType)}
             </span>
           </li>
@@ -162,10 +161,10 @@ const Rankings = () => {
       );
     });
   };
-  
-  
-  
-  
+
+
+
+
 
   const getUserValue = (type) => {
     const userEntry = ranking.find(entry => entry.user_id === user?.id);
@@ -188,37 +187,37 @@ const Rankings = () => {
   }, {});
 
   return (
-    <div className='container'>
+    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header 
-        user={user} 
-        theme={theme} 
-        toggleTheme={toggleTheme} 
-        toggleSidebar={toggleSidebar} 
+      <Header
+        user={user}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        toggleSidebar={toggleSidebar}
       />
-      <div className="ranking">
-        <div className='row'>
-        <p>Ranking</p>
-        <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="ranking-dropdown">
-          <option value="CO2">CO2 Saved</option>
-          <option value="kcal">Calories Burned</option>
-          <option value="money">Money Saved</option>
-        </select>
+      <div className="w-[95%] max-w-[600px]  overflow-hidden bg-gray-400 p-[20px] rounded-[10px]">
+        <div className='flex justify-between'>
+          <p className='text-white'>Ranking</p>
+          <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="p-[8px] mb-[10px]">
+            <option value="CO2">CO2 Saved</option>
+            <option value="kcal">Calories Burned</option>
+            <option value="money">Money Saved</option>
+          </select>
         </div>
-        <div className="ranking-section">
+        <div className="">
           <ul>
-            {getRankingItems(rankingType)}
+            {getRankingItems(rankingType).slice(0, 5)}
           </ul>
         </div>
         {user && currentUserIndex > 5 && (
-          <div className="current-user">
+          <div className="mt-[20px]">
             <p>You</p>
             <li
               key={user.id}
-              className="ranking-item highlight"
+              className=""
             >
-              <span className="ranking-position">{currentUserIndex !== -1 ? currentUserIndex + 1 : 'N/A'}. </span>
-              <span className="user-info">
+              <span className="">{currentUserIndex !== -1 ? currentUserIndex + 1 : 'N/A'}. </span>
+              <span className="">
                 {user.username} |  {formatValue(getUserValue(rankingType))}
               </span>
             </li>

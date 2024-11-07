@@ -10,11 +10,16 @@ module.exports = {
       },
       animation: {
         'scrolling-progress': 'scroll 5s linear infinite',
+        'fadeIn': 'fadeIn 0.5s ease-out',
       },
       keyframes: {
         scroll: {
           '0%': { backgroundPosition: '200% 0%' },
           '100%': { backgroundPosition: '0% 0%' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
       screens: {
@@ -25,4 +30,3 @@ module.exports = {
   },
   plugins: [],
 }
-
