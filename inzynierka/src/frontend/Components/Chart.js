@@ -30,7 +30,7 @@ const Chart = ({ month, year, transportMode, userRoutes }) => {
   };
 
   const chartOptions = {
-    responsive: true,
+    responsive: false,
     scales: {
       x: {
         title: {
@@ -48,7 +48,7 @@ const Chart = ({ month, year, transportMode, userRoutes }) => {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full justify-items-center max-w-[100%] content-center">
       <Line data={chartData} options={chartOptions} />
     </div>
   );

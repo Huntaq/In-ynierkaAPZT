@@ -119,7 +119,7 @@ const Settings = () => {
   const remainingChars = maxLength - inputValue.length;
 
   return (
-    <div className='container'>
+    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
       <Sidebar 
         isOpen={sidebarOpen} 
         user={user}  
@@ -132,18 +132,18 @@ const Settings = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
       />
-      <div className='row'>
-        <div className="rest-content">
-          <div className='Problem FAQ'>
-            <a className='none' onClick={toggleFAQ}>
+      <div className=' w-full h-full justify-items-center content-center'>
+      <div onClick={toggleFAQ} className=' hover:cursor-pointer bg-black w-[150px] h-[60px] hover:scale-105 rounded-[5px] text-center content-center'>
+            <a className='text-white' >
               FAQ
             </a>
           </div>
-          <div className='row'>
+        <div className=" w-[95%] max-w-[620px] h-[340px] bg-white justify-items-center rounded-[10px]">
+          <div className=''>
             <p>I have a problem</p>
           </div>
-          <div className='Problem'>
-            <div className='row'>
+          <div className='h-[300px] w-[95%] max-w-[600px]'>
+            <div className=''>
               <select
                 id="issue-select"
                 className="styled-select"

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import '../css/trophies.css';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
@@ -249,7 +248,7 @@ const Trophies = () => {
   if (error) return <p>Błąd: {error}</p>;
 
   return (
-    <div className='container'>
+    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header
         user={user}
@@ -258,29 +257,29 @@ const Trophies = () => {
         toggleSidebar={toggleSidebar}
       />
       <h2>🏅 Your Trophies 🏅</h2>
-      <div className="events-container">
+      <div className="">
         {events.length > 0 && (
-          <ul className="UniqueThropies ">
+          <ul className="flex">
             {events.map(event => (
-              <li key={event.id} className="UniqueThropy HoverTrophy" onClick={() => handleTrophyEventClick(event)}>
-                <img src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+              <li key={event.id} className="hover:scale-105 hover:cursor-pointer" onClick={() => handleTrophyEventClick(event)}>
+                <img className='w-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
               </li>
             ))}
           </ul>
         )}
 
         {selectedEvent && (
-          <div className="modalEvent">
-            <div className="modal-contentEvent" ref={popupRef}>
-              <span className="close" onClick={handleCloseEventModal}>&times;</span>
-              <div className='row EventTitle'><p>! Congratiulations !</p></div>
-              <div className='row EventTitle'><p>Trophy earned by competing in</p></div>
-              <div className='row EventDesc'><p>{selectedEvent.title} Event!</p></div>
+          <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
+            <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn" ref={popupRef}>
+              <span className="" onClick={handleCloseEventModal}>&times;</span>
+              <div className=''><p>! Congratiulations !</p></div>
+              <div className=''><p>Trophy earned by competing in</p></div>
+              <div className=''><p>{selectedEvent.title} Event!</p></div>
             </div>
           </div>
         )}
       </div>
-      <div className="trophies-container testyy">
+      <div className="">
         <TrophyList
           runningDistance={runningDistance}
           cyclingDistance={cyclingDistance}
@@ -291,9 +290,9 @@ const Trophies = () => {
         />
       </div>
       {popupVisible && (
-        <div className="popup1">
-          <div className="popup1-content" ref={popupRef}>
-            <p className='headerModalTrophy'>{popupContent.title}</p>
+        <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
+          <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
+            <p>{popupContent.title}</p>
             <p>Level: {popupContent.level}</p>
             <p>{popupContent.detail}</p>
             <p>{popupContent.fact}</p>

@@ -141,7 +141,7 @@ const Calendar1 = () => {
   if (error) return <p>Błąd: {error}</p>;
 
   return (
-    <div className='container'>
+    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header 
         user={user} 
@@ -149,8 +149,8 @@ const Calendar1 = () => {
         toggleTheme={toggleTheme} 
         toggleSidebar={toggleSidebar} 
       />
-      <div className="row">
-        <div className='backgroundCalendar'>
+      <div className="">
+        <div className='justify-items-center'>
           <Calendar
             onChange={handleDateChange}
             value={selectedDate}
@@ -171,8 +171,8 @@ const Calendar1 = () => {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel="Daily Activities"
-        className="modal"
-        overlayClassName="modal-overlay"
+        className="fixed bg-white z-50 w-[95%] max-w-[600px] h-auto p-[20px] rounded-[20px] top-[40%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
+        overlayClassName="fixed top-0 left-0 bg-black bg-opacity-60 w-full h-full"
       >
         <h2>Aktywności z dnia {selectedDate.toLocaleDateString()}</h2>
         {dailyActivities.length > 0 ? (
@@ -186,7 +186,7 @@ const Calendar1 = () => {
         ) : (
           <p>Brak aktywności na ten dzień.</p>
         )}
-        <button className='button' onClick={closeModal}>Zamknij</button>
+        <button className='bg-black text-white w-[150px] h-[60px] rounded-[10px] hover:scale-105' onClick={closeModal}>Zamknij</button>
       </Modal>
     </div>
   );

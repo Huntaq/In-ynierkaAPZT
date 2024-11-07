@@ -72,9 +72,9 @@ const Overview = ({
                     <p className=''>PLN</p>
                   </div>
                 </div>
-                <div className='max-w-[600px] w-full h-[200px] bg-white m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
+                <div className='flex max-w-[600px] w-full h-[200px] bg-white m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]'>
                   <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
-                  <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
+                  <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes}/>
                 </div>
               </div>
             );
