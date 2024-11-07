@@ -432,7 +432,7 @@ const fetchEvents = async (token, sessionKey) => {
 	if (error) return <p>{error}</p>;
 
 	return (
-		<div className="container">
+		<div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
 		<SidebarAdmin isOpen={sidebarOpen}toggleSidebar={toggleSidebar}toggleModal={toggleModal} />
 			<div className="row">
 			<button className="button btncos" onClick={toggleSidebar}>☰</button>

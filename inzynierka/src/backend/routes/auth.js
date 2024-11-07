@@ -8,33 +8,8 @@ const router = express.Router();
 const SECRET_KEY = process.env.SECRET_KEY;
 const crypto = require('crypto');
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (token == null) return res.sendStatus(401); 
-
-  jwt.verify(token, SECRET_KEY, (err, payload) => {
-    if (err) return res.sendStatus(403); 
-
-    db.query('SELECT session_key FROM users WHERE id = ?', [payload.id], (err, results) => {
-      if (err) {
-        console.error('db error:', err);
-        return res.status(500).json({ error: 'error' });
-      }
-
-      if (results.length === 0 || results[0].session_key !== payload.sessionKey) {
-        return res.sendStatus(403); 
-      }
-
-      req.user = payload;
-      next();
-    });
-  });
-};
-
-
-
+//obsługa rejestracji
 router.post('/register', async (req, res) => {
   const { name, password, email, age, gender } = req.body;
 
@@ -103,6 +78,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
+//obsługa loginu
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -143,8 +119,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/protected', authenticateToken, (req, res) => {
-  res.json({});
-});
 
-module.exports = { authenticateToken, router };
+
+module.exports = { router };

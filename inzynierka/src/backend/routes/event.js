@@ -3,8 +3,8 @@ const multer = require('multer');
 const db = require('../config/db');
 const path = require('path');
 const router = express.Router();
-// const upload = multer({ storage: multer.memoryStorage() });
 
+//sciezka do przechowywania zdjec 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads';
@@ -18,26 +18,26 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-
-
-router.get('/thropies', (req, res) => {
+//wyświetla unikalne id zdobyte przez usera
+router.get('/thropies/:id', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
+  const id = req.params.id;
     if (!token) {
       return res.status(401).json({ error: 'Token is required' });
     }  
-  const sqlQuery = 'SELECT id, title, image,TrophyImage, user_ids FROM events';
+    const sqlQuery = 'SELECT id, title, image, TrophyImage, user_ids FROM events WHERE FIND_IN_SET(?, user_ids) > 0';
     
-    db.query(sqlQuery, (err, results) => {
+    db.query(sqlQuery,[id], (err, results) => {
       if (err) {
-        console.error('Błąd zapytania:', err);
-        return res.status(500).json({ error: 'Błąd bazy danych' });
+        console.error('query error', err);
+        return res.status(500).json({ error: 'DB error' });
       }
-  
       res.json(results);
     });
   });
 
 
+  //tworzenie eventu z panelu admina
   router.post('/', upload.fields([{ name: 'image' }, { name: 'trophyImage' }]), async (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -47,7 +47,7 @@ router.get('/thropies', (req, res) => {
     const files = req.files;
 
     if (!title || !description || !startDate || !endDate || !type || !distance) {
-        return res.status(400).json({ message: 'Wszystkie pola są wymagane' });
+        return res.status(400).json({ message: 'all fields are required' });
     }
 
    
@@ -70,16 +70,16 @@ router.get('/thropies', (req, res) => {
 
         db.query(sqlInsertEvent, [title, description, startDate, endDate, type, distance, imageUrl, trophyImageUrl], (err, result) => {
             if (err) {
-                console.error('Error inserting event into database:', err);
-                return res.status(500).json({ message: 'Błąd serwera' });
+                console.error('error', err);
+                return res.status(500).json({ message: 'server error' });
             }
-            res.status(201).json({ message: 'Wydarzenie zostało pomyślnie utworzone', eventId: result.insertId });
+            res.status(201).json({ message: 'event created', eventId: result.insertId });
         });
 
     
 });
 
-
+//usuwa event i wszystkie jego dane 
 router.delete('/:eventId', async (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -90,12 +90,12 @@ router.delete('/:eventId', async (req, res) => {
   const sqlSelectEvent = 'SELECT image, TrophyImage FROM events WHERE id = ?';
   db.query(sqlSelectEvent, [eventId], async (err, results) => {
     if (err) {
-      console.error('Error fetching event from database:', err);
-      return res.status(500).json({ message: 'Błąd podczas pobierania szczegółów wydarzenia' });
+      console.error('query error', err);
+      return res.status(500).json({ message: 'query error' });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ message: 'Wydarzenie nie zostało znalezione' });
+      return res.status(404).json({ message: 'event not found' });
     }
 
     const event = results[0];
@@ -108,7 +108,7 @@ router.delete('/:eventId', async (req, res) => {
       const filePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/', imageUrl);
       fs.unlink(filePath, (err) => {
         if (err) {
-          console.error('Error deleting image file:', err);
+          console.error('error deleting image', err);
         }
       });
     }
@@ -117,7 +117,7 @@ router.delete('/:eventId', async (req, res) => {
       const trophyFilePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/', trophyImageUrl);
       fs.unlink(trophyFilePath, (err) => {
         if (err) {
-          console.error('Error deleting trophy image file:', err);
+          console.error('error deleting image', err);
         }
       });
     }
@@ -125,10 +125,10 @@ router.delete('/:eventId', async (req, res) => {
     const deleteEventQuery = 'DELETE FROM events WHERE id = ?';
     db.query(deleteEventQuery, [eventId], (err) => {
       if (err) {
-        console.error('Error deleting event from database:', err);
-        return res.status(500).json({ message: 'Błąd podczas usuwania wydarzenia' });
+        console.error('error deleting event', err);
+        return res.status(500).json({ message: 'error deleting event' });
       }
-      res.status(200).json({ message: 'Wydarzenie zostało pomyślnie usunięte' });
+      res.status(200).json({ message: 'event deleted' });
     });
   });
 });
@@ -146,8 +146,8 @@ router.delete('/:eventId', async (req, res) => {
 
     db.query(sqlSelectEvents, (err, results) => {
       if (err) {
-        console.error('Error fetching events from database:', err);
-        return res.status(500).json({ message: 'Błąd serwera' });
+        console.error('query error', err);
+        return res.status(500).json({ message: 'server error' });
       }
       
       const processedResults = results.map(event => {
@@ -172,16 +172,16 @@ router.patch('/:id/status', (req, res) => {
     const { status } = req.body;
     
     if (!['active', 'inactive'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
+      return res.status(400).json({ error: 'error' });
     }
   
     const sql = 'UPDATE events SET status = ? WHERE id = ?';
     db.query(sql, [status, id], (err) => {
       if (err) {
-        console.error('Query error:', err);
+        console.error('query error', err);
         return res.status(500).json({ error: 'DB error' });
       }
-      res.json({ message: 'Event status updated' });
+      res.json({ message: 'event updated' });
     });
   });
 
@@ -199,18 +199,18 @@ router.patch('/:id/status', (req, res) => {
   
     db.query(sqlCheckUser, [eventId], (err, results) => {
       if (err) {
-        console.error('Query error:', err);
+        console.error('query error', err);
         return res.status(500).json({ error: 'DB error' });
       }
   
       if (results.length === 0) {
-        return res.status(404).json({ message: 'Event not found' });
+        return res.status(404).json({ message: 'even not found' });
       }
   
       const userIds = results[0].user_ids ? results[0].user_ids.split(',') : [];
   
       if (userIds.includes(userId.toString())) {
-        return res.status(200).json({ message: 'User ID already added to event' });
+        return res.status(200).json({ message: 'user already added' });
       }
   
       userIds.push(userId);
@@ -224,10 +224,10 @@ router.patch('/:id/status', (req, res) => {
   
       db.query(sqlUpdateEvent, [updatedUserIds, eventId], (err) => {
         if (err) {
-          console.error('Query error:', err);
+          console.error('query error', err);
           return res.status(500).json({ error: 'DB error' });
         }
-        res.status(200).json({ message: 'User ID added to event' });
+        res.status(200).json({ message: 'user added' });
       });
     });
   });
@@ -241,11 +241,11 @@ router.patch('/:id/status', (req, res) => {
   
     db.query(sql, [eventId], (err, results) => {
       if (err) {
-        console.error('Query error:', err);
+        console.error('query error', err);
         return res.status(500).json({ error: 'DB error' });
       }
       if (results.length === 0) {
-        return res.status(404).json({ error: 'Event not found' });
+        return res.status(404).json({ error: 'error' });
       }
       res.json(results[0]);
     });

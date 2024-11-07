@@ -25,7 +25,7 @@ router.get('/:id', (req, res) => {
 
     db.query(sqlUser, [id], (err, results) => {
       if (err) {
-        console.error('Query error:', err);
+        console.error('query error', err);
         return res.status(500).json({ error: 'DB error' });
       }
 
@@ -66,7 +66,7 @@ router.get('/:id/admin', (req, res) => {
 
   db.query(sqlUser, [id], (err, results) => {
     if (err) {
-      console.error('Query error:', err);
+      console.error('query error', err);
       return res.status(500).json({ error: 'DB error' });
     }
      if (results.length > 0) {
@@ -76,7 +76,7 @@ router.get('/:id/admin', (req, res) => {
         const sqlAllUsers = 'SELECT id, username, email, age, gender, is_banned, email_notifications, push_notifications FROM users';
         db.query(sqlAllUsers, (err, users) => {
           if (err) {
-            console.error('Query error:', err);
+            console.error('query error', err);
             return res.status(500).json({ error: 'DB error' });
           }
           res.json(users);
@@ -112,7 +112,7 @@ router.get('/:id/profile', (req, res) => {
 
   db.query(sqlUser, [id], (err, results) => {
     if (err) {
-      console.error('Query error:', err);
+      console.error('query error', err);
       return res.status(500).json({ error: 'DB error' });
     }
 
@@ -149,7 +149,7 @@ router.get('/:id/routes_with_usernames', (req, res) => {
 
   db.query(sql, [userId], (err, results) => {
     if (err) {
-      console.error('Query error:', err);
+      console.error('query error', err);
       return res.status(500).json({ error: 'DB error' });
     }
     

@@ -5,6 +5,7 @@ import "../css/friends.css"
 import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import UserProfileModal from './Components/UserProfileModal';
+
 const Friends = () => {
     const [invitedFriends, setInvitedFriends] = useState([]);
     const [pendingFriends, setPendingFriends] = useState([]);
@@ -68,15 +69,19 @@ const Friends = () => {
 
         fetchUserData();
     }, []);
+
     useEffect(() => {
         fetchFriendsData();
     }, [navigate]);
+
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
     };
+
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
     };
+
     const fetchFriendsData = async () => {
         const token = localStorage.getItem('authToken');
         if (token) {
@@ -135,6 +140,7 @@ const Friends = () => {
         }
         setLoading(false);
     };
+
     const handleRemove = async (friendId) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
@@ -165,6 +171,7 @@ const Friends = () => {
             console.error('Błąd podczas próby usunięcia przyjaciela:', error);
         }
     };
+
     const handleAccept = async (friendId) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
@@ -188,39 +195,6 @@ const Friends = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                await fetchFriendsData();
-            } else {
-                console.error('Nie udało się zmienić statusu zaproszenia:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Błąd podczas próby akceptacji zaproszenia:', error);
-        }
-    };
-
-    const handleDecline = async (friendId) => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            console.error('Brak tokenu autoryzacyjnego');
-            return;
-        }
-
-        const decodedToken = jwtDecode(token);
-        const sessionKey = decodedToken.sessionKey;
-
-        try {
-            const response = await fetch(`http://localhost:5000/api/friends/decline/${userId}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    'sessionKey': sessionKey,
-                },
-                body: JSON.stringify({ friendId }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-
                 await fetchFriendsData();
             } else {
                 console.error('Nie udało się zmienić statusu zaproszenia:', response.statusText);
@@ -348,7 +322,7 @@ const Friends = () => {
                         <span className='friend-username'>{friend.user_username}</span>
                         <div className='friends-pending-actions'>
                             <button onClick={() => handleAccept(friend.user_id)} className='friends-accept-button'>Accept</button>
-                            <button onClick={() => handleDecline(friend.user_id)} className='friends-decline-button'>Decline</button>
+                            <button onClick={() => handleRemove(friend.user_id)} className='friends-decline-button'>Decline</button>
                         </div>
                     </ul>
                 ))}
