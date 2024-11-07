@@ -13,12 +13,13 @@ router.post('/', (req, res) => {
 
   db.query(sqlInsertNotification, [content, header], (err, result) => {
     if (err) {
-      console.error('Query error:', err);
+      console.error('query error', err);
       return res.status(500).json({ error: 'DB error' });
     }
-    res.status(200).json({ message: 'Notification sent successfully' });
+    res.status(200).json({ message: 'success' });
   });
 });
+
 router.get('/popup', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -28,33 +29,31 @@ router.get('/popup', (req, res) => {
 
   db.query(sqlGetNotifications, (err, results) => {
     if (err) {
-      console.error('Query error:', err);
+      console.error('query error', err);
       return res.status(500).json({ error: 'DB error' });
     }
     res.status(200).json(results);
   });
 });
+
 router.delete('/popup/:id', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
       return res.status(401).json({ error: 'Token is required' });
     }
   const { id } = req.params;
-  if (!id) {
-    return res.status(400).json({ error: 'Invalid notification ID' });
-  }
 
   const sqlDeleteNotification = 'DELETE FROM notifications_popup WHERE id = ?';
 
   db.query(sqlDeleteNotification, [id], (err, result) => {
     if (err) {
-      console.error('Query error:', err);
+      console.error('query error', err);
       return res.status(500).json({ error: 'DB error' });
     }
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Notification not found' });
+      return res.status(404).json({ error: 'error' });
     }
-    res.status(200).json({ message: 'Notification deleted successfully' });
+    res.status(200).json({ message: 'success' });
   });
 });
 

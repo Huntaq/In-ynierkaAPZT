@@ -113,7 +113,7 @@ const Trophies = () => {
               localStorage.removeItem('authToken');
               navigate('/');
             }
-            const eventsResponse = await fetch('http://localhost:5000/api/event/thropies', {
+            const eventsResponse = await fetch(`http://localhost:5000/api/event/thropies/${id}`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,

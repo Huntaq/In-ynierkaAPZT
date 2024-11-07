@@ -267,7 +267,7 @@ const Profile = () => {
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
   return (
-    <div className='container'>
+    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
       <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
       <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} currentPage="Profile" />
       <div>

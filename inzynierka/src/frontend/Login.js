@@ -29,17 +29,6 @@ const Login = () => {
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('showPopup', 'true');
 
-        const protectedResponse = await fetch('http://localhost:5000/api/protected', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${data.token}`,
-          },
-        });
-
-        if (protectedResponse.ok) {
-        } else {
-          console.error('Error with protected data');
-        }
         navigate('/UserAcc');
       } else {
         setLoginError('Invalid username or password');

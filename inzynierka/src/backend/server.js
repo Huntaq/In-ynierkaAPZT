@@ -28,9 +28,7 @@ app.use('/api/event', eventRouter);
 app.use('/api/ban', banRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/friends', friendsRouter);
-app.get('/api/protected', authRoutes.authenticateToken, (req, res) => {
-  res.json({ user: req.user });
-});
+
 
 app.listen(port, () => {
   console.log(`Serwer działa na http://localhost:${port}`);

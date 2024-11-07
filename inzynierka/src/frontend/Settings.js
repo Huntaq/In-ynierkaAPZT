@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Components/Sidebar';
-import '../css/Settings.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import emailjs from 'emailjs-com';
@@ -146,7 +145,7 @@ const Settings = () => {
             <div className=''>
               <select
                 id="issue-select"
-                className="styled-select"
+                className="w-full p-[10px] border-[1px] border-[#ccc] rounded-[4px]"
                 value={selectedIssue}
                 onChange={handleIssueChange}
               >
@@ -158,41 +157,58 @@ const Settings = () => {
               </select>
             </div>
             {showFAQ && (
-              <div className='modal-overlay'>
-                <div className='modal-content'>
-                  <button className='modal-close' onClick={toggleFAQ}>X</button>
+              <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 content-center justify-items-center'>
+                <div className='w-[95%] h-[300px] bg-white max-w-[500px] overflow-y-scroll scrollbar-hidden p-[30px] rounded-[10px]'>
+                  <button className='' onClick={toggleFAQ}>X</button>
                   <h2>FAQ</h2>
-                  <div className='faq-item'>
+                  <div className=''>
                     <h3>What is this website about?</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla auctor vehicula lacus.</p>
                   </div>
-                  <div className='faq-item'>
+                  <div className=''>
                     <h3>How do I reset my password?</h3>
                     <p>Curabitur vehicula neque nec sem tempus fermentum. Mauris ac sapien vel mauris eleifend fermentum.</p>
                   </div>
+                  <div className=''>
+                    <h3>How do I reset my password?</h3>
+                    <p>Curabitur vehicula neque nec sem tempus fermentum. Mauris ac sapien vel mauris eleifend fermentum.</p>
+                  </div>
+                  <div className=''>
+                    <h3>How do I reset my password?</h3>
+                    <p>Curabitur vehicula neque nec sem tempus fermentum. Mauris ac sapien vel mauris eleifend fermentum.</p>
+                  </div>
+                  <div className=''>
+                    <h3>How do I reset my password?</h3>
+                    <p>Curabitur vehicula neque nec sem tempus fermentum. Mauris ac sapien vel mauris eleifend fermentum.</p>
+                  </div>
+                  <div className=''>
+                    <h3>How do I reset my password?</h3>
+                    <p>Curabitur vehicula neque nec sem tempus fermentum. Mauris ac sapien vel mauris eleifend fermentum.</p>
+                  </div>
+
                 </div>
               </div>
             )}
-            <div className='row'>
-              <div className="input-container">
-                <label htmlFor="problem-input" className="input-label">Describe your issue</label>
+            <div className=''>
+              <div className="relative">
+                <label htmlFor="problem-input" className="absolute top-[10px] left-[10px] bg-white ">Describe your issue</label>
                 <input
                   id="problem-input"
-                  className="styled-input"
+                  className="box-border w-full h-[180px] border-[#ccc] border-[1px] rounded-[5px]  p-[10px] mt-[20px]"
                   placeholder=" "
                   value={inputValue}
                   onChange={handleInputChange}
                   maxLength={maxLength}
                 />
-                <div className="char-count">
+                <div className="absolute bottom-[10px] right-[10px] text-[#888]">
                   {remainingChars} characters remaining
                 </div>
               </div>
             </div>
-            <div className='row'>
-              <button className='buttonSendEmail' onClick={sendEmail}>Send</button>
-              {emailStatus === 'success' && <span className='email-success'>Email sent successfully!</span>}
-              {emailStatus === 'error' && <span className='email-error'>Please select an issue type and provide a description.</span>}
+            <div className='mt-[5px] CustomXSM:grid'>
+              <button className='w-[150px] h-[40px] bg-black text-white rounded-[5px] hover:scale-105' onClick={sendEmail}>Send</button>
+              {emailStatus === 'success' && <span className='ml-[10px] text-green-500 font-bold CustomXSM:ml-[0px] CustomXSM:mt-[10px]'>Email sent successfully!</span>}
+              {emailStatus === 'error' && <span className='ml-[10px] text-red-500 font-bold CustomXSM:ml-[0px] CustomXSM:mt-[10px]'>Please select an issue type and provide a description.</span>}
             </div>
           </div>
         </div>
