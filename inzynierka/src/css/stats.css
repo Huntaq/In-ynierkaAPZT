@@ -193,9 +193,6 @@ body.dark {
   margin-bottom: 20px;
   margin-top: -15px;
 }
-.margin-left-button{
-  margin-left: 50px;
-}
 .displayProfile{
   display: inline-flex;
   margin: 0px 10px 0px 30px;
@@ -306,9 +303,6 @@ body.dark {
   margin: auto;
   box-shadow: 2px 2px 15px rgba(88, 88, 88, 0.2);
 }
-.margintest{
-  margin-bottom: 50px;
-}
 .background2 {
   background: white;
   height: 200px;
@@ -340,9 +334,6 @@ body.dark {
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-  .inline{
-    display: inline;
-  }
   .title {
     margin: auto;
     justify-content: center;
@@ -368,103 +359,12 @@ body.dark {
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
     }
-.button:hover {
-  background: #317c43;
-}
-.buttonAvatar {
-  top: 20px;
-  right: 25px;
-  align-self: center;
-  max-width: 150px;
-  max-height: 40px;
-  position: relative;
-  padding: 10px 20px;
-  border-radius: 7px;
-  border: 1px solid #409A55;
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 2px;
-  background: #409A55;
-  color: white;
-  overflow: hidden;
-  box-shadow: 0 0 0 0 transparent;
-  -webkit-transition: all 0.2s ease-in;
-  -moz-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
-  }
-.buttonAvatar:hover {
-background: #317c43;
-}
-.Notify{
-  top: 0;
-  right: 0;
-  margin-left: 20px;
-  min-width: 140px;
-}
+
+
 .buttonAvatar.Notify:disabled {
   background-color: gray;
   cursor: not-allowed;
   opacity: 0.6;
-}
-.buttonAvatarDelete {
-  top: 20px;
-  right: 25px;
-  align-self: center;
-  max-width: 150px;
-  max-height: 40px;
-  position: relative;
-  padding: 10px 20px;
-  border-radius: 7px;
-  border: 1px solid #C5C5C5;
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 2px;
-  background: #C5C5C5;;
-  color: white;
-  overflow: hidden;
-  box-shadow: 0 0 0 0 transparent;
-  -webkit-transition: all 0.2s ease-in;
-  -moz-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
-  }
-.buttonAvatarDelete:hover {
-background: #a1a1a1;
-}
-.buttonMode {
-  align-self: center;
-  max-width: 150px;
-  max-height: 40px;
-  position: relative;
-  padding: 10px 20px;
-  border-radius: 7px;
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 2px;
-  background: #409A55;
-  color: white;
-  overflow: hidden;
-  box-shadow: 0 0 0 0 transparent;
-  -webkit-transition: all 0.2s ease-in;
-  -moz-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
-  }
-.buttonMode:hover {
-background: #317c43;
-}
-.admin{
-  margin-right: 10px;
-}
-.margin-right{
-  margin-right:5px;
-}
-.margin-left{
-  margin-left:5px;
-}
-.margin-left1{
-  margin-left:7px;
 }
 
 .activity-date {
@@ -550,14 +450,7 @@ background: #317c43;
   align-self: auto;
   margin-left: 20px;
 }
-.row.ProfileNotify{
-  color: #727272;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  display: ruby;
-}
+
 .widthProfile{
   margin-bottom: 10px;
   margin-left: 15px;

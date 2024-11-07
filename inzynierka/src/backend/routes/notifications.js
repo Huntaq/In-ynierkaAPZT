@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../config/db');
 const router = express.Router();
 
+//tworzenie notyfikacji 
 router.post('/', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -20,6 +21,7 @@ router.post('/', (req, res) => {
   });
 });
 
+//wyświetlanie notyfikacji przy logowaniu
 router.get('/popup', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -36,6 +38,7 @@ router.get('/popup', (req, res) => {
   });
 });
 
+//usuwanie notyfikacji
 router.delete('/popup/:id', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {

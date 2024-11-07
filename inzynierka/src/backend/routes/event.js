@@ -134,7 +134,7 @@ router.delete('/:eventId', async (req, res) => {
 });
 
   
-
+//wyświetla dane eventów
   router.get('/', async (req, res) => {
     
     const token = req.headers['authorization']?.split(' ')[1];

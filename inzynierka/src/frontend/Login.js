@@ -34,7 +34,7 @@ const Login = () => {
         setLoginError('Invalid username or password');
       }
     } catch (err) {
-      console.error('Wystąpił błąd:', err);
+      console.error('error', err);
       setLoginError('An error occurred during login');
     }
   };

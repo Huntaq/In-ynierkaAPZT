@@ -35,9 +35,11 @@ const Trophies = () => {
       scalar: 2,
     });
   };
+
   const handleTrophyEventClickConfetti = () => {
     triggerConfetti();
   };
+
   const getTrophyLevel = (distance) => {
     if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
     if (distance >= 75) return { level: 4, color: 'silver', next: 100 - distance };
@@ -131,22 +133,22 @@ const Trophies = () => {
 
               setEvents(filteredEvents);
             } else {
-              setError('Błąd podczas pobierania danych wydarzeń');
+              setError('events query/server error');
             }
           } else {
-            setError('Błąd podczas pobierania danych użytkownika');
+            setError('user info query/server error');
           }
         } catch (err) {
-          setError('Wystąpił błąd podczas pobierania danych');
+          setError('query/server error');
         }
       } else {
-        setError('Użytkownik nie jest zalogowany');
+        setError('Token is required');
       }
       setLoading(false);
     };
 
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -261,8 +263,8 @@ const Trophies = () => {
         {events.length > 0 && (
           <ul className="flex">
             {events.map(event => (
-              <li key={event.id} className="hover:scale-105 hover:cursor-pointer" onClick={() => handleTrophyEventClick(event)}>
-                <img className='w-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+              <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
+                <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
               </li>
             ))}
           </ul>

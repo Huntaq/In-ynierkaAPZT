@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const router = express.Router();
 
+//folder do zdjęć
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads';
@@ -20,6 +21,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+//wstawianie nowego / usuwanie starego zdjęcia profilowego
 router.post('/', upload.single('file'), async (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -64,6 +66,7 @@ router.post('/', upload.single('file'), async (req, res) => {
   });
 });
 
+//usuwanie zdjęcia profilowego
 router.delete('/', async (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -100,7 +103,5 @@ router.delete('/', async (req, res) => {
     }
   });
 });
-
-
 
 module.exports = router;

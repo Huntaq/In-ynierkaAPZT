@@ -20,44 +20,45 @@ const Settings = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('authToken');
-  
-      if (token) {
-        try {
-          const decodedToken = jwtDecode(token);
-          const id = decodedToken.id;
-          const sessionKey = decodedToken.sessionKey;
-
-          const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'sessionKey': sessionKey
-            },
-          });
-  
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            setUser(userData[0]);
-            if (userData[0].is_banned === 1) {
-              navigate('/Banned');
-            }
-          } else {
-            localStorage.removeItem('authToken');
-            navigate('/');
-          }
-        } catch (err) {
-          setError('Wystąpił błąd podczas pobierania danych');
-        }
-      } else {
-        setError('Użytkownik nie jest zalogowany');
-      }
-      setLoading(false);
-    };
   
     fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const id = decodedToken.id;
+        const sessionKey = decodedToken.sessionKey;
+
+        const userResponse = await fetch(`http://localhost:5000/api/users/${id}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'sessionKey': sessionKey
+          },
+        });
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          setUser(userData[0]);
+          if (userData[0].is_banned === 1) {
+            navigate('/Banned');
+          }
+        } else {
+          localStorage.removeItem('authToken');
+          navigate('/');
+        }
+      } catch (err) {
+        setError('query/server error');
+      }
+    } else {
+      setError('Token is required');
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     document.body.className = theme;
@@ -102,12 +103,10 @@ const Settings = () => {
       process.env.REACT_APP_EMAILJS_USER_ID
     )
       .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
         setEmailStatus('success');
         setInputValue('');
         setSelectedIssue('');
       }, (err) => {
-        console.error('FAILED...', err);
         setEmailStatus('error');
       });
   };

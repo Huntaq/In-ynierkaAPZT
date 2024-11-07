@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../config/db');
 const router = express.Router();
 
+//pobiera dane o znajomych usera
 router.get('/:user_id', (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
     const userId = req.params.user_id;
@@ -25,6 +26,7 @@ router.get('/:user_id', (req, res) => {
     });
 });
 
+//akceptowanie zaproszenia
 router.post('/accept/:user_id', (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
     const { friendId } = req.body;
@@ -42,6 +44,7 @@ router.post('/accept/:user_id', (req, res) => {
     });
 });
 
+//wyszukiwarka userów 
 router.get('/allusers/:userId', (req, res) => {
     const { userId } = req.params;
     const token = req.headers['authorization']?.split(' ')[1];
@@ -78,6 +81,7 @@ router.get('/allusers/:userId', (req, res) => {
     });
 });
 
+//wysyłanie zaproszenia
 router.post('/invite/:user_id', (req, res) => {
     const userId = req.params.user_id;
     const { friend_id, status } = req.body;
@@ -95,6 +99,7 @@ router.post('/invite/:user_id', (req, res) => {
     });
 });
 
+//usuwanie zaproszenia / znajomego  / odrzucenie zaproszenia
 router.post('/remove/:user_id', (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
     const userId = req.params.user_id;
@@ -118,6 +123,7 @@ router.post('/remove/:user_id', (req, res) => {
     });
 });
 
+//wyświetlanie profilu znajomego
 router.get('/get/:userId', async (req, res) => {
     const userId = req.params.userId;
     const token = req.headers['authorization']?.split(' ')[1];
