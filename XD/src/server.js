@@ -10,6 +10,8 @@ const multer = require('multer');
 
 const app = express();
 const port = 5000;
+const baseURL = 'http://192.168.56.1';
+const port1 = 80
 
 
 
@@ -27,14 +29,14 @@ const db = mysql.createConnection({
 });
 
 app.use(session({
-  secret: '213314', // Replace with a unique key in production
+  secret: '213314', 
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' } // Secure only in production with HTTPS
+  cookie: { secure: process.env.NODE_ENV === 'production' } 
 }));
 
 
-// Konfiguracja multer do przechowywania przesłanych plików
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = './uploads/profilePictures/';
@@ -44,16 +46,16 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const userId = req.session.userId; // Zakładamy, że sesja zawiera ID użytkownika
+    const userId = req.session.userId; 
     const ext = path.extname(file.originalname);
-    cb(null, `user_${userId}${ext}`); // Nazwa pliku np. user_123.jpg
+    cb(null, `user_${userId}${ext}`); 
   }
 });
 
 
 const upload = multer({ storage: storage });
 
-// Endpoint do przesyłania zdjęcia profilowego
+
 app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res) => {
   const userId = req.session.userId;
 
@@ -63,7 +65,7 @@ app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res
 
   const profilePicturePath = `/uploads/profilePictures/${req.file.filename}`;
 
-  // Aktualizacja w bazie danych
+  
   db.query(
     'UPDATE users SET profilePicture = ? WHERE id = ?',
     [profilePicturePath, userId],
@@ -114,14 +116,16 @@ app.post('/api/login', (req, res) => {
         res.json({
           message: 'Login successful',
           user: {
-            id: user.id,  
+            id: user.id,
             username: user.username,
             age: user.age,
             gender: user.gender,
             is_banned: user.is_banned,
             email: user.email,
-            profilePicture: user.profilePicture,
-            posts: [] 
+            profilePicture: user.profilePicture
+              ? `${baseURL}:${port1}${user.profilePicture}`
+              : null,
+            posts: [],
           },
         });
       } else {
@@ -130,6 +134,7 @@ app.post('/api/login', (req, res) => {
     });
   });
 });
+
 
 app.get('/api/posts', (req, res) => {
   const userId = req.session.userId;
@@ -170,24 +175,24 @@ app.post('/api/posts', (req, res) => {
 app.post('/api/register', (req, res) => {
   const { username, password, email, age, gender } = req.body;
 
-  // Ensure gender is either 'F' or 'M'
+  
   if (!['F', 'M'].includes(gender)) {
     return res.status(400).json({ message: 'Invalid gender value' });
   }
 
-  // Ensure age is an integer
+  
   const ageInt = parseInt(age, 10);
   if (!username || !password || !email || isNaN(ageInt) || !gender) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  // Validate password (8 characters, 1 lowercase, 1 uppercase, 1 number, 1 special char)
+  
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   if (!passwordRegex.test(password)) {
     return res.status(400).json({ message: 'Password must be at least 8 characters long and contain a lowercase letter, an uppercase letter, a number, and a special character' });
   }
 
-  // Check if username or email already exists
+
   db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email], (err, results) => {
     if (err) {
       console.error('Database query error:', err);
@@ -195,7 +200,7 @@ app.post('/api/register', (req, res) => {
     }
 
     if (results.length > 0) {
-      // Check if both username and email exist
+      
       const existingUser = results[0];
       let conflictMessage = '';
       if (existingUser.username === username && existingUser.email === email) {
@@ -209,14 +214,14 @@ app.post('/api/register', (req, res) => {
       return res.status(409).json({ message: conflictMessage });
     }
 
-    // Hash password
+
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) {
         console.error('Password hashing error:', err);
         return res.status(500).json({ message: 'Error hashing password' });
       }
 
-      // Insert new user
+      
       db.query('INSERT INTO users (username, password_hash, email, age, gender) VALUES (?, ?, ?, ?, ?)', 
         [username, hash, email, ageInt, gender], (err, result) => {
           if (err) {
@@ -240,7 +245,7 @@ app.get('/api/events', (req, res) => {
       return res.status(500).json({ message: 'Error fetching events from database' });
     }
 
-    // Zwracamy wyniki jako JSON
+   
     res.json(results);
   });
 });
@@ -248,7 +253,7 @@ app.get('/api/events', (req, res) => {
 app.post('/api/friends', (req, res) => {
   const { user_id, friend_id } = req.body;
 
-  // Sprawdź, czy zaproszenie do znajomych już istnieje
+  
   db.query('SELECT * FROM friends WHERE user_id = ? AND friend_id = ?', [user_id, friend_id], (err, results) => {
     if (err) {
       console.error('Error checking existing friendship:', err);
@@ -259,7 +264,7 @@ app.post('/api/friends', (req, res) => {
       return res.status(400).json({ message: 'Friend request already sent or already friends' });
     }
 
-    // Jeśli nie ma istniejącej znajomości, wstaw zaproszenie
+    
     const query = 'INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, "pending")';
     db.query(query, [user_id, friend_id], (err, result) => {
       if (err) {

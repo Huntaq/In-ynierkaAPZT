@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useEffect, useContext } from 'react';  
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';  
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { UserProvider, UserContext } from '../src/UserContex';  // Zakładam poprawny plik: UserContext
+import { UserProvider, UserContext } from '../src/UserContex'; 
 
 
 import Feed from './Feed';
@@ -16,7 +16,7 @@ import Log from './Log';
 import RegistrationForm from '../src/Rejestracja';
 import Events from './Events';
 import Friends from './Friends';
-import test from './Test';
+import StartStopButton from './test';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -49,8 +49,8 @@ const AppContent = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="test">
-        <Stack.Screen name="test" component={Log} />
+      <Stack.Navigator initialRouteName="Logowanie">
+        <Stack.Screen name="Logowanie" component={Log} />
         
         <Stack.Screen 
           name="Home" 
@@ -124,36 +124,52 @@ const AppContent = () => {
     </NavigationContainer>
   );
 };
-
 const ProfileImageButton = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   return (
     <UserContext.Consumer>
       {({ user }) => (
-        user && user.profilePicture ? (
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          {user && user.profilePicture ? (
             <Image
               source={{ uri: user.profilePicture }}
               style={styles.profileImage}
             />
-          </TouchableOpacity>
-        ) : null
+          ) : (
+            <View style={styles.defaultProfileImage}>
+              <Text style={styles.profileInitial}>
+                {user ? user.username.charAt(0).toUpperCase() : 'D'}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       )}
     </UserContext.Consumer>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-  },
   profileImage: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 20, // This makes the image circular
+    overflow: 'hidden',
     marginRight: 10,
+  },
+  defaultProfileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20, // Ensures the default profile image is also circular
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  profileInitial: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

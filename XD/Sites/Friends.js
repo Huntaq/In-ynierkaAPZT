@@ -24,47 +24,13 @@ const Friends = ({ userId }) => {
   }, [userId]);
 
   
-  const addFriend = async (friendId) => {
-    try {
-      await axios.post('http://192.168.56.1:5000/api/friends', { user_id: userId, friend_id: friendId });
-      Alert.alert('Success', 'Friend request sent successfully');
-    } catch (error) {
-      console.error('Error adding friend:', error);
-      Alert.alert('Error', 'Failed to send friend request');
-    }
-  };
+
 
   
-  const acceptFriend = async (friendId) => {
-    try {
-      await axios.put('http://192.168.56.1:5000/api/friends/accept', { user_id: userId, friend_id: friendId });
-      Alert.alert('Success', 'Friend request accepted');
-      
-      setFriends((prevFriends) =>
-        prevFriends.map((friend) =>
-          friend.friend_id === friendId ? { ...friend, status: 'accepted' } : friend
-        )
-      );
-    } catch (error) {
-      console.error('Error accepting friend request:', error);
-      Alert.alert('Error', 'Failed to accept friend request');
-    }
-  };
 
 
-  const rejectFriend = async (friendId) => {
-    try {
-      await axios.put('http://192.168.56.1:5000/api/friends/reject', { user_id: userId, friend_id: friendId });
-      Alert.alert('Success', 'Friend request rejected');
-      
-      setFriends((prevFriends) =>
-        prevFriends.filter((friend) => friend.friend_id !== friendId)
-      );
-    } catch (error) {
-      console.error('Error rejecting friend request:', error);
-      Alert.alert('Error', 'Failed to reject friend request');
-    }
-  };
+
+
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -79,17 +45,11 @@ const Friends = ({ userId }) => {
           <View style={styles.friendItem}>
             <Text style={styles.text}>Username: {item.username}</Text>
             <Text style={styles.text}>Status: {item.status}</Text>
-            {item.status === 'pending' && (
-              <View style={styles.buttonContainer}>
-                <Button title="Accept" onPress={() => acceptFriend(item.friend_id)} />
-                <Button title="Reject" onPress={() => rejectFriend(item.friend_id)} />
-              </View>
-            )}
           </View>
         )}
       />
       {}
-      <Button title="Add Friend" onPress={() => addFriend(anotherUserId)} />
+      
     </View>
   );
 };

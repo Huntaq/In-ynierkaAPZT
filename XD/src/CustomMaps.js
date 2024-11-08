@@ -24,7 +24,7 @@ const CustomMap = () => {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState(0);
   const [isTracking, setIsTracking] = useState(false);
-  const [IsResumed, setIsResumed] = useState(truefalse);
+  const [IsResumed, setIsResumed] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
