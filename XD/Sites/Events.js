@@ -8,7 +8,7 @@ const Events = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Użycie jednego useEffect dla pobrania eventów i tras użytkownika
+
   useEffect(() => {
     const fetchEventsAndRoutes = async () => {
       try {
@@ -25,7 +25,7 @@ const Events = () => {
     };
 
     fetchEventsAndRoutes();
-  }, []); // Pusty array oznacza, że useEffect wykona się tylko raz przy załadowaniu komponentu
+  }, []); 
 
   const calculateProgress = (event) => {
     const { startDate, endDate, distance } = event;

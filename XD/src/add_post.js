@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import axios from 'axios';
 
 const AddPost = () => {
-  const [user_id, setUserId] = useState(''); // Initialize user_id state
+  const [user_id, setUserId] = useState(''); 
   const [route_id, setRouteId] = useState('');
   const [content, setContent] = useState('');
 
@@ -22,7 +22,7 @@ const AddPost = () => {
 
       if (response.status === 200) {
         Alert.alert('Sukces', 'Post został dodany');
-        setUserId(''); // Clear user_id after submission
+        setUserId(''); 
         setRouteId('');
         setContent('');
       }
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
-    textAlignVertical: 'top', // Wyrównanie tekstu do góry
+    textAlignVertical: 'top', 
   },
 });
 

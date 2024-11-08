@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-// Komponent Nagłowek
+
 function Nagłowek() {
   return (
     <View style={styles.container}>
@@ -10,29 +10,29 @@ function Nagłowek() {
   );
 }
 
-// Stylizacja komponentów
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 50, // Zmniejsz wysokość nagłówka
-    flexDirection: 'row', // Ustaw flexDirection na row, aby umieścić tekst poziomo
-    justifyContent: 'center', // Wyśrodkowanie tekstu w poziomie
-    alignItems: 'center', // Wyśrodkowanie tekstu w pionie
-    backgroundColor: '#000', // Kolor tła nagłówka
-    borderRadius: 10, // Zaokrąglenie rogów
-    borderWidth: 2, // Grubość obramówki
-    borderColor: '#fff', // Kolor obramówki
-    paddingHorizontal: 10, // Padding w poziomie
-    paddingVertical: 5, // Padding w pionie
+    height: 50, 
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#000', 
+    borderRadius: 10, 
+    borderWidth: 2, 
+    borderColor: '#fff', 
+    paddingHorizontal: 10, 
+    paddingVertical: 5, 
   },
   greetingText: {
-    fontSize: 16, // Zmniejsz rozmiar czcionki
+    fontSize: 16, 
     fontWeight: 'bold',
-    color: '#fff', // Kolor tekstu
-    padding: 5, // Padding wewnętrzny
-    borderWidth: 1, // Grubość obramówki tekstu
-    borderColor: '#fff', // Kolor obramówki tekstu
-    borderRadius: 5, // Zaokrąglenie rogów obramówki tekstu
+    color: '#fff', 
+    padding: 5, 
+    borderWidth: 1, 
+    borderColor: '#fff', 
+    borderRadius: 5, 
   },
 });
 

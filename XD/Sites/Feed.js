@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
-import NavBar from '../src/Navbar'; // Zakładam, że NavBar jest poprawnym komponentem nawigacyjnym
+import NavBar from '../src/Navbar'; 
 
 const RoutesList = ({ user_id }) => {
   const [routes, setRoutes] = useState([]);
@@ -13,10 +13,10 @@ const RoutesList = ({ user_id }) => {
       try {
         const response = await axios.get('http://192.168.56.1:5000/api/user_routes', { withCredentials: true });
 
-        console.log('Response:', response.data); // Logowanie odpowiedzi
+        console.log('Response:', response.data); 
         setRoutes(response.data);
       } catch (err) {
-        console.error('Fetch routes error:', err); // Logowanie błędu
+        console.error('Fetch routes error:', err); 
         setError('Błąd podczas pobierania tras');
       } finally {
         setLoading(false);
@@ -31,16 +31,16 @@ const RoutesList = ({ user_id }) => {
       
       
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />  // Wyświetla spinner, gdy trwa ładowanie
+        <ActivityIndicator size="large" color="#0000ff" />  
       ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>  // Wyświetla błąd, jeśli wystąpił
+        <Text style={styles.errorText}>{error}</Text>  
       ) : (
         <FlatList
           data={routes}
           
           renderItem={({ item }) => (
             <View style={styles.route}>
-              {/* Wyświetlanie szczegółów trasy */}
+              
               
               <Text style={styles.text}>Transport Mode ID: {item.transport_mode_id}</Text>
               <Text style={styles.text}>Distance: {item.distance_km} km</Text>

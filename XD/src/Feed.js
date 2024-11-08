@@ -10,7 +10,7 @@ const Feed = () => {
         { text: "OK", onPress: () => console.log("OK Pressed") },
         { text: "Anuluj", onPress: () => console.log("Cancel Pressed"), style: "cancel" }
       ],
-      { cancelable: false } // Ustawienie na true pozwala na zamknięcie dialogu przez kliknięcie poza nim
+      { cancelable: false } 
     );
   };
 

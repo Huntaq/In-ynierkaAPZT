@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 
 const RegistrationForm = () => {
@@ -12,9 +11,9 @@ const RegistrationForm = () => {
   const [gender, setGender] = useState('');
   const [age, setAge] = useState('');
   
-  const navigation = useNavigation(); // Hook do nawigacji
+  const navigation = useNavigation(); 
 
-  // Password validation function
+  
   const validatePassword = (password) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return regex.test(password);
@@ -49,7 +48,7 @@ const RegistrationForm = () => {
       if (response.status === 200) {
         Alert.alert('Success', 'Registration successful');
         
-        // Resetowanie formularza
+        
         setUsername('');
         setEmail('');
         setPassword('');
@@ -57,7 +56,7 @@ const RegistrationForm = () => {
         setGender('');
         setAge('');
 
-        // Przejście do ekranu logowania
+        
         navigation.navigate('Logowanie');
       } else if (response.status === 409) {
         Alert.alert('Error', response.data.message);
@@ -68,6 +67,10 @@ const RegistrationForm = () => {
       console.error(error);
       Alert.alert('Error', 'Registration failed. Please try again.');
     }
+  };
+
+  const handleGenderSelect = (selectedGender) => {
+    setGender(selectedGender);
   };
 
   return (
@@ -108,15 +111,20 @@ const RegistrationForm = () => {
       />
 
       <Text style={styles.label}>Gender:</Text>
-      <Picker
-        selectedValue={gender}
-        style={styles.input}
-        onValueChange={(itemValue) => setGender(itemValue)}
-      >
-        <Picker.Item label="Select Gender" value="" />
-        <Picker.Item label="Male" value="M" />
-        <Picker.Item label="Female" value="F" />
-      </Picker>
+      <View style={styles.checkboxContainer}>
+        <TouchableOpacity
+          style={[styles.checkbox, gender === 'M' ? styles.checkedBox : null]}
+          onPress={() => handleGenderSelect('M')}
+        >
+          <Text style={styles.checkboxLabel}>Male</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.checkbox, gender === 'F' ? styles.checkedBox : null]}
+          onPress={() => handleGenderSelect('F')}
+        >
+          <Text style={styles.checkboxLabel}>Female</Text>
+        </TouchableOpacity>
+      </View>
 
       <Text style={styles.label}>Age:</Text>
       <TextInput
@@ -146,6 +154,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 15,
     padding: 10,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  checkbox: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  checkedBox: {
+    backgroundColor: '#8A2BE2',
+  },
+  checkboxLabel: {
+    color: '#000', 
+    fontWeight: 'bold',
   },
 });
 

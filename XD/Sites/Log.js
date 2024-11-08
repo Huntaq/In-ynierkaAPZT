@@ -21,10 +21,10 @@ const LoginScreen = () => {
       });
 
       if (response.status === 200) {
-        const userData = response.data.user;  // Zakładam, że serwer zwraca dane użytkownika
-        console.log('Logged in user data:', userData);  // Loguj dane użytkownika do konsoli
-        setUser(userData);  // Ustaw dane użytkownika w kontekście
-        navigation.navigate('Home');  // Przekieruj na ekran główny
+        const userData = response.data.user;  
+        console.log('Logged in user data:', userData);  
+        setUser(userData);  
+        navigation.navigate('Home');  
       }
     } catch (err) {
       setError(err.response ? err.response.data.message : 'Login failed');
@@ -34,7 +34,7 @@ const LoginScreen = () => {
   };
 
   const handleNavigateToRegister = () => {
-    navigation.navigate('Registration');  // Nawigacja do ekranu rejestracji
+    navigation.navigate('Registration');  
   };
 
   return (

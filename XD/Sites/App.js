@@ -6,7 +6,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserProvider, UserContext } from '../src/UserContex';  // Zakładam poprawny plik: UserContext
 
-// Importy ekranów
+
 import Feed from './Feed';
 import SaveRoad from './SaveRoad';
 import Home from './Home';
@@ -16,7 +16,7 @@ import Log from './Log';
 import RegistrationForm from '../src/Rejestracja';
 import Events from './Events';
 import Friends from './Friends';
-
+import test from './Test';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -27,17 +27,17 @@ const App = () => {
   );
 };
 
-// Wyodrębnienie logiki do osobnego komponentu
+
 const AppContent = () => {
-  const { setUser } = useContext(UserContext);  // Pobierz funkcję setUser z kontekstu
+  const { setUser } = useContext(UserContext); 
 
   useEffect(() => {
     const loadUserData = async () => {
       try {
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
-          console.log('Loaded user from AsyncStorage:', storedUser);  // Loguj dane użytkownika z AsyncStorage
-          setUser(JSON.parse(storedUser));  // Ustaw dane użytkownika w kontekście
+          console.log('Loaded user from AsyncStorage:', storedUser); 
+          setUser(JSON.parse(storedUser));  
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -49,8 +49,8 @@ const AppContent = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Logowanie">
-        <Stack.Screen name="Logowanie" component={Log} />
+      <Stack.Navigator initialRouteName="test">
+        <Stack.Screen name="test" component={Log} />
         
         <Stack.Screen 
           name="Home" 
@@ -126,7 +126,7 @@ const AppContent = () => {
 };
 
 const ProfileImageButton = () => {
-  const navigation = useNavigation(); // Używamy nawigacji
+  const navigation = useNavigation(); 
 
   return (
     <UserContext.Consumer>

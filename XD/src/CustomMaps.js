@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Modal, Alert, Platform } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -6,35 +6,35 @@ import haversine from 'haversine';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import axios from 'axios';
 import { UserContext } from './UserContex';
-import { UserProvider } from './UserContex';
 
 
 const CustomMap = () => {
-  const { user } = useContext(UserContext);  // Pobieramy dane użytkownika z kontekstu
+  const { user } = useContext(UserContext);
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitudeDelta: 0.005,
+    longitudeDelta: 0.005,
   });
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 0,
     longitude: 0,
   });
+
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState(0);
   const [isTracking, setIsTracking] = useState(false);
+  const [IsResumed, setIsResumed] = useState(truefalse);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
-  const [lastRecordedPosition, setLastRecordedPosition] = useState(null); 
+  const [lastRecordedPosition, setLastRecordedPosition] = useState(null);
 
   useEffect(() => {
     let watchId;
     const requestLocationPermission = async () => {
-      // Prośba o pozwolenie na lokalizację
-      const permission = Platform.OS === 'android' 
-        ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION 
+      const permission = Platform.OS === 'android'
+        ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
         : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
 
       const result = await request(permission);
@@ -56,7 +56,7 @@ const CustomMap = () => {
 
             if (lastRecordedPosition) {
               const distance = haversine(lastRecordedPosition, newCoordinate, { unit: 'meter' });
-              if (distance >= 10) {
+              if (distance >= 5) {
                 setRouteCoordinates((prevCoordinates) => [...prevCoordinates, newCoordinate]);
                 setDistanceTravelled((prevDistance) => prevDistance + distance);
                 setLastRecordedPosition(newCoordinate);
@@ -80,12 +80,13 @@ const CustomMap = () => {
         },
         {
           enableHighAccuracy: true,
-          distanceFilter: 5, 
-          interval: 5000, 
-          fastestInterval: 2000, 
+          distanceFilter: 5,
+          interval: 5000,
+          fastestInterval: 2000,
         }
       );
     };
+
 
     requestLocationPermission();
 
@@ -108,34 +109,35 @@ const CustomMap = () => {
     return () => clearInterval(interval);
   }, [isTracking]);
 
+
   const handleSavePress = async () => {
-    if (!user || !user.id) {
-      Alert.alert('Error', 'User is not logged in');
-      return;
-    }
-  
     try {
-      const routeData = {
-        user_id: user.id,
-        transport_mode_id: transportMode === 'Walking' ? '1' : transportMode === 'Cycling' ? '2' : '3',
-        distance_km: (distanceTravelled / 1000).toFixed(2),
-        CO2: calculateCO2Savings(),
-        kcal: calculateCaloriesBurned(),
-        duration: formatTime(timeElapsed),  // Wysyłanie czasu w formacie HH:MM:SS
-        money: calculateSavings(),
-        is_private: false
-      };
-  
-      const response = await axios.post('http://192.168.56.1:5000/api/routes', routeData, {
+      const formData = new FormData();
+      formData.append('user_id', user.id);
+      formData.append('transport_mode_id', {
+        'Walking': '1',
+        'Running': '2',
+        'Cycling': '3'
+      });
+
+
+      formData.append('distance_km', (distanceTravelled / 1000).toFixed(2));
+      formData.append('CO2', calculateCO2Savings());
+      formData.append('kcal', calculateCaloriesBurned());
+      formData.append('duration', formatTime(timeElapsed));
+      formData.append('money', calculateSavings());
+      formData.append('is_private', false);
+
+      const response = await axios.post('http://192.168.56.1:5000/api/routes', formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
-  
-      if (response.status === 200) {
-        console.log('Route saved successfully:', response.data);
+
+
+      if (response.status === 201) {
         Alert.alert('Success', 'Route has been saved successfully.');
-        setModalVisible(false);  // Zamknięcie modal po sukcesie
+        setModalVisible(false);
       } else {
         throw new Error('Failed to save route.');
       }
@@ -144,56 +146,64 @@ const CustomMap = () => {
       Alert.alert('Error', 'Unable to save route. Please try again.');
     }
   };
-  
+
 
   const handleStartPress = () => {
     setIsTracking(true);
     setRouteCoordinates([]);
     setDistanceTravelled(0);
     setTimeElapsed(0);
-    setLastRecordedPosition(null); 
+    setLastRecordedPosition(null);
     console.log('Start pressed');
   };
 
   const handleStopPress = () => {
     setIsTracking(false);
+    setIsResumed(false);
     console.log('Stop pressed');
   };
+
 
   const formatTime = (time) => {
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
     const seconds = time % 60;
-  
+
     const formattedHours = hours < 10 ? `0${hours}` : hours;
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
     const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-  
+
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
-  
+
+
   const handleTransportModeChange = (mode) => {
     setTransportMode(mode);
   };
+
 
   const calculateSavings = () => {
     const savingsPerKm = transportMode === 'Bus' ? 1 : 0.5;
     return (distanceTravelled / 1000 * savingsPerKm).toFixed(2);
   };
 
+
   const calculateCO2Savings = () => {
-    const co2PerKm = 120; 
+    const co2PerKm = 120;
     return (distanceTravelled / 1000 * co2PerKm).toFixed(2);
   };
+
 
   const calculateCaloriesBurned = () => {
     const caloriesPerKm = transportMode === 'Walking' ? 50 : 35;
     return (distanceTravelled / 1000 * caloriesPerKm).toFixed(2);
   };
 
+
   const handleFinishPress = () => {
     setModalVisible(true);
   };
+
 
   return (
     <View style={styles.container}>
@@ -202,41 +212,42 @@ const CustomMap = () => {
         region={region}
         onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
       >
-        <Marker
-          coordinate={currentPosition}
-          title={"Your Location"}
-          description={"This is where you are currently located."}
-        />
+          <Marker
+            coordinate={currentPosition}
+            title={"Your Location"}
+            description={"This is where you are currently located."}
+          />
         <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
       </MapView>
+
       <View style={styles.controls}>
         <Text style={styles.distanceText}>Distance: {distanceTravelled.toFixed(2)} m</Text>
         <Text style={styles.timerText}>Time: {formatTime(timeElapsed)}</Text>
         <Text style={styles.transportText}>Mode: {transportMode}</Text>
 
         <View style={styles.modeButtons}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.modeButton, 
+              styles.modeButton,
               transportMode === 'Walking' ? styles.activeButton : null
             ]}
             onPress={() => handleTransportModeChange('Walking')}
           >
             <Text style={styles.buttonText}>Walking</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.modeButton, 
+              styles.modeButton,
               transportMode === 'Cycling' ? styles.activeButton : null
             ]}
             onPress={() => handleTransportModeChange('Cycling')}
           >
             <Text style={styles.buttonText}>Cycling</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.modeButton, 
-              transportMode === 'Bus' ? styles.activeButton : null
+              styles.modeButton,
+              transportMode === 'Running' ? styles.activeButton : null
             ]}
             onPress={() => handleTransportModeChange('Bus')}
           >
@@ -265,7 +276,7 @@ const CustomMap = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Trasa ukończona!</Text>
 
-            {/* Minimapa z trasą */}
+            
             <MapView
               style={styles.miniMap}
               region={{
@@ -278,14 +289,14 @@ const CustomMap = () => {
               <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="red" />
             </MapView>
 
-            {/* Informacje */}
+            
             <Text style={styles.modalText}>Czas: {formatTime(timeElapsed)}</Text>
             <Text style={styles.modalText}>Dystans: {(distanceTravelled / 1000).toFixed(2)} km</Text>
             <Text style={styles.modalText}>Zaoszczędzone pieniądze: {calculateSavings()} PLN</Text>
             <Text style={styles.modalText}>Zaoszczędzone CO2: {calculateCO2Savings()} g</Text>
             <Text style={styles.modalText}>Spalone kalorie: {calculateCaloriesBurned()} kcal</Text>
 
-            {/* Przycisk zapisz */}
+           
             <TouchableOpacity
               style={[styles.button, styles.saveButton]}
               onPress={handleSavePress}
@@ -293,7 +304,7 @@ const CustomMap = () => {
               <Text style={styles.buttonText}>Zapisz</Text>
             </TouchableOpacity>
 
-            {/* Przycisk zamknięcia */}
+            
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
               onPress={() => setModalVisible(false)}
@@ -313,9 +324,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+
   controls: {
     position: 'absolute',
     bottom: 30,
@@ -325,41 +338,49 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
   },
+
   distanceText: {
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 10,
   },
+
   timerText: {
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 10,
   },
+
   transportText: {
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 10,
     fontWeight: 'bold',
   },
+
   modeButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 10,
   },
+
   modeButton: {
     backgroundColor: '#D3D3D3',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 10,
   },
+
   activeButton: {
     backgroundColor: '#8A2BE2',
   },
+
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
   },
+
   startButton: {
     backgroundColor: '#8A2BE2',
     borderRadius: 10,
@@ -368,6 +389,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   stopButton: {
     backgroundColor: '#FF6347',
     borderRadius: 10,
@@ -376,6 +398,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   finishButton: {
     backgroundColor: '#FF0000',
     borderRadius: 10,
@@ -384,31 +407,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   saveButton: {
-    backgroundColor: '#32CD32',  // Example color for save button
+    backgroundColor: '#32CD32',
     marginTop: 10,
   },
+
   startButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
   },
+
   stopButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
   },
+
   finishButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
   },
+
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+
   modalContent: {
     backgroundColor: '#fff',
     padding: 20,
@@ -416,33 +445,30 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
   },
+
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
+
   modalText: {
     fontSize: 16,
     textAlign: 'center',
     marginVertical: 5,
   },
+
   miniMap: {
     width: '100%',
     height: 100,
     marginBottom: 20,
   },
-  shareButton: {
-    backgroundColor: '#8A2BE2',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
+
   cancelButton: {
     backgroundColor: '#FF6347',
     marginTop: 10,
   },
+  
 });
 
 export default CustomMap;

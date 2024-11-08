@@ -7,7 +7,7 @@ const Friends = ({ userId }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Funkcja pobierająca listę znajomych dla zalogowanego użytkownika
+    
     const fetchFriends = async () => {
       try {
         const response = await axios.get(`http://192.168.56.1:5000/api/friends/${userId}`);
@@ -23,7 +23,7 @@ const Friends = ({ userId }) => {
     fetchFriends();
   }, [userId]);
 
-  // Funkcja wysyłająca zaproszenie do znajomych
+  
   const addFriend = async (friendId) => {
     try {
       await axios.post('http://192.168.56.1:5000/api/friends', { user_id: userId, friend_id: friendId });
@@ -34,12 +34,12 @@ const Friends = ({ userId }) => {
     }
   };
 
-  // Funkcja akceptująca zaproszenie
+  
   const acceptFriend = async (friendId) => {
     try {
       await axios.put('http://192.168.56.1:5000/api/friends/accept', { user_id: userId, friend_id: friendId });
       Alert.alert('Success', 'Friend request accepted');
-      // Odświeżenie listy znajomych po zaakceptowaniu zaproszenia
+      
       setFriends((prevFriends) =>
         prevFriends.map((friend) =>
           friend.friend_id === friendId ? { ...friend, status: 'accepted' } : friend
@@ -51,12 +51,12 @@ const Friends = ({ userId }) => {
     }
   };
 
-  // Funkcja odrzucająca zaproszenie
+
   const rejectFriend = async (friendId) => {
     try {
       await axios.put('http://192.168.56.1:5000/api/friends/reject', { user_id: userId, friend_id: friendId });
       Alert.alert('Success', 'Friend request rejected');
-      // Odświeżenie listy znajomych po odrzuceniu zaproszenia
+      
       setFriends((prevFriends) =>
         prevFriends.filter((friend) => friend.friend_id !== friendId)
       );
@@ -88,7 +88,7 @@ const Friends = ({ userId }) => {
           </View>
         )}
       />
-      {/* Dodaj przycisk do wysyłania zaproszeń do znajomych */}
+      {}
       <Button title="Add Friend" onPress={() => addFriend(anotherUserId)} />
     </View>
   );

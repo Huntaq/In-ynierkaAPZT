@@ -20,9 +20,9 @@ app.use(express.json());
 
 
 const db = mysql.createConnection({
-  host: '34.116.229.68',
+  host: 'localhost',
   user: 'root',
-  password: 'QN|9YDTy[Tex3,04',
+  password: '',
   database: 'inzynierka'
 });
 
@@ -50,7 +50,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// Inicjalizacja multer z użyciem storage
+
 const upload = multer({ storage: storage });
 
 // Endpoint do przesyłania zdjęcia profilowego
@@ -82,6 +82,9 @@ app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res
 });
 
 app.use('/uploads', express.static('uploads'));
+
+
+
 
 
 
@@ -335,7 +338,7 @@ app.get('/api/friends/:user_id', (req, res) => {
 
 
 
-app.post('/api/routes', (req, res) => {
+app.post('/api/routes', upload.single('route_image'), (req, res) => {
   const {
     user_id,
     transport_mode_id,
@@ -347,23 +350,35 @@ app.post('/api/routes', (req, res) => {
     is_private
   } = req.body;
 
-  if (!user_id || !transport_mode_id || !distance_km ||  !CO2 || !kcal || !duration || !money === undefined || is_private === undefined) {
+  if (
+    !user_id ||
+    !transport_mode_id ||
+    typeof distance_km === 'undefined' ||
+    typeof CO2 === 'undefined' ||
+    typeof kcal === 'undefined' ||
+    !duration ||
+    typeof money === 'undefined' ||
+    typeof is_private === 'undefined'
+  ) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
+  const routeImagePath = req.file ? `/uploads/${path.basename(req.file.path)}` : null;
+
   db.query(
-    'INSERT INTO user_routes (user_id, transport_mode_id, distance_km,  CO2, kcal, duration, money, is_private) VALUES (?,  ?, ?, ?, ?, ?, ?, ?)',
-    [user_id, transport_mode_id, distance_km,  CO2, kcal, duration, money, is_private],
+    'INSERT INTO user_routes (user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, route_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, routeImagePath],
     (err, result) => {
       if (err) {
         console.error('Error adding route:', err);
         return res.status(500).json({ message: 'Error adding route to the database' });
       }
 
-      res.json({ message: 'Route added successfully', routeId: result.insertId });
+      res.status(201).json({ message: 'Route added successfully', routeId: result.insertId });
     }
   );
 });
+
 
 app.get('/api/user_routes', (req, res) => {
   // Pobieranie userId z sesji (zakładam, że użytkownik jest zalogowany i userId jest w sesji)

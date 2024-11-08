@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, Image, Button, Alert } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker'; // Dodajemy import biblioteki
+import { launchImageLibrary } from 'react-native-image-picker'; 
 import { UserContext } from '../src/UserContex'; 
 import NavBarPro from '../src/NavbarProfil';
 
@@ -8,7 +8,7 @@ const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Function to handle image selection
+  
   const handleSelectImage = () => {
     const options = {
       mediaType: 'photo',
@@ -25,17 +25,16 @@ const Profile = () => {
         const selectedImage = response.assets[0].uri;
         console.log('Selected image URI: ', selectedImage);
 
-        // Here we call the function to upload the image to the backend
+        
         handleUploadToBackend(selectedImage);
       }
     });
   };
 
-  // Function to handle image upload to backend
   const handleUploadToBackend = (imageUri) => {
     setIsUploading(true);
 
-    // Prepare form data
+    
     const formData = new FormData();
     formData.append('profilePicture', {
       uri: imageUri,
@@ -43,15 +42,15 @@ const Profile = () => {
       name: 'profilePicture.jpg',
     });
 
-    fetch('http://192.168.56.1:5000/api/uploadProfilePicture', { // Zmieniamy URL na Twój backend
+    fetch('http://192.168.56.1:5000/api/uploadProfilePicture', { 
       method: 'POST',
       body: formData,
-      credentials: 'include', // Zakładamy, że sesja używa ciasteczek
+      credentials: 'include', 
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.profilePicture) {
-          // Aktualizujemy zdjęcie profilowe w kontekście użytkownika
+          
           setUser({
             ...user,
             profilePicture: data.profilePicture,

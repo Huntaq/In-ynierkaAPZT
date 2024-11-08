@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-// Komponent Start
+
 function Start() {
   const [selected, setSelected] = useState(null);
   const [isCounting, setIsCounting] = useState(false);
@@ -12,13 +12,13 @@ function Start() {
 
     if (isCounting) {
       interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1); // Inkrementuj czas co sekundę
+        setTime((prevTime) => prevTime + 1); 
       }, 1000);
     } else if (!isCounting && time !== 0) {
       clearInterval(interval);
     }
 
-    return () => clearInterval(interval); // Czyszczenie interwału po odmontowaniu komponentu
+    return () => clearInterval(interval); 
   }, [isCounting]);
 
   const handlePress = (option) => {
@@ -40,9 +40,8 @@ function Start() {
     setIsCounting(false);
     setTime(0);
     console.log('Reset pressed');
-  };//Zmienić jak bedziesz wiedział co potrzeba
-
-  // Formatowanie czasu w minutach i sekundach
+  };
+  
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
