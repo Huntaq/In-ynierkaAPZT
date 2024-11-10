@@ -250,57 +250,66 @@ const Trophies = () => {
   if (error) return <p>Błąd: {error}</p>;
 
   return (
-    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
-      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header
-        user={user}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        toggleSidebar={toggleSidebar}
-      />
-      <h2>🏅 Your Trophies 🏅</h2>
-      <div className="">
-        {events.length > 0 && (
-          <ul className="flex">
-            {events.map(event => (
-              <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
-                <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
-              </li>
-            ))}
-          </ul>
-        )}
 
-        {selectedEvent && (
-          <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
-            <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn" ref={popupRef}>
-              <span className="" onClick={handleCloseEventModal}>&times;</span>
-              <div className=''><p>! Congratiulations !</p></div>
-              <div className=''><p>Trophy earned by competing in</p></div>
-              <div className=''><p>{selectedEvent.title} Event!</p></div>
+    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
+      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
+        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
+          <Sidebar />
+        </div>
+        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+            <Header
+              user={user}
+              theme={theme}
+              toggleTheme={toggleTheme}
+              toggleSidebar={toggleSidebar}
+            />
+            <h2>🏅 Your Trophies 🏅</h2>
+            <div className="">
+              {events.length > 0 && (
+                <ul className="flex">
+                  {events.map(event => (
+                    <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
+                      <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {selectedEvent && (
+                <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
+                  <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn" ref={popupRef}>
+                    <span className="" onClick={handleCloseEventModal}>&times;</span>
+                    <div className=''><p>! Congratiulations !</p></div>
+                    <div className=''><p>Trophy earned by competing in</p></div>
+                    <div className=''><p>{selectedEvent.title} Event!</p></div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
-      <div className="">
-        <TrophyList
-          runningDistance={runningDistance}
-          cyclingDistance={cyclingDistance}
-          Co2Saved={Co2Saved}
-          CaloriesBurned={CaloriesBurned}
-          MoneySaved={MoneySaved}
-          handleTrophyClick={handleTrophyClick}
-        />
-      </div>
-      {popupVisible && (
-        <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
-          <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
-            <p>{popupContent.title}</p>
-            <p>Level: {popupContent.level}</p>
-            <p>{popupContent.detail}</p>
-            <p>{popupContent.fact}</p>
+            <div className="">
+              <TrophyList
+                runningDistance={runningDistance}
+                cyclingDistance={cyclingDistance}
+                Co2Saved={Co2Saved}
+                CaloriesBurned={CaloriesBurned}
+                MoneySaved={MoneySaved}
+                handleTrophyClick={handleTrophyClick}
+              />
+            </div>
+            {popupVisible && (
+              <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
+                <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
+                  <p>{popupContent.title}</p>
+                  <p>Level: {popupContent.level}</p>
+                  <p>{popupContent.detail}</p>
+                  <p>{popupContent.fact}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

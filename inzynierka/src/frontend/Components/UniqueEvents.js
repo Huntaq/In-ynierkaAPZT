@@ -4,7 +4,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
   if (events.length === 0) return null;
 
   return (
-    <div className="relative CustomSM:max-w-[95%] w-[600px] h-[250px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
+    <div className="relative CustomSM:max-w-[95%] max-w-[800px] w-[100%] h-[150px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
       <div className="bg-none">
         <div
           className="absolute top-0 left-0 w-full h-full bg-cover rounded-[5px] transition ease-in duration-800"
@@ -13,10 +13,10 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
           }}
         />
 
-        <div className="flex items-center justify-between m-[10px]">
-          <h3 className="text-[24px] z-40">{events[currentIndex].title}</h3>
+        <div className="relative flex items-center justify-between m-[10px]">
+          <h3 className="text-[24px]">{events[currentIndex].title}</h3>
           <div className="flex flex-col justify-center w-[150px]">
-            <div className="w-full bg-white h-[20px] overflow-hidden z-40">
+            <div className="w-full bg-white h-[20px] overflow-hidden ">
               <div className="h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress"
                 style={{ width: `${progressData[events[currentIndex].id] || 0}%` }}>
               </div>
@@ -26,8 +26,8 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="relative">
           <p className="pl-[10px] text-white">{events[currentIndex].description}</p>
         </div>
-        <div className="flex justify-between  mt-[145px] text-center CustomXSM:mt-[120px]">
-          <p className="flex-1 text-white font-bold z-40"><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
+        <div className="relative flex justify-between  mt-[40px] text-center CustomXSM:mt-[120px]">
+          <p className="flex-1 text-white font-bold "><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
           <div className="flex-1 flex justify-center translate-x-[-0%] CustomXSM:items-center">
           {events.map((_, index) => (
             <span
@@ -37,7 +37,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
             />
           ))}
         </div>
-          <p className="flex-1 text-white font-bold z-40 "><strong>End Date:</strong> {new Date(events[currentIndex].endDate).toLocaleDateString()}</p>
+          <p className="flex-1 text-white font-bold "><strong>End Date:</strong> {new Date(events[currentIndex].endDate).toLocaleDateString()}</p>
         </div>
       </div>
     </div>

@@ -169,7 +169,7 @@ const Rankings = () => {
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
-  
+
   const triggerConfetti = () => {
     confetti({
       particleCount: 100,
@@ -185,42 +185,51 @@ const Rankings = () => {
   }, {});
 
   return (
-    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
-      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header
-        user={user}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        toggleSidebar={toggleSidebar}
-      />
-      <div className="w-[95%] max-w-[600px]  overflow-hidden bg-gray-400 p-[20px] rounded-[10px]">
-        <div className='flex justify-between'>
-          <p className='text-white'>Ranking</p>
-          <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="p-[8px] mb-[10px]">
-            <option value="CO2">CO2 Saved</option>
-            <option value="kcal">Calories Burned</option>
-            <option value="money">Money Saved</option>
-          </select>
+
+    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
+      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
+        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
+          <Sidebar />
         </div>
-        <div className="">
-          <ul>
-            {getRankingItems(rankingType).slice(0, 5)}
-          </ul>
-        </div>
-        {user && currentUserIndex > 5 && (
-          <div className="mt-[20px]">
-            <p>You</p>
-            <li
-              key={user.id}
-              className=""
-            >
-              <span className="">{currentUserIndex !== -1 ? currentUserIndex + 1 : 'N/A'}. </span>
-              <span className="">
-                {user.username} |  {formatValue(getUserValue(rankingType))}
-              </span>
-            </li>
+        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+            <Header
+              user={user}
+              theme={theme}
+              toggleTheme={toggleTheme}
+              toggleSidebar={toggleSidebar}
+            />
+            <div className="w-[95%] max-w-[600px]  overflow-hidden bg-gray-400 p-[20px] rounded-[10px]">
+              <div className='flex justify-between'>
+                <p className='text-white'>Ranking</p>
+                <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="p-[8px] mb-[10px]">
+                  <option value="CO2">CO2 Saved</option>
+                  <option value="kcal">Calories Burned</option>
+                  <option value="money">Money Saved</option>
+                </select>
+              </div>
+              <div className="">
+                <ul>
+                  {getRankingItems(rankingType).slice(0, 5)}
+                </ul>
+              </div>
+              {user && currentUserIndex > 5 && (
+                <div className="mt-[20px]">
+                  <p>You</p>
+                  <li
+                    key={user.id}
+                    className=""
+                  >
+                    <span className="">{currentUserIndex !== -1 ? currentUserIndex + 1 : 'N/A'}. </span>
+                    <span className="">
+                      {user.username} |  {formatValue(getUserValue(rankingType))}
+                    </span>
+                  </li>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

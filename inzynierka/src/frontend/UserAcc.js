@@ -46,54 +46,6 @@ const UserAcc = () => {
 
   }, [navigate]);
 
-  const calculateTrophyLevel = (value, thresholds) => {
-    const levels = [
-      { level: 5, color: 'gold' },
-      { level: 4, color: 'silver' },
-      { level: 3, color: 'bronze' },
-      { level: 2, color: 'blue' },
-      { level: 1, color: 'green' },
-      { level: 0, color: 'grey' }
-    ];
-
-    for (let i = 0; i < thresholds.length; i++) {
-      if (value >= thresholds[i]) {
-        return {
-          level: levels[i].level,
-          color: levels[i].color,
-          next: thresholds[i + 1] ? thresholds[i + 1] - value : 0,
-        };
-      }
-    }
-
-    return { level: 0, color: 'grey', next: thresholds[0] - value };
-  };
-
-  const defaultSections = [
-    { id: 'co2', label: 'CO2 Saved', visible: true },
-    { id: 'pln', label: 'PLN Saved', visible: true },
-    { id: 'streak', label: 'Current Streak', visible: true },
-    { id: 'Test', label: 'Test', visible: false },
-    // tu bedzie wiecej sekcji 
-  ];
-
-  const [sections, setSections] = useState(() => {
-    const savedSections = localStorage.getItem('userSections');
-    return savedSections ? JSON.parse(savedSections) : defaultSections;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('userSections', JSON.stringify(sections));
-  }, [sections]);
-
-  const toggleSectionVisibility1 = (id) => {
-    setSections(prevSections =>
-      prevSections.map(section =>
-        section.id === id ? { ...section, visible: !section.visible } : section
-      )
-    );
-  };
-
   const fetchUserData = async () => {
     const token = localStorage.getItem('authToken');
     if (token) {
@@ -274,9 +226,69 @@ const UserAcc = () => {
         setError('query/server error');
       }
     } else {
+      navigate('/');
       setError('Token is required');
     }
     setLoading(false);
+  };
+
+  const calculateTrophyLevel = (value, thresholds) => {
+    const levels = [
+      { level: 5, color: 'gold' },
+      { level: 4, color: 'silver' },
+      { level: 3, color: 'bronze' },
+      { level: 2, color: 'blue' },
+      { level: 1, color: 'green' },
+      { level: 0, color: 'grey' }
+    ];
+
+    for (let i = 0; i < thresholds.length; i++) {
+      if (value >= thresholds[i]) {
+        return {
+          level: levels[i].level,
+          color: levels[i].color,
+          next: thresholds[i + 1] ? thresholds[i + 1] - value : 0,
+        };
+      }
+    }
+
+    return { level: 0, color: 'grey', next: thresholds[0] - value };
+  };
+  const runningTrophy = calculateTrophyLevel(runningDistance, [10, 20, 50, 75, 100]);
+  const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 20, 50, 75, 100]);
+  const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
+  const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
+  const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
+
+  const defaultSections = [
+    { id: 'co2', label: 'CO2 Saved', visible: true },
+    { id: 'pln', label: 'PLN Saved', visible: true },
+    { id: 'streak', label: 'Current Streak', visible: true },
+    { id: 'Test', label: 'Test', visible: false },
+    { id: 'Calendar', label: 'Calendar', visible: true },
+    { id: 'Chart', label: 'Chart', visible: true },
+    { id: 'Trophies', label: 'Trophies', visible: true },
+    { id: 'kmYear', label: 'kmYear', visible: true },
+    { id: 'kmMonth', label: 'kmMonth', visible: true },
+    { id: 'kmWeek', label: 'kmWeek', visible: true },
+    // tu bedzie wiecej sekcji 
+  ];
+
+  const [sections, setSections] = useState(() => {
+    const savedSections = localStorage.getItem('userSections');
+    return savedSections ? JSON.parse(savedSections) : defaultSections;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('userSections', JSON.stringify(sections));
+  }, [sections]);
+
+  const toggleSectionVisibility1 = (id) => {
+    setSections(prevSections =>
+      prevSections.map(section =>
+        section.id === id ? { ...section, visible: !section.visible } : section
+      )
+    );
   };
 
   const handleProgressUpdate = async (event, progressPercentage) => {
@@ -304,12 +316,6 @@ const UserAcc = () => {
       }
     }
   };
-
-  const runningTrophy = calculateTrophyLevel(runningDistance, [10, 20, 50, 75, 100]);
-  const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 20, 50, 75, 100]);
-  const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
-  const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
-  const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -361,7 +367,7 @@ const UserAcc = () => {
   };
 
   useEffect(() => {
-    
+
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setNotificationPopupVisible(false);
@@ -489,80 +495,86 @@ const UserAcc = () => {
   };
 
   return (
+    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
+      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
+        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
+          <Sidebar />
+        </div>
+        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center  scrollbar-hide'>
 
-    <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+            <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
+            <div className='CustomSM:contents flex justify-between w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
+              <div className="CustomSM:hidden flex-[1]"></div>
 
-      <Sidebar isOpen={sidebarOpen} user={user} toggleSidebar={toggleSidebar} userRoutes={userRoutes} />
-      <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-      <div className='CustomSM:contents flex justify-between w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
-        <div className="CustomSM:hidden flex-[1]"></div>
+              <UniqueEvents
+                events={events}
+                currentIndex={currentIndex}
+                progressData={progressData}
+                handleDotClick={handleDotClick}
+              />
 
-        <UniqueEvents
-          events={events}
-          currentIndex={currentIndex}
-          progressData={progressData}
-          handleDotClick={handleDotClick}
-        />
+              <div className="CustomSM:mt-[10px] max-h-[90px] CustomXSM:max-w-[95%] w-full CustomSM:max-w-[600px] grid flex-[1] gap-[10px] justify-end ">
+                {showAdminButton && (
+                  <button onClick={() => navigate('/AdminPanel')} className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white">
+                    Admin
+                  </button>
+                )}
 
-        <div className="CustomSM:mt-[10px] max-h-[90px] CustomXSM:max-w-[95%] w-full CustomSM:max-w-[600px] grid flex-[1] gap-[10px] justify-end ">
-          {showAdminButton && (
-            <button onClick={() => navigate('/AdminPanel')}className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white">
-              Admin
-            </button>
-          )}
-          
-          <button className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white"onClick={() => setPopupVisible1(true)}>
-            Layout
-          </button>
-          </div>
-          {popupVisible1 && (
-            <SettingsPopup
+                <button className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white" onClick={() => setPopupVisible1(true)}>
+                  Layout
+                </button>
+              </div>
+              {popupVisible1 && (
+                <SettingsPopup
+                  sections={sections}
+                  toggleSectionVisibility1={toggleSectionVisibility1}
+                  onClose={() => setPopupVisible1(false)}
+                />
+              )}
+            </div>
+
+            <Overview
               sections={sections}
-              toggleSectionVisibility1={toggleSectionVisibility1}
-              onClose={() => setPopupVisible1(false)}
+              totalCO2={totalCO2}
+              savedKm={savedKm}
+              earthImage={earthImage}
+              totalMoney={totalMoney}
+              handleMonthChange={handleMonthChange}
+              handleTransportChange={handleTransportChange}
+              month={month}
+              year={year}
+              transportMode={transportMode}
+              userRoutes={userRoutes}
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+              meter={meter}
+              runningDistance={runningDistance}
+              cyclingDistance={cyclingDistance}
+              Co2Saved={Co2Saved}
+              CaloriesBurned={CaloriesBurned}
+              MoneySaved={MoneySaved}
+              handleTrophyClick={handleTrophyClick}
+              notifications={notifications}
+              notificationPopupVisible={notificationPopupVisible}
+              popupRef={popupRef}
+              currentNotificationIndex={currentNotificationIndex}
+              goToNotification={goToNotification}
+              showNextNotification={showNextNotification}
             />
-          )}
-      </div>
-
-
-      <Overview
-        sections={sections}
-        totalCO2={totalCO2}
-        savedKm={savedKm}
-        earthImage={earthImage}
-        totalMoney={totalMoney}
-        handleMonthChange={handleMonthChange}
-        handleTransportChange={handleTransportChange}
-        month={month}
-        year={year}
-        transportMode={transportMode}
-        userRoutes={userRoutes}
-        currentStreak={currentStreak}
-        longestStreak={longestStreak}
-        meter={meter}
-        runningDistance={runningDistance}
-        cyclingDistance={cyclingDistance}
-        Co2Saved={Co2Saved}
-        CaloriesBurned={CaloriesBurned}
-        MoneySaved={MoneySaved}
-        handleTrophyClick={handleTrophyClick}
-        notifications={notifications}
-        notificationPopupVisible={notificationPopupVisible}
-        popupRef={popupRef}
-        currentNotificationIndex={currentNotificationIndex}
-        goToNotification={goToNotification}
-        showNextNotification={showNextNotification}
-      />
-      {popupVisible && (
-        <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
-          <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
-            <p>{popupContent.title}</p>
-            <p>Level: {popupContent.level}</p>
-            <p>{popupContent.detail}</p>
-            <p>{popupContent.fact}</p>
+            {popupVisible && (
+              <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
+                <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
+                  <p>{popupContent.title}</p>
+                  <p>Level: {popupContent.level}</p>
+                  <p>{popupContent.detail}</p>
+                  <p>{popupContent.fact}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

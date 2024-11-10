@@ -49,14 +49,14 @@
 }
 body.light {
   color: #000000;
-  background-color: rgb(241, 241, 241);
+  background-color: #D9EDDF;
 }
 body.dark {
   color: #ffffff;
   background-color: gray;
 }
 .unique-dot.active {
-  background-color: #8ac598;
+  background-color: #84D49D;
 }
 .trohpies::-webkit-scrollbar {
   width: 12px;
@@ -67,14 +67,14 @@ body.dark {
   border: 3px solid white;
 }
 .react-calendar {
-  background-color: #8ac598 !important;
-  width: 80% !important;
-  height: 60% !important;
-  max-width: 700px !important;
-  padding: 20px;
+  margin: 5px;
+  background-color: #F1FCF3 !important;
+  width: 400px !important;
+  padding: 15px;
   font-family: Arial, sans-serif;
   border: none !important;
   border-radius: 15px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .react-calendar__navigation {
@@ -82,62 +82,48 @@ body.dark {
   justify-content: space-between;
   margin-bottom: 10px;
 }
-
-.react-calendar__navigation button {
+.react-calendar__tile--active {
+  background: #84D49D !important;
   color: white;
-  background-color: rgb(61, 106, 255);
-  border: none;
-  border-radius: 4px;
-  padding: 5px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
 }
-
-.react-calendar__navigation button:hover {
-  background-color: rgb(101, 106, 255);
+.react-calendar__tile--active:hover {
+  background: #99d1ab !important;
+  color: white;
 }
-
 .react-calendar__month-view__weekdays {
   text-align: center;
   font-weight: bold;
-  color: gray;
+  color: #828282;
 }
 
 .react-calendar__tile {
-  background-color: white !important;
-  border: 3px solid #8ac598 !important;
-  border-radius: 10px;
-  width: 1vw;
+  border-radius: 20px;
   height: auto;
   background: none;
   border: none;
   text-align: center;
   cursor: pointer;
-}
-.react-calendar__month-view__weekdays__weekday{
-  color: white;
-}
-.react-calendar__tile--now {
-  background-color: rgba(61, 106, 255, 0.1);
-}
-.react-calendar__tile--active:hover {
-  background-color: rgb(101, 106, 255);
-}
-
-.react-calendar__tile--hasActive:hover {
-  background-color: rgb(101, 106, 255);
+  margin-bottom: 2px !important;
+  
 }
 .react-calendar__tile--highlighted {
-  background-color: #409A55!important; 
+  background-color: #84D49D!important; 
   color: white !important;
 }
 .react-calendar__tile--highlighted:hover {
-  background-color: rgb(78, 165, 134) !important;
+  background-color: #99d1ab !important;
   color: white !important;
 }
-.react-calendar__tile--active {
-  background-color: rgb(61, 106, 255) !important;
+.react-calendar__navigation button {
+  color: #828282 !important;
+}
+.react-calendar__tile--now {
+  background: #84D49D !important;
+  color: white !important;
+}
+.react-calendar__tile--now:hover {
+  background: #99d1ab !important;
+  color: white !important;
 }
 /* 
 !!!Tu są rzeczy które muszą zostac!!!
