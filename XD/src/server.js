@@ -6,6 +6,7 @@ const session = require('express-session');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const bodyParser = require('body-parser');
 
 
 const app = express();
@@ -14,9 +15,10 @@ const baseURL = 'http://192.168.56.1';
 const port1 = 80
 
 
-
+app.use('/uploads', express.static('uploads'));
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 
 
 
@@ -31,8 +33,8 @@ const db = mysql.createConnection({
 app.use(session({
   secret: '213314', 
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' } 
+  saveUninitialized: false,
+  cookie: { secure: false } 
 }));
 
 
@@ -83,7 +85,8 @@ app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res
   );
 });
 
-app.use('/uploads', express.static('uploads'));
+
+
 
 
 
@@ -172,6 +175,7 @@ app.post('/api/posts', (req, res) => {
       res.json({ message: 'Post added successfully' });
   });
 });
+
 app.post('/api/register', (req, res) => {
   const { username, password, email, age, gender } = req.body;
 
@@ -250,94 +254,83 @@ app.get('/api/events', (req, res) => {
   });
 });
 
-app.post('/api/friends', (req, res) => {
-  const { user_id, friend_id } = req.body;
+app.get('/api/friends', (req, res) => {
+  const userId = req.session.userId;
+  console.log('User ID:', userId);
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
+  }
+  console.log('User ID2:', userId);
 
+  const query = `SELECT 
+  friends.id AS friends_id, 
+  friends.user_id AS friends_user_id, 
+  friends.friend_id AS friends_friend_id, 
+  friends.status AS friends_status,
+  friends.created_at AS friends_created_at,
+  users.id AS user_id,
+  users.username,
+  users.profilePicture,
+  users.is_Admin 
+  FROM friends 
+  JOIN users ON (friends.friend_id = users.id OR friends.user_id = users.id)
+  WHERE (user_id = ? OR friends.friend_id = ?) AND friends.status = 'accepted';
+`;
+console.log('User ID3:', userId);
+  db.query(query, [userId,userId], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ message: 'Error querying the database' });
+    }
+    const filteredResults = results.filter(friend => friend.user_id !== userId);
+    return res.status(200).json({ message: 'Friends retrieved successfully', results });
+  });
+});
+
+app.delete('/api/friends/:friendId', (req, res) => {
+  const userId = req.session.userId;
+  const { friendId } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
+  }
+
+  const query = `DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)`;
   
-  db.query('SELECT * FROM friends WHERE user_id = ? AND friend_id = ?', [user_id, friend_id], (err, results) => {
+  db.query(query, [userId, friendId, friendId, userId], (err, result) => {
     if (err) {
-      console.error('Error checking existing friendship:', err);
-      return res.status(500).json({ message: 'Database error' });
-    }
-
-    if (results.length > 0) {
-      return res.status(400).json({ message: 'Friend request already sent or already friends' });
-    }
-
-    
-    const query = 'INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, "pending")';
-    db.query(query, [user_id, friend_id], (err, result) => {
-      if (err) {
-        console.error('Error adding friend:', err);
-        return res.status(500).json({ message: 'Error adding friend to database' });
-      }
-
-      res.json({ message: 'Friend request sent successfully' });
-    });
-  });
-});
-
-app.put('/api/friends/accept', (req, res) => {
-  const { user_id, friend_id } = req.body;
-
-  const query = 'UPDATE friends SET status = "accepted" WHERE user_id = ? AND friend_id = ? AND status = "pending"';
-  db.query(query, [friend_id, user_id], (err, result) => {
-    if (err) {
-      console.error('Error accepting friend request:', err);
-      return res.status(500).json({ message: 'Database error' });
+      console.error('Error deleting friend from database:', err);
+      return res.status(500).json({ message: 'Error deleting friend' });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(400).json({ message: 'No pending friend request found' });
+      return res.status(404).json({ message: 'No matching friend found' });
     }
 
-    res.json({ message: 'Friend request accepted successfully' });
+    return res.status(200).json({ message: 'Friend removed successfully' });
   });
 });
 
-app.put('/api/friends/reject', (req, res) => {
-  const { user_id, friend_id } = req.body;
+app.get('/search-users', (req, res) => {
+  console.log('Żądanie wyszukiwania otrzymane:', req.query); // Dodanie logowania
+  const { username } = req.query;
+  if (!username) {
+    console.log('Brak parametru username');
+    return res.status(400).send({ message: 'Username query parameter is required.' });
+  }
 
-  const query = 'UPDATE friends SET status = "rejected" WHERE user_id = ? AND friend_id = ? AND status = "pending"';
-  db.query(query, [friend_id, user_id], (err, result) => {
+  const query = `SELECT id, username, profilePicture FROM users WHERE username LIKE ?`;
+  db.query(query, [`%${username}%`], (err, results) => {
     if (err) {
-      console.error('Error rejecting friend request:', err);
-      return res.status(500).json({ message: 'Database error' });
+      console.error('Błąd zapytania do bazy danych:', err);
+      return res.status(500).send({ message: 'Internal server error.' });
     }
-
-    if (result.affectedRows === 0) {
-      return res.status(400).json({ message: 'No pending friend request found' });
-    }
-
-    res.json({ message: 'Friend request rejected successfully' });
+    console.log('Wyniki wyszukiwania:', results); // Dodanie logowania
+    res.send(results);
   });
 });
-app.get('/api/friends/:user_id', (req, res) => {
-  const { user_id } = req.params;
 
-  const query = `
-    SELECT u.id, u.username, u.email, f.status 
-    FROM users u 
-    JOIN friends f ON (u.id = f.friend_id OR u.id = f.user_id)
-    WHERE (f.user_id = ? OR f.friend_id = ?) 
-      AND f.status = "accepted" 
-      AND u.id != ?
-  `;
 
-  console.log('User ID:', user_id);
-  console.log('Query:', query);
-  console.log('Parameters:', [user_id, user_id, user_id]);
-
-  db.query(query, [user_id, user_id, user_id], (err, results) => {
-    if (err) {
-      console.error('Error fetching friends:', err);
-      return res.status(500).json({ message: 'Error fetching friends from database' });
-    }
-
-    console.log('Friends results:', results);
-    res.json(results);
-  });
-});
 
 
 
@@ -386,21 +379,21 @@ app.post('/api/routes', upload.single('route_image'), (req, res) => {
 
 
 app.get('/api/user_routes', (req, res) => {
-  // Pobieranie userId z sesji (zakładam, że użytkownik jest zalogowany i userId jest w sesji)
+  
   const userId = req.session.userId;
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  // Pobranie tras użytkownika z bazy danych
+ 
   db.query('SELECT * FROM user_routes WHERE user_id = ?', [userId], (err, results) => {
     if (err) {
       console.error('Error fetching user routes:', err);
       return res.status(500).json({ message: 'Error fetching routes from database' });
     }
 
-    // Zwracamy trasy użytkownika w formacie JSON
+    
     res.json(results);
   });
 });

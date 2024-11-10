@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserProvider, UserContext } from '../src/UserContex'; 
 
 
+
 import Feed from './Feed';
 import SaveRoad from './SaveRoad';
 import Home from './Home';
@@ -17,6 +18,7 @@ import RegistrationForm from '../src/Rejestracja';
 import Events from './Events';
 import Friends from './Friends';
 import StartStopButton from './test';
+import FriendSearchScreen from './Friends_add';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -52,6 +54,15 @@ const AppContent = () => {
       <Stack.Navigator initialRouteName="Logowanie">
         <Stack.Screen name="Logowanie" component={Log} />
         
+        <Stack.Screen 
+          name="ADD Friends" 
+          component={FriendSearchScreen} 
+          options={{
+            title: 'Friends',
+            headerRight: () => <ProfileImageButton />,
+          }} 
+        />
+
         <Stack.Screen 
           name="Home" 
           component={Home} 
