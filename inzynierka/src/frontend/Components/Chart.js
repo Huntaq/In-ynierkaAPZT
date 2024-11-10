@@ -48,7 +48,7 @@ const Chart = ({ month, year, transportMode, userRoutes }) => {
   };
 
   return (
-    <div className="w-full h-full justify-items-center max-w-[100%] content-center">
+    <div className="w-full h-[165px] justify-items-center max-w-[100%] content-center">
       <Line data={chartData} options={chartOptions} />
     </div>
   );

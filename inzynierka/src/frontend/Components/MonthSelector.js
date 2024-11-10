@@ -25,12 +25,12 @@ const MonthSelector = ({ onMonthChange, onTransportChange }) => {
   },[onTransportChange, transportMode]);
 
   return (
-    <div className='mr-[2px] ml-[2px] CustomSM:hidden content-center'>
+    <div className=' CustomSM:hidden content-center justify-self-center'>
       <div className='text-center '>
         <span>{monthNames[currentMonth]}</span>
       </div>
       <div className=''>
-      <select value={transportMode} onChange={handleTransportChange} className='rounded-[7px] border-[1px] p-[5px] border-[#007bff]'>
+      <select value={transportMode} onChange={handleTransportChange} className='rounded-[7px] border-[1px] p-[5px] border-[#3B4A3F]'>
         {Object.entries(transportModes).map(([modeId, modeName]) => (
           <option key={modeId} value={modeId}>
             {modeName}

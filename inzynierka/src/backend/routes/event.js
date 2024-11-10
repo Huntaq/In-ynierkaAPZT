@@ -36,7 +36,6 @@ router.get('/thropies/:id', (req, res) => {
     });
   });
 
-
   //tworzenie eventu z panelu admina
   router.post('/', upload.fields([{ name: 'image' }, { name: 'trophyImage' }]), async (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
@@ -49,8 +48,6 @@ router.get('/thropies/:id', (req, res) => {
     if (!title || !description || !startDate || !endDate || !type || !distance) {
         return res.status(400).json({ message: 'all fields are required' });
     }
-
-   
 
         let imageUrl = null;
         let trophyImageUrl = null;
