@@ -4,7 +4,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
   if (events.length === 0) return null;
 
   return (
-    <div className="relative CustomSM:max-w-[95%] max-w-[800px] w-[100%] h-[150px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
+    <div className="relative CustomSM:max-w-[95%] max-w-[820px] w-[100%] h-[150px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
       <div className="bg-none">
         <div
           className="absolute top-0 left-0 w-full h-full bg-cover rounded-[5px] transition ease-in duration-800"
@@ -26,7 +26,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="relative">
           <p className="pl-[10px] text-white">{events[currentIndex].description}</p>
         </div>
-        <div className="relative flex justify-between  mt-[40px] text-center CustomXSM:mt-[120px]">
+        <div className="relative flex justify-between  mt-[40px] text-center CustomXSM:mt-[20px]">
           <p className="flex-1 text-white font-bold "><strong>Start Date:</strong> {new Date(events[currentIndex].startDate).toLocaleDateString()}</p>
           <div className="flex-1 flex justify-center translate-x-[-0%] CustomXSM:items-center">
           {events.map((_, index) => (
