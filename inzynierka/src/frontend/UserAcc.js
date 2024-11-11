@@ -504,8 +504,8 @@ const UserAcc = () => {
           <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center  scrollbar-hide'>
 
             <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-            <div className='CustomSM:contents flex justify-between w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
-              <div className="CustomSM:hidden flex-[1]"></div>
+            <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
+              {/* <div className="CustomSM:hidden flex-[1]"></div> */}
 
               <UniqueEvents
                 events={events}
@@ -514,14 +514,14 @@ const UserAcc = () => {
                 handleDotClick={handleDotClick}
               />
 
-              <div className="CustomSM:mt-[10px] max-h-[90px] CustomXSM:max-w-[95%] w-full CustomSM:max-w-[600px] grid flex-[1] gap-[10px] justify-end ">
+              <div className="absolute top-0 left-0 max-h-[90px]gap-[10px]">
                 {showAdminButton && (
-                  <button onClick={() => navigate('/AdminPanel')} className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white">
+                  <button onClick={() => navigate('/AdminPanel')} className="w-[100px] h-[40px] bg-white rounded text-black">
                     Admin
                   </button>
                 )}
 
-                <button className="w-[100px] h-[40px] bg-[#5ca86e] hover:bg-[#409A55] rounded text-white" onClick={() => setPopupVisible1(true)}>
+                <button className="w-[100px] h-[40px] bg-white  rounded text-black" onClick={() => setPopupVisible1(true)}>
                   Layout
                 </button>
               </div>

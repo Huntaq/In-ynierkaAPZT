@@ -196,7 +196,7 @@ const Statistics = () => {
               <div className='stats-card11 distance-run gradientBasic'>
                 <div className='stats-info'>
                   <h3>Distance traveled this week:</h3>
-                  <p>{distanceThisWeek} km</p>
+                  <p>{distanceThisWeek.toFixed(2)} km</p>
                   <div className='popup'>
                     Your weekly distance contributes to a healthier you and a greener planet. Keep moving!
                   </div>
@@ -206,7 +206,7 @@ const Statistics = () => {
 
                 <div className='stats-info'>
                   <h3>Distance traveled this month:</h3>
-                  <p>{distanceThisMonth} km</p>
+                  <p>{distanceThisMonth.toFixed(2)} km</p>
                   <div className='popup'>
                     Your monthly distance is a great way to track long-term progress. Keep up the good work!
                   </div>
@@ -215,7 +215,7 @@ const Statistics = () => {
               <div className='stats-card11 distance-month gradientBasic'>
                 <div className='stats-info'>
                   <h3>Distance traveled this year:</h3>
-                  <p>{distanceThisYear} km</p>
+                  <p>{distanceThisYear.toFixed(2)} km</p>
                   <div className='popup'>
                     Your yearly distance shows your commitment to an active lifestyle. Well done!
                   </div>
@@ -224,7 +224,7 @@ const Statistics = () => {
               <div className='stats-card11 minutes-week gradientAlternative'>
                 <div className='stats-info'>
                   <h3>Minutes of activity this week:</h3>
-                  <p>{minutesThisWeek} minutes</p>
+                  <p>{minutesThisWeek.toFixed(2)} minutes</p>
                   <div className='popup'>
                     Every minute of activity is a step towards a healthier you and a greener environment.
                   </div>
@@ -233,7 +233,7 @@ const Statistics = () => {
               <div className='stats-card11 calories-week gradientBasic'>
                 <div className='stats-info'>
                   <h3>Calories burned this week:</h3>
-                  <p>{caloriesThisWeek} kcal</p>
+                  <p>{caloriesThisWeek.toFixed(2)} kcal</p>
                   <div className='popup'>
                     Burning calories means you’re staying active and contributing to a healthier planet. Keep it up!
                   </div>
@@ -242,7 +242,7 @@ const Statistics = () => {
               <div className='stats-card11 co2-week gradientAlternative'>
                 <div className='stats-info'>
                   <h3>CO2 saved this week:</h3>
-                  <p>{co2ThisWeek} kg</p>
+                  <p>{co2ThisWeek.toFixed(2)} kg</p>
                   <div className='popup'>
                     Your CO2 savings help fight climate change. Every bit makes a difference!
                   </div>
@@ -251,7 +251,7 @@ const Statistics = () => {
               <div className='stats-card11 money-week gradientBasic'>
                 <div className='stats-info'>
                   <h3>Money saved this week:</h3>
-                  <p>{moneyThisWeek} PLN</p>
+                  <p>{moneyThisWeek.toFixed(2)} PLN</p>
                   <div className='popup'>
                     Saving money while staying active is a win-win. Keep up the great work!
                   </div>
@@ -296,7 +296,7 @@ const Statistics = () => {
               <div className='stats-card11 distance-medal gradientAlternative'>
                 <div className='stats-info'>
                   <h3>Best Route (CO2 saved):</h3>
-                  <p>{bestRouteCO2.distance_km} km with {bestRouteCO2.CO2} kg CO2 saved</p>
+                  <p>{bestRouteCO2.distance_km.toFixed(2)} km with {bestRouteCO2.CO2.toFixed(2)} kg CO2 saved</p>
                   <div className='popup'>
                     This route achieved the highest CO2 savings. Fantastic effort!
                   </div>
@@ -305,7 +305,7 @@ const Statistics = () => {
               <div className='stats-card11 distance-year gradientBasic'>
                 <div className='stats-info'>
                   <h3>Best Route (Calories burned):</h3>
-                  <p>{bestRouteCalories.distance_km} km with {bestRouteCalories.kcal} kcal burned</p>
+                  <p>{bestRouteCalories.distance_km.toFixed(2)} km with {bestRouteCalories.kcal.toFixed(2)} kcal burned</p>
                   <div className='popup'>
 
                     This route burned the most calories. Keep up the excellent work!
