@@ -256,34 +256,127 @@ app.get('/api/events', (req, res) => {
 
 app.get('/api/friends', (req, res) => {
   const userId = req.session.userId;
-  console.log('User ID:', userId);
+
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
   }
-  console.log('User ID2:', userId);
 
-  const query = `SELECT 
-  friends.id AS friends_id, 
-  friends.user_id AS friends_user_id, 
-  friends.friend_id AS friends_friend_id, 
-  friends.status AS friends_status,
-  friends.created_at AS friends_created_at,
-  users.id AS user_id,
-  users.username,
-  users.profilePicture,
-  users.is_Admin 
-  FROM friends 
-  JOIN users ON (friends.friend_id = users.id OR friends.user_id = users.id)
-  WHERE (user_id = ? OR friends.friend_id = ?) AND friends.status = 'accepted';
-`;
-console.log('User ID3:', userId);
-  db.query(query, [userId,userId], (err, results) => {
+  
+  const query1 = `
+    SELECT 
+      friends.id AS friends_id, 
+      friends.user_id AS friends_user_id, 
+      friends.friend_id AS friends_friend_id, 
+      friends.status AS friends_status,
+      friends.created_at AS friends_created_at,
+      users.id AS user_id,
+      users.username,
+      users.profilePicture,
+      users.is_Admin 
+    FROM friends 
+    JOIN users ON friends.friend_id = users.id
+    WHERE friends.user_id = ? AND friends.status = 'accepted';
+  `;
+
+  
+  const query2 = `
+    SELECT 
+      friends.id AS friends_id, 
+      friends.user_id AS friends_user_id, 
+      friends.friend_id AS friends_friend_id, 
+      friends.status AS friends_status,
+      friends.created_at AS friends_created_at,
+      users.id AS user_id,
+      users.username,
+      users.profilePicture,
+      users.is_Admin 
+    FROM friends 
+    JOIN users ON friends.user_id = users.id
+    WHERE friends.friend_id = ? AND friends.status = 'accepted';
+  `;
+
+  
+  db.query(query1, [userId], (err, results1) => {
     if (err) {
-      console.error('Error querying the database:', err);
+      console.error('Error querying the database (query1):', err);
       return res.status(500).json({ message: 'Error querying the database' });
     }
-    const filteredResults = results.filter(friend => friend.user_id !== userId);
-    return res.status(200).json({ message: 'Friends retrieved successfully', results });
+
+    
+    db.query(query2, [userId], (err, results2) => {
+      if (err) {
+        console.error('Error querying the database (query2):', err);
+        return res.status(500).json({ message: 'Error querying the database' });
+      }
+
+      
+      const allFriends = [...results1, ...results2];
+
+      return res.status(200).json({ message: 'Friends retrieved successfully', results: allFriends });
+    });
+  });
+});
+app.get('/api/friends_pending', (req, res) => {
+  const userId = req.session.userId;
+  console.log("User ID from session:", userId);
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
+  }
+
+  
+  const query1 = `
+    SELECT 
+      friends.id AS friends_id, 
+      friends.user_id AS friends_user_id, 
+      friends.friend_id AS friends_friend_id, 
+      friends.status AS friends_status,
+      friends.created_at AS friends_created_at,
+      users.id AS user_id,
+      users.username,
+      users.profilePicture,
+      users.is_Admin 
+    FROM friends 
+    JOIN users ON friends.friend_id = users.id
+    WHERE friends.user_id = ? AND friends.status = 'pending';
+  `;
+
+  
+  const query2 = `
+    SELECT 
+      friends.id AS friends_id, 
+      friends.user_id AS friends_user_id, 
+      friends.friend_id AS friends_friend_id, 
+      friends.status AS friends_status,
+      friends.created_at AS friends_created_at,
+      users.id AS user_id,
+      users.username,
+      users.profilePicture,
+      users.is_Admin 
+    FROM friends 
+    JOIN users ON friends.user_id = users.id
+    WHERE friends.friend_id = ? AND friends.status = 'pending';
+  `;
+
+  
+  db.query(query1, [userId], (err, results1) => {
+    if (err) {
+      console.error('Error querying the database (query1):', err);
+      return res.status(500).json({ message: 'Error querying the database' });
+    }
+
+    
+    db.query(query2, [userId], (err, results2) => {
+      if (err) {
+        console.error('Error querying the database (query2):', err);
+        return res.status(500).json({ message: 'Error querying the database' });
+      }
+
+      
+      const allFriends = [...results1, ...results2];
+
+      return res.status(200).json({ message: 'Friends Pending retrieved successfully', results: allFriends });
+    });
   });
 });
 
@@ -311,25 +404,52 @@ app.delete('/api/friends/:friendId', (req, res) => {
   });
 });
 
-app.get('/search-users', (req, res) => {
-  console.log('Żądanie wyszukiwania otrzymane:', req.query); // Dodanie logowania
-  const { username } = req.query;
-  if (!username) {
-    console.log('Brak parametru username');
-    return res.status(400).send({ message: 'Username query parameter is required.' });
-  }
+app.post('/api/search_friend', (req, res) => {
+  const searchUsername = req.body.username; 
+  const query = "SELECT id, username, profilePicture FROM users ";
 
-  const query = `SELECT id, username, profilePicture FROM users WHERE username LIKE ?`;
-  db.query(query, [`%${username}%`], (err, results) => {
+  db.query(query, [`%${searchUsername}%`], (err, result) => {
     if (err) {
-      console.error('Błąd zapytania do bazy danych:', err);
-      return res.status(500).send({ message: 'Internal server error.' });
+      console.error('Error fetching friend from database:', err);
+      return res.status(500).json({ message: 'Error searching friend' });
     }
-    console.log('Wyniki wyszukiwania:', results); // Dodanie logowania
-    res.send(results);
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No matching friend found' });
+    }
+
+    return res.status(200).json({ friends: result });
   });
 });
 
+
+app.post('/api/friend_add', (req, res) => {
+  const { user_id, friend_id } = req.body;
+
+  
+  const checkQuery = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
+  db.query(checkQuery, [user_id, friend_id], (err, result) => {
+    if (err) {
+      console.error('Błąd przy sprawdzaniu istnienia znajomego:', err);
+      return res.status(500).json({ message: 'Błąd serwera' });
+    }
+
+    if (result.length > 0) {
+      
+      return res.status(400).json({ message: 'Ten znajomy jest już dodany' });
+    }
+
+    
+    const insertQuery = "INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, 'pending')";
+    db.query(insertQuery, [user_id, friend_id], (err, result) => {
+      if (err) {
+        console.error('Błąd przy dodawaniu znajomego do bazy danych:', err);
+        return res.status(500).json({ message: 'Błąd serwera' });
+      }
+      return res.status(200).json({ message: 'Znajomy dodany pomyślnie' });
+    });
+  });
+});
 
 
 

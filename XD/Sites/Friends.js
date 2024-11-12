@@ -6,16 +6,19 @@ import { useNavigation } from '@react-navigation/native';
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
+  const [pendingFriends, setPendingFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(UserContext);
   const navigation = useNavigation();
+
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const response = await axios.get('http://192.168.56.1:5000/api/friends', {
-          withCredentials: true,
-        });
-        setFriends(response.data.results || []);
+        const responseAccepted = await axios.get('http://192.168.56.1:5000/api/friends', { withCredentials: true });
+        setFriends(responseAccepted.data.results || []);
+
+        const responsePending = await axios.get('http://192.168.56.1:5000/api/friends_pending', { withCredentials: true });
+        setPendingFriends(responsePending.data.results || []);
       } catch (error) {
         console.error('Error fetching friends:', error.response?.data || error.message);
         Alert.alert('Error', error.response?.data?.message || 'Failed to fetch friends');
@@ -29,54 +32,48 @@ const Friends = () => {
     }
   }, [user]);
 
-  const handleDeleteFriend = async (friendId) => {
-    try {
-      const response = await axios.delete(`http://192.168.56.1:5000/api/friends/${friendId}`, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        Alert.alert('Success', 'Friend removed successfully');
-        setFriends(friends.filter((friend) => friend.user_id !== friendId));
-      }
-    } catch (error) {
-      console.error('Error deleting friend:', error.response?.data || error.message);
-      Alert.alert('Error', error.response?.data?.message || 'Failed to remove friend');
-    }
-  };
-  
-
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return (
     <View style={styles.container}>
+      <Text style={styles.sectionHeader}>Pending Friend Requests</Text>
       <FlatList
-        data={friends}
-        keyExtractor={(item) => item.user_id.toString()}
+        data={pendingFriends}
+        keyExtractor={(item) => item.friends_id.toString()}
         renderItem={({ item }) => (
           <View style={styles.friendItem}>
             <Text style={styles.text}>Username: {item.username}</Text>
             {item.profilePicture ? (
-              <Image 
-              source={{ uri: `http://192.168.56.1${item.profilePicture}` }} 
-              style={styles.profilePicture} 
-              resizeMode="cover"
-              onError={(e) => console.log("Error loading image:", e.nativeEvent.error)}
-            />
+              <Image source={{ uri: `http://192.168.56.1${item.profilePicture}` }} style={styles.profilePicture} />
             ) : (
               <Text style={styles.text}>No profile picture available</Text>
             )}
-            <Button title="Remove Friend" onPress={() => handleDeleteFriend(item.user_id)} />
+            <Button title="Accept Friend" onPress={() => {}} />
           </View>
-
         )}
-        
       />
-      <Button
-      title="Dodaj Przyjaciela"
-      onPress={() => navigation.navigate('ADD Friends')}
-    />
+
+      <View style={styles.separator} />
+
+      <Text style={styles.sectionHeader}>Accepted Friends</Text>
+      <FlatList
+        data={friends}
+        keyExtractor={(item) => item.friends_id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.friendItem}>
+            <Text style={styles.text}>Username: {item.username}</Text>
+            {item.profilePicture ? (
+              <Image source={{ uri: `http://192.168.56.1${item.profilePicture}` }} style={styles.profilePicture} />
+            ) : (
+              <Text style={styles.text}>No profile picture available</Text>
+            )}
+            <Button title="Remove Friend" onPress={() => {}} />
+          </View>
+        )}
+      />
+      <Button title="Dodaj Przyjaciela" onPress={() => navigation.navigate('ADD Friends')} />
     </View>
   );
 };
@@ -86,6 +83,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#000',
+    marginVertical: 20,
   },
   friendItem: {
     padding: 10,
@@ -100,6 +102,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
   },
 });
 
