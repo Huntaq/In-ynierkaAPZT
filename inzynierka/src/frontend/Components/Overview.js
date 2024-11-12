@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import MonthSelector from './MonthSelector';
 import Chart from './Chart';
 import TrophyList from './TrophyList';
-import Calendar1 from '../Calendar';
 import CalendarComponent from './CalendarCompontent';
 
 const Overview = ({
@@ -105,15 +103,7 @@ const Overview = ({
             case 'Calendar':
               return (
                 <div className='max-w-[600px]' key={section.id}>
-                <CalendarComponent/>
-                </div>
-              );
-
-            case 'Chart':
-              return (
-                <div className=' mt-[5px] min-w-[400px] max-w-[400px] w-full h-[220px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.1]' key={section.id}>
-                  <MonthSelector onMonthChange={handleMonthChange} onTransportChange={handleTransportChange} />
-                  <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
+                  <CalendarComponent />
                 </div>
               );
 
