@@ -147,7 +147,7 @@ router.get('/:id/routes_with_usernames', (req, res) => {
   }
 
   const sql = `
-    SELECT ur.user_id, ur.CO2, ur.kcal, ur.money, u.username 
+    SELECT ur.user_id, ur.CO2, ur.kcal, ur.money, u.username  , u.profilePicture
     FROM user_routes ur
     JOIN users u ON ur.user_id = u.id
   `;

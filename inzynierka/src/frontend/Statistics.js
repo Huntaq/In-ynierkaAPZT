@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
-import '../css/statistics.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO } from 'date-fns';
@@ -12,6 +11,7 @@ const Statistics = (
   year,
   transportMode
 ) => {
+
   const [userRoutes, setUserRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,7 +97,7 @@ const Statistics = (
     };
 
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
