@@ -1,6 +1,5 @@
 .admin-panel-container {
   padding: 20px;
-  font-family: 'Arial', sans-serif;
   width: 100%;
 }
 
@@ -98,7 +97,6 @@
 
 p {
   color: #1E1E1E;
-  font-family: Lato;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -202,7 +200,6 @@ p {
   cursor: pointer;
   color: #888;
   border: 0px solid white;
-  font-family: Lato;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -228,7 +225,6 @@ p {
 
 .modal-title {
   color: #1E1E1E;
-  font-family: Lato;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -257,7 +253,6 @@ p {
 
 .input::placeholder {
   color: var(--Gray-600, #6C757D);
-  font-family: Lato;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -267,7 +262,6 @@ p {
 
 .textarea::placeholder {
   color: var(--Gray-600, #6C757D);
-  font-family: Lato;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -284,9 +278,7 @@ p {
   border-radius: 0px 4px 4px 0px;
   border: 1px solid var(--Gray-300, #DEE2E6);
   background: var(--Gray-200, #E9ECEF);
-
   color: var(--Gray-600, #6C757D);
-  font-family: Lato;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

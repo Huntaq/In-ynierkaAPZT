@@ -142,6 +142,7 @@ const Trophies = () => {
           setError('query/server error');
         }
       } else {
+        navigate('/');
         setError('Token is required');
       }
       setLoading(false);
@@ -257,7 +258,7 @@ const Trophies = () => {
           <Sidebar />
         </div>
         <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
             <Header
               user={user}
               theme={theme}

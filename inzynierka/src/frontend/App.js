@@ -12,7 +12,7 @@ import Rankings from './Rankings';
 import Statistics from './Statistics';
 import AdminPanel from './AdminPanel';
 import Banned from './Banned';
-import Friends from './Friends';
+// import Friends from './Friends';
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
           <Route path="/Statistics"  element={<Statistics />} />
           <Route path="/AdminPanel"  element={<AdminPanel />} />
           <Route path="/Banned"  element={<Banned />}  />
-          <Route path="/Friends"  element={<Friends />} />
+          {/* <Route path="/Friends"  element={<Friends />} /> */}
         </Routes>
     </Router>
   );

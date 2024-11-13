@@ -4,6 +4,7 @@ import '../css/stats.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
+import Logo from './Components/img/earthLogo.png';
 
 const Profile = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -71,6 +72,7 @@ const Profile = () => {
         setError('query/server error');
       }
     } else {
+      navigate('/');
       setError('Token is required');
     }
     setLoading(false);
@@ -267,30 +269,30 @@ const Profile = () => {
   if (error) return <p>Błąd: {error}</p>;
   return (
     <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
+      <div className='flex w-full max-w-[1440px] max-h-[800px]  h-full justify-self-center gap-[10px] p-[10px]'>
         <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
           <Sidebar />
         </div>
-        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF]  rounded-[10px] overflow-y-scroll justify-center'>
 
-          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+          <div className='flex justify-start items-center flex-col w-full max-w-[1600px] justify-self-center'>
             <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} currentPage="Profile" />
-            <div className='w-full justify-center'>
+            <div className='w-full justify-center '>
               <div className='flex justify-center'>
-                <p className='w-[50%] text-center'>Your profile</p>
-                <p className='w-[50%] text-center'>Notification settings</p>
+                <p className='w-[50%] text-center CustomSM:hidden'>Your profile</p>
+                <p className='w-[50%] text-center CustomSM:hidden'>Notification settings</p>
               </div>
-              <div className='flex justify-center'>
-                <div className='w-full max-w-[600px] h-[600px] p-[10px] items-center bg-white rounded-[5px] shadow-[2px_2px_15px_rgba(88,88,88,0.2)] inline'>
-                  <div className='flex items-center'>
-                    <div className='inline'>
+              <div className='flex justify-center gap-[10px] max-w-[98%] place-self-center CustomSM:block'>
+                <div className='w-full max-w-[550px] h-[550px] p-[10px] items-center bg-[#F1FCF3] rounded-[5px] shadow-[2px_2px_15px_rgba(88,88,88,0.2)] CustomSM:mb-[10px]'>
+                  <div className='flex items-center CustomXXSM:block'>
+                    <div className='w-full max-w-[100px] justify-self-center'>
                       <div className='relative'>
-                        <a href="/Profile" className='inline' style={{ textDecoration: 'none' }}>
+                        <a href="/Profile" className='' style={{ textDecoration: 'none' }}>
                           {user && (previewUrl || user.profilePicture) ? (
                             <img
                               src={previewUrl || `http://localhost/uploads/${user.profilePicture.split('/').pop()}`}
                               alt="Profile"
-                              className='w-[100px] h-[100px] rounded-[50%]'
+                              className='w-[100px] h-[100px] rounded-[50%] border-[2px] border-red-500'
                             />
                           ) : (
                             <div className='w-[100px] h-[100px] rounded-[50%] border-[1px] border-black text-center content-center'>
@@ -303,8 +305,8 @@ const Profile = () => {
                         </svg></div>
                       </div>
                     </div>
-                    <div className='inline'>
-                      <form onSubmit={handleProfilePictureUpload}>
+                    <div className='w-full max-w-[400px] items-center'>
+                      <form className='justify-self-center text-center CustomXXSM:mt-[20px]' onSubmit={handleProfilePictureUpload}>
                         <input
                           type="file"
                           id="fileInput"
@@ -317,7 +319,7 @@ const Profile = () => {
                         />
                         {!selectedFile ? (
                           <button
-                            className='w-[120px] h-[40px] bg-black text-white rounded-[5px] m-[5px]'
+                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[5px] m-[5px]'
                             type="button"
                             onClick={() => document.getElementById('fileInput').click()}
                           >
@@ -325,7 +327,7 @@ const Profile = () => {
                           </button>
                         ) : (
                           <button
-                            className='w-[120px] h-[40px] bg-black text-white rounded-[5px] m-[5px]'
+                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[5px] m-[5px]'
                             type="submit"
                           >
                             Upload
@@ -333,7 +335,7 @@ const Profile = () => {
                         )}
                         {user && (
                           <button
-                            className='w-[120px] h-[40px] bg-black text-white rounded-[5px] m-[5px]'
+                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[5px] m-[5px]'
                             type="button"
                             onClick={handleProfilePictureDelete}
                           >
@@ -344,7 +346,7 @@ const Profile = () => {
                     </div>
                   </div>
                   {user && (
-                    <div className='w-full max-w-[600px] text-center h-[480px] content-center '>
+                    <div className='w-full max-w-[600px] text-center h-[480px] content-center CustomXXSM:h-[350px]'>
                       <div className='flex w-full'>
                         <p className='w-[50%] text-center'>Username:</p>
                         <p className='w-[50%] text-center'>Email:</p>
@@ -364,60 +366,74 @@ const Profile = () => {
                 </div>
 
                 <div>
-                  <div className='w-full max-w-[600px] h-[250px] p-[10px] rounded-[7px] bg-white m-auto '>
-                    <p className=''>Notifications by email</p>
-                    <div style={{ display: 'flex', gap: '80px' }}>
-                      <label className=''>
-                        <input
-                          type="checkbox"
-                          checked={emailNotification === 'yes'}
-                          onChange={() => handleEmailNotificationChange('yes')}
-                        /> Yes
-                      </label>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={emailNotification === 'no'}
-                          onChange={() => handleEmailNotificationChange('no')}
-                        /> No
-                      </label>
-                    </div>
+                  <div className='w-full max-w-[600px] h-[250px] p-[10px] rounded-[7px] bg-[#F1FCF3] '>
+                    <div className='h-full flex flex-col p-[30px] items-center'>
+                      <p className='mb-[10px] '>Notifications by email</p>
+                      <div style={{ display: 'flex', gap: '80px', height: '25px' }}>
+                        <label className='flex gap-[5px] items-center '>
+                          <input
+                            type="checkbox"
+                            checked={emailNotification === 'yes'}
+                            onChange={() => handleEmailNotificationChange('yes')}
+                            className="appearance-none w-[20px] h-[20px] rounded-md cursor-pointer bg-white checked:bg-[#38A169] border-[1px] border-[#9D9D9D] checked:border-none"
+                          />
+                          <p>Yes</p>
+                        </label>
+                        <label className='flex gap-[5px] items-center'>
+                          <input
+                            type="checkbox"
+                            checked={emailNotification === 'no'}
+                            onChange={() => handleEmailNotificationChange('no')}
+                            className="appearance-none w-[20px] h-[20px] rounded-md cursor-pointer bg-white checked:bg-[#38A169] border-[1px] border-[#9D9D9D] checked:border-none"
+                          /> No
+                        </label>
+                      </div>
 
-                    <p className=''>Push notifications</p>
-                    <div style={{ display: 'flex', gap: '80px' }}>
-                      <label className=''>
-                        <input
-                          type="checkbox"
-                          checked={pushNotification === 'yes'}
-                          onChange={() => handlePushNotificationChange('yes')}
-                        /> Yes
-                      </label>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={pushNotification === 'no'}
-                          onChange={() => handlePushNotificationChange('no')}
-                        /> No
-                      </label>
-                    </div>
-                    <button
-                      className={`bg-black text-white w-[120px] h-[40px] rounded-[10px] ${isCooldown ? 'cooldown' : ''}`}
-                      onClick={handleUpdateClick}
-                      disabled={isCooldown}
-                    >
-                      {isCooldown ? `(${remainingCooldown})` : 'Update'}
-                    </button>
+                      <p className='mb-[10px] mt-[10px]'>Push notifications</p>
+                      <div style={{ display: 'flex', gap: '80px', height: '25px' }}>
+                        <label className='flex gap-[5px] items-center'>
+                          <input
+                            type="checkbox"
+                            checked={pushNotification === 'yes'}
+                            onChange={() => handlePushNotificationChange('yes')}
+                            className="appearance-none w-[20px] h-[20px] rounded-md cursor-pointer bg-white checked:bg-[#38A169] border-[1px] border-[#9D9D9D] checked:border-none"
 
+                          /> Yes
+                        </label>
+                        <label className='flex gap-[5px] items-center'>
+                          <input
+                            type="checkbox"
+                            checked={pushNotification === 'no'}
+                            onChange={() => handlePushNotificationChange('no')}
+                            className="appearance-none w-[20px] h-[20px] rounded-md cursor-pointer bg-white checked:bg-[#38A169] border-[1px] border-[#9D9D9D] checked:border-none"
+
+                          /> No
+                        </label>
+                      </div>
+                      <div className='mt-[20px] content-center text-center'>
+                      <button
+                        className={`bg-[#84D49D] text-white w-[120px] h-[40px] rounded-[10px] ${isCooldown ? 'cooldown' : ''}`}
+                        onClick={handleUpdateClick}
+                        disabled={isCooldown}
+                      >
+                        {isCooldown ? `(${remainingCooldown})` : 'Update'}
+                      </button>
+                    </div>
+                    </div>
                   </div>
-                  <div className='w-full max-w-[600px] text-white bg-black rounded-[5px]'>
-                    <div className='w-full max-w-[600px] h-[300px] '>
+                  <div className='w-full max-w-[550px] bg-[#F1FCF3] rounded-[5px] mt-[10px] h-[250px] text-center'>
+                    <div className='flex justify-between pl-[20px] pr-[20px] pt-[20px] items-center'>
+                      <p className='text-[#3B4A3F]'>Inspire Others</p>
+                      <p><img src={Logo} alt='Earth' className='w-[40px] h-[40px]'/></p>
+                      </div>
+                    <p className='text-[#3B4A3F] p-[20px] text-[14px]'>
                       Did you know that regular exercise can boost your
                       brainpower? Physical activity increases
                       the production of proteins that improve brain
                       function, memory, and learning capabilities. Just
                       30 minutes of exercise a few times a week can
                       make a significant difference!
-                    </div>
+                    </p>
                   </div>
                 </div>
               </div>
