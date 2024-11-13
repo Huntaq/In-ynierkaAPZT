@@ -3,19 +3,20 @@ import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
-import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
-
+import first from './Components/img/ranking/1st.png';
+import second from './Components/img/ranking/2nd.png';
+import third from './Components/img/ranking/3rd.png';
+import left from './Components/img/ranking/arrow left.svg';
+import right from './Components/img/ranking/arrow right.svg';
 const Rankings = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [user, setUser] = useState(null);
   const [rankingType, setRankingType] = useState('total_CO2');
-  const [currentUserIndex, setCurrentUserIndex] = useState(-1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -94,24 +95,12 @@ const Rankings = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
-
-  useEffect(() => {
-    if (ranking.length > 0 && user) {
-      const sortedRanking = [...ranking].sort((a, b) => b[rankingType] - a[rankingType]);
-      const index = sortedRanking.findIndex(entry => entry.user_id === user.id);
-      setCurrentUserIndex(index);
-    }
-  }, [ranking, user, rankingType]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
@@ -132,101 +121,122 @@ const Rankings = () => {
     }
   };
 
+  const handleArrowClick = (direction) => {
+    const rankingTypes = ['CO2', 'kcal', 'money'];
+    let currentIndex = rankingTypes.indexOf(rankingType.replace('total_', ''));
 
-  const handleRankingTypeChange = (event) => {
-    setRankingType(`total_${event.target.value}`);
+    if (direction === 'next') {
+      currentIndex = (currentIndex + 1) % rankingTypes.length;
+    } else {
+      currentIndex = (currentIndex - 1 + rankingTypes.length) % rankingTypes.length;
+    }
+
+    setRankingType(`total_${rankingTypes[currentIndex]}`);
   };
 
   const getRankingItems = (type) => {
     const sortedRanking = [...ranking].sort((a, b) => b[type] - a[type]);
 
     return sortedRanking.map((entry, index) => {
-      const isCurrentUser = entry.user_id === user?.id;
-      const isFirstPlace = index === 0;
+      const userData = usernameMap[entry.user_id] || { username: 'Unknown User', profilePicture: '' };
+      const showImage = index < 3;
+
+      const userClass = index < 3 ? 'text-[#3B4A3F] text-center relative' : 'h-[70px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#F1FCF3] gap-[10px]';
+
+      let borderClass = '';
+      if (index === 0) {
+        borderClass = 'border-[5px] border-[#d4af37]';
+      } else if (index === 1) {
+        borderClass = 'border-[5px] border-[#c0c0c0]';
+      } else if (index === 2) {
+        borderClass = 'border-[5px] border-[#CD7F32]';
+      }
 
       return (
         entry[type] !== undefined && (
-          <li
-            key={entry.user_id}
-            className={`w-full justify-center bg-white mb-[10px] p-[15px] rounded-[5px] flex box-border   ranking-item ${isCurrentUser ? 'highlight' : ''} ${isFirstPlace ? 'first-place' : ''}`}
-            onMouseEnter={isCurrentUser && isFirstPlace ? triggerConfetti : undefined}
-          >
-            {isCurrentUser && isFirstPlace && <span role="img" aria-label="crown" className="w-[20px] h-[20px] mr-[5px]">👑</span>}
-            <span className="">{index + 1}. </span>
-            <span className="">
-              {usernameMap[entry.user_id] || 'Unknown User'} | {formatValue(entry[type], rankingType)}
-            </span>
-          </li>
+          <ul key={entry.user_id} className={`${userClass}`}>
+            {showImage && !userData.profilePicture && (
+              <div className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full bg-white flex items-center justify-center ${borderClass}`}>
+                <span className="text-black text-xl">{userData.username.charAt(0).toUpperCase()}</span>
+              </div>
+            )}
+            {showImage && userData.profilePicture && (
+              <img
+                src={`http://localhost${userData.profilePicture}`}
+                alt="Profile"
+                className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full ${borderClass}`}
+              />
+            )}
+            {index === 0 && <img alt='first' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[120px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={first} />}
+            {index === 1 && <img alt='second' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[120px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={second} />}
+            {index === 2 && <img alt='third' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[120px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={third} />}
+            {index >= 3 && <span className='font-bold text-[32px] content-center'>{index + 1} </span>}
+            <span className='content-center'>{userData.username}</span>
+            <span className="block content-center">{formatValue(entry[type], rankingType)}</span>
+          </ul>
         )
       );
     });
   };
 
-  const getUserValue = (type) => {
-    const userEntry = ranking.find(entry => entry.user_id === user?.id);
-    return userEntry ? userEntry[type] : 0;
-  };
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
 
-  const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#ffeb3b', '#ff9800', '#f44336'],
-    });
-  };
-
   const usernameMap = userRoutes.reduce((map, route) => {
-    map[route.user_id] = route.username;
+    map[route.user_id] = { username: route.username, profilePicture: route.profilePicture };
     return map;
   }, {});
+
+  const userIndex = ranking.findIndex(entry => entry.user_id === user?.id);
 
   return (
 
     <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
-        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
+      <div className='flex w-full max-w-[1440px] min-h-[800px] h-full justify-self-center gap-[20px] p-[20px]'>
+        <div className='w-[20%] max-w-[120px] rounded-[10px] bg-[#D9EDDF] justify-items-center'>
           <Sidebar />
         </div>
         <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
-            <Header
-              user={user}
-              theme={theme}
-              toggleTheme={toggleTheme}
-              toggleSidebar={toggleSidebar}
-            />
-            <div className="w-[95%] max-w-[600px]  overflow-hidden bg-gray-400 p-[20px] rounded-[10px]">
-              <div className='flex justify-between'>
-                <p className='text-white'>Ranking</p>
-                <select value={rankingType.replace('total_', '')} onChange={handleRankingTypeChange} className="p-[8px] mb-[10px]">
-                  <option value="CO2">CO2 Saved</option>
-                  <option value="kcal">Calories Burned</option>
-                  <option value="money">Money Saved</option>
-                </select>
+          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+            <Header user={user} theme={theme} toggleTheme={toggleTheme} />
+            <div className="flex justify-between w-[600px] max-w-[98%] pt-[40px]">
+                    <div className="flex justify-start w-1/3">
+                      {getRankingItems(rankingType).slice(1, 2)}
+                    </div>
+                    <div className="flex justify-center w-1/3 relative">
+                      <div className="absolute top-[-40px]">
+                        {getRankingItems(rankingType).slice(0, 1)}
+                      </div>
+                    </div>
+                    <div className="flex justify-end w-1/3 relative">
+                      <div className="absolute top-[20px]">
+                        {getRankingItems(rankingType).slice(2, 3)}
+                      </div>
+                    </div>
+                  </div>
+            <div className='flex w-full justify-center max-h-[400px]'>
+              <div className="flex w-[53px] h-[53px] self-center mr-[10px]">
+                <button onClick={() => handleArrowClick('prev')}><img className='hover:scale-105' src={right}/></button>
               </div>
-              <div className="">
-                <ul>
-                  {getRankingItems(rankingType).slice(0, 5)}
-                </ul>
-              </div>
-              {user && currentUserIndex > 5 && (
-                <div className="mt-[20px]">
-                  <p>You</p>
-                  <li
-                    key={user.id}
-                    className=""
-                  >
-                    <span className="">{currentUserIndex !== -1 ? currentUserIndex + 1 : 'N/A'}. </span>
-                    <span className="">
-                      {user.username} |  {formatValue(getUserValue(rankingType))}
-                    </span>
-                  </li>
+
+              <div className="w-[95%] max-w-[600px] overflow-y-scroll scrollbar-hide">
+                <div>
+                  <div className='h-[70px] mt-[30px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#84D49D] gap-[10px]'>
+                    <p className='font-bold text-[32px] content-center'>{userIndex}</p>
+                    <p className='content-center'>{user.username}</p>
+                  </div>
+                  <div className='w-full h-[2px] bg-black mb-[10px]'>
+
+                  </div>
+                  <ul>
+                    {getRankingItems(rankingType).slice(3,100)}
+                  </ul>
                 </div>
-              )}
+              </div>
+              <div className='flex w-[53px] h-[53px] self-center ml-[10px]'>
+                <button onClick={() => handleArrowClick('next')}><img className='hover:scale-105' src={left}/></button>
+              </div>
             </div>
           </div>
         </div>
