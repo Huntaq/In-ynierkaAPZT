@@ -501,7 +501,7 @@ const UserAcc = () => {
           <Sidebar />
         </div>
         <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center  scrollbar-hide'>
+          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center  scrollbar-hide'>
 
             <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
             <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>

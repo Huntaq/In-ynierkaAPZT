@@ -25,6 +25,7 @@ module.exports = {
       screens: {
         CustomSM: { max: '850px' },
         CustomXSM: { max: '611px' },
+        CustomXXSM: { max: '500px' },
       },
     },
   },

@@ -89,6 +89,7 @@ const Rankings = () => {
           setError('query/server error');
         }
       } else {
+        navigate('/');
         setError('Token is required');
       }
       setLoading(false);
@@ -145,19 +146,19 @@ const Rankings = () => {
 
       let borderClass = '';
       if (index === 0) {
-        borderClass = 'border-[5px] border-[#d4af37]';
+        borderClass = 'p-[5px] bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600';
       } else if (index === 1) {
-        borderClass = 'border-[5px] border-[#c0c0c0]';
+        borderClass = 'p-[5px] bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500';
       } else if (index === 2) {
-        borderClass = 'border-[5px] border-[#CD7F32]';
+        borderClass = 'p-[5px] bg-gradient-to-r from-yellow-900 via-orange-700 to-yellow-800';
       }
 
       return (
         entry[type] !== undefined && (
           <ul key={entry.user_id} className={`${userClass}`}>
             {showImage && !userData.profilePicture && (
-              <div className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full bg-white flex items-center justify-center ${borderClass}`}>
-                <span className="text-black text-xl">{userData.username.charAt(0).toUpperCase()}</span>
+              <div className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full flex items-center justify-center ${borderClass}`}>
+                <span className="text-black text-xl bg-white w-full h-full rounded-full content-center">{userData.username.charAt(0).toUpperCase()}</span>
               </div>
             )}
             {showImage && userData.profilePicture && (
@@ -167,9 +168,9 @@ const Rankings = () => {
                 className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full ${borderClass}`}
               />
             )}
-            {index === 0 && <img alt='first' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[120px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={first} />}
-            {index === 1 && <img alt='second' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[120px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={second} />}
-            {index === 2 && <img alt='third' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[120px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={third} />}
+            {index === 0 && <img alt='first' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={first} />}
+            {index === 1 && <img alt='second' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={second} />}
+            {index === 2 && <img alt='third' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={third} />}
             {index >= 3 && <span className='font-bold text-[32px] content-center'>{index + 1} </span>}
             <span className='content-center'>{userData.username}</span>
             <span className="block content-center">{formatValue(entry[type], rankingType)}</span>
@@ -210,9 +211,7 @@ const Rankings = () => {
                       </div>
                     </div>
                     <div className="flex justify-end w-1/3 relative">
-                      <div className="absolute top-[20px]">
                         {getRankingItems(rankingType).slice(2, 3)}
-                      </div>
                     </div>
                   </div>
             <div className='flex w-full justify-center max-h-[400px]'>
@@ -223,7 +222,7 @@ const Rankings = () => {
               <div className="w-[95%] max-w-[600px] overflow-y-scroll scrollbar-hide">
                 <div>
                   <div className='h-[70px] mt-[30px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#84D49D] gap-[10px]'>
-                    <p className='font-bold text-[32px] content-center'>{userIndex}</p>
+                    <p className='font-bold text-[32px] content-center'>{userIndex + 1}</p>
                     <p className='content-center'>{user.username}</p>
                   </div>
                   <div className='w-full h-[2px] bg-black mb-[10px]'>

@@ -91,6 +91,7 @@ const Statistics = (
           setError('query/server error');
         }
       } else {
+        navigate('/');
         setError('Token is required');
       }
       setLoading(false);
@@ -128,26 +129,26 @@ const Statistics = (
           <Sidebar />
         </div>
         <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start h-screen min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
             <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
             <div className='max-w-[95%] mt-[5px] w-[1000px] min-h-[400px]  h-auto max-h-[400px] bg-[#F1FCF3] rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.1]'>
               <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
             </div>
-            <div className='flex w-full mt-[20px] gap-[10px] justify-center text-center'>
-              <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px]'>
-                <div className=''>
+            <div className='flex flex-wrap w-full mt-[20px] gap-[10px] justify-center text-center max-w-[95%]'>
+              <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center'>
+                <div>
                   <h3>Distance traveled this week:</h3>
                   <p className='font-bold'>{distanceThisWeek.toFixed(2)} km</p>
                 </div>
               </div>
-              <div className='w-full max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px]'>
-                <div className=''>
+              <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center'>
+                <div>
                   <h3>Distance traveled this month:</h3>
                   <p className='font-bold'>{distanceThisMonth.toFixed(2)} km</p>
                 </div>
               </div>
-              <div className='w-full max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px]'>
-                <div className=''>
+              <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center'>
+                <div >
                   <h3>Distance traveled this year:</h3>
                   <p className='font-bold'>{distanceThisYear.toFixed(2)} km</p>
                 </div>
