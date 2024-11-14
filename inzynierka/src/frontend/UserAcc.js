@@ -306,11 +306,6 @@ const UserAcc = () => {
           body: JSON.stringify({ userId }),
         });
 
-        if (response.ok) {
-          const data = await response.json();
-        } else {
-          const errorData = await response.json();
-        }
       } catch (err) {
         console.error('error ', err);
       }

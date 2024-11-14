@@ -292,10 +292,10 @@ const Profile = () => {
                             <img
                               src={previewUrl || `http://localhost/uploads/${user.profilePicture.split('/').pop()}`}
                               alt="Profile"
-                              className='w-[100px] h-[100px] rounded-[50%] border-[2px] border-red-500'
+                              className='w-[100px] h-[100px] rounded-[50%]'
                             />
                           ) : (
-                            <div className='w-[100px] h-[100px] rounded-[50%] border-[1px] border-black text-center content-center'>
+                            <div className='w-[100px] h-[100px] rounded-[50%] text-center content-center'>
                               {user && user.username ? user.username[0] : 'U'}
                             </div>
                           )}
@@ -319,15 +319,15 @@ const Profile = () => {
                         />
                         {!selectedFile ? (
                           <button
-                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[5px] m-[5px]'
+                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[20px] m-[5px] hover:scale-105'
                             type="button"
                             onClick={() => document.getElementById('fileInput').click()}
                           >
-                            Choose
+                            Change avatar
                           </button>
                         ) : (
                           <button
-                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[5px] m-[5px]'
+                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[20px] m-[5px] hover:scale-105'
                             type="submit"
                           >
                             Upload
@@ -335,11 +335,11 @@ const Profile = () => {
                         )}
                         {user && (
                           <button
-                            className='w-[120px] h-[40px] bg-[#84D49D] text-white rounded-[5px] m-[5px]'
+                            className='w-[120px] h-[40px] border-[2px] border-[#84D49D] text-[#84D49D] rounded-[20px] m-[5px] hover:scale-105'
                             type="button"
                             onClick={handleProfilePictureDelete}
                           >
-                            Delete
+                            Delete avatar
                           </button>
                         )}
                       </form>
