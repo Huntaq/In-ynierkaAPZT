@@ -39,8 +39,8 @@ const Overview = ({
     };
   }, [notifications.length]);
   return (
-    <div className='flex'>
-      <div className='mt-[5px]'>
+    <div className='flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
+      <div className='flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTestCol1:w-full OverviewTestCol1:contents'>
         {sections.map((section) => {
           if (!section.visible) return null;
 
@@ -51,7 +51,7 @@ const Overview = ({
             case 'Test':
               return (
                 <div className='flex CustomXSM:block' key={section.id}>
-                  <div className='content-center justify-items-center mt-[5px] overflow-y-auto min-w-[200px] min-h-[200px] w-full h-auto bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                  <div className='content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[200px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
                     {section.id === 'co2' && (
                       <>
                         <p className='text-[#3B4A3F] font-bold'>CO2 Saved</p>
@@ -95,21 +95,21 @@ const Overview = ({
         })}
       </div>
 
-      <div className='m-[5px] max-w-[600px]'>
+      <div className='flex flex-col gap-[10px] w-[500px] max-w-[100%] min-w-[200px]'>
         {sections.map((section) => {
           if (!section.visible) return null;
 
           switch (section.id) {
             case 'Calendar':
               return (
-                <div className='max-w-[600px]' key={section.id}>
+                <div className='w-[600px] max-w-[100%]' key={section.id}>
                   <CalendarComponent />
                 </div>
               );
 
             case 'Trophies':
               return (
-                <div className=' mt-[5px] trohpies max-w-[400px] w-full overflow-auto min-h-[200px] h-[200px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.1]' key={section.id}>
+                <div className=' mt-[5px] trohpies mt-[5px] w-[600px] max-w-[100%] overflow-auto min-h-[200px] h-[200px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.1]' key={section.id}>
                   <h2 className='justify-self-center'>🏅 Your Trophies 🏅</h2>
                   <TrophyList
                     runningDistance={runningDistance}
@@ -128,28 +128,28 @@ const Overview = ({
         })}
       </div>
 
-      <div className='mt-[5px]'>
+      <div className='flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTest:contents OverviewTest:w-full'>
         {sections.map((section) => {
           if (!section.visible) return null;
 
           switch (section.id) {
             case 'kmYear':
               return (
-                <div className='content-center justify-items-center m-[5px] mt-[5px] min-w-[200px] w-full h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
+                <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
                   <p> KM THIS YEAR </p>
                 </div>
               );
 
             case 'kmMonth':
               return (
-                <div className='content-center justify-items-center m-[5px] mt-[5px] min-w-[200px] w-full h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
+                <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
                   <p> KM THIS MONTH </p>
                 </div>
               );
 
             case 'kmWeek':
               return (
-                <div className='content-center justify-items-center m-[5px] mt-[5px] min-w-[200px] w-full h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
+                <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
                   <p> KM THIS WEEK </p>
                 </div>
               );

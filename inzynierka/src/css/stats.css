@@ -125,6 +125,12 @@ body.dark {
   background: #99d1ab !important;
   color: white !important;
 }
+@media (max-width: 500px) {
+  .react-calendar__navigation button {
+    min-width: 22px !important;
+  }
+}
+
 /* 
 !!!Tu są rzeczy które muszą zostac!!!
 */

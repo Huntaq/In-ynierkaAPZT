@@ -26,6 +26,8 @@ module.exports = {
         CustomSM: { max: '850px' },
         CustomXSM: { max: '611px' },
         CustomXXSM: { max: '500px' },
+        OverviewTest: { max: '1118px' },
+        OverviewTestCol1: { max: '897px' },
       },
     },
   },
