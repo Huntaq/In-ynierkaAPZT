@@ -491,12 +491,12 @@ const UserAcc = () => {
 
   return (
     <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
-        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
+      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[10px] p-[10px]'>
+        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center max-h-[760px]'>
           <Sidebar />
         </div>
         <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center  scrollbar-hide'>
+          <div className='flex justify-start min-h-screeen items-center flex-col w-[1600px] max-w-[95%] justify-self-center  scrollbar-hide'>
 
             <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
             <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>

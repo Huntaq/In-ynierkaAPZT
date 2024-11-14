@@ -94,9 +94,9 @@ const CalendarComponent = () => {
     };
 
     return (
-        <div className='max-w-[600px] '>
+        <div className='max-w-[95%] w-[600px]'>
             <div>
-                <div className='justify-items-center '>
+                <div className='justify-items-center CustomXXSM:text-[12px]'>
                     <Calendar
                         onChange={handleDateChange}
                         value={selectedDate}

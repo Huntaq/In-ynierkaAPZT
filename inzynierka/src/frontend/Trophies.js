@@ -253,8 +253,8 @@ const Trophies = () => {
   return (
 
     <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[20px] p-[20px]'>
-        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center'>
+      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[10px] p-[10px]'>
+        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center max-h-[760px]'>
           <Sidebar />
         </div>
         <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
