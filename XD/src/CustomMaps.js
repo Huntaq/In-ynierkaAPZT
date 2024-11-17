@@ -9,6 +9,7 @@ import { UserContext } from './UserContex';
 
 
 const CustomMap = () => {
+  const [weatherData, setWeatherData] = useState(null);
   const { user } = useContext(UserContext);
   const [region, setRegion] = useState({
     latitude: 0,
@@ -29,6 +30,22 @@ const CustomMap = () => {
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
   const [lastRecordedPosition, setLastRecordedPosition] = useState(null);
+/*
+  const fetchWeatherData = async (latitude, longitude) => {
+    try {
+      const API_KEY = 'YOUR_API_KEY'; 
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`
+      );
+      setWeatherData({
+        temperature: response.data.main.temp,
+        icon: `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`,
+      });
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+    }
+  };
+  */
 
   useEffect(() => {
     let watchId;
@@ -73,6 +90,7 @@ const CustomMap = () => {
             latitude,
             longitude,
           }));
+          //fetchWeatherData(latitude, longitude);
         },
         (error) => {
           console.log(error);
@@ -219,6 +237,17 @@ const CustomMap = () => {
           />
         <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
       </MapView>
+      <View style={styles.weatherContainer}>
+          {weatherData && (
+            <>
+              <Text style={styles.weatherText}>{weatherData.temperature}°C</Text>
+              <Image
+                source={{ uri: weatherData.icon }}
+                style={styles.weatherIcon}
+              />
+            </>
+          )}
+      </View>
 
       <View style={styles.controls}>
         <Text style={styles.distanceText}>Distance: {distanceTravelled.toFixed(2)} m</Text>
@@ -468,6 +497,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6347',
     marginTop: 10,
   },
+  weatherContainer: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  weatherText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginRight: 5,
+  },
+  weatherIcon: {
+    width: 50,
+    height: 50,
+  },
+  
   
 });
 

@@ -316,6 +316,7 @@ app.get('/api/friends', (req, res) => {
     });
   });
 });
+
 app.get('/api/friends_pending', (req, res) => {
   const userId = req.session.userId;
   console.log("User ID from session:", userId);
@@ -324,25 +325,7 @@ app.get('/api/friends_pending', (req, res) => {
     return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
   }
 
-  
-  const query1 = `
-    SELECT 
-      friends.id AS friends_id, 
-      friends.user_id AS friends_user_id, 
-      friends.friend_id AS friends_friend_id, 
-      friends.status AS friends_status,
-      friends.created_at AS friends_created_at,
-      users.id AS user_id,
-      users.username,
-      users.profilePicture,
-      users.is_Admin 
-    FROM friends 
-    JOIN users ON friends.friend_id = users.id
-    WHERE friends.user_id = ? AND friends.status = 'pending';
-  `;
-
-  
-  const query2 = `
+  const query = `
     SELECT 
       friends.id AS friends_id, 
       friends.user_id AS friends_user_id, 
@@ -358,25 +341,40 @@ app.get('/api/friends_pending', (req, res) => {
     WHERE friends.friend_id = ? AND friends.status = 'pending';
   `;
 
-  
-  db.query(query1, [userId], (err, results1) => {
+  db.query(query, [userId], (err, results) => {
     if (err) {
-      console.error('Error querying the database (query1):', err);
+      console.error('Error querying the database:', err);
       return res.status(500).json({ message: 'Error querying the database' });
     }
 
-    
-    db.query(query2, [userId], (err, results2) => {
-      if (err) {
-        console.error('Error querying the database (query2):', err);
-        return res.status(500).json({ message: 'Error querying the database' });
-      }
+    return res.status(200).json({ message: 'Friends Pending retrieved successfully', results });
+  });
+});
 
-      
-      const allFriends = [...results1, ...results2];
+app.post('/api/friends_accept', (req, res) => {
+  const userId = req.session.userId;
+  const { friendId } = req.body; 
 
-      return res.status(200).json({ message: 'Friends Pending retrieved successfully', results: allFriends });
-    });
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
+  }
+
+  if (!friendId) {
+    return res.status(400).json({ message: 'Bad Request: Friend ID is required' });
+  }
+
+  const query = "UPDATE friends SET status = 'accepted' WHERE id = ? AND status = 'pending'";
+  db.query(query, [friendId], (err, result) => {
+    if (err) {
+      console.error('Error updating status in the database:', err);
+      return res.status(500).json({ message: 'Error updating status in the database' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'No pending friend request found with the given ID' });
+    }
+
+    return res.status(200).json({ message: 'Friend request accepted successfully' });
   });
 });
 

@@ -32,6 +32,29 @@ const Friends = () => {
     }
   }, [user]);
 
+  const acceptFriendRequest = async (friendId) => {
+    try {
+      const response = await axios.post(
+        'http://192.168.56.1:5000/api/friends_accept',
+        { friendId },
+        { withCredentials: true }
+      );
+
+      Alert.alert('Success', response.data.message);
+
+      
+      const updatedPendingFriends = pendingFriends.filter((friend) => friend.friends_id !== friendId);
+      setPendingFriends(updatedPendingFriends);
+
+      
+      const responseAccepted = await axios.get('http://192.168.56.1:5000/api/friends', { withCredentials: true });
+      setFriends(responseAccepted.data.results || []);
+    } catch (error) {
+      console.error('Error accepting friend request:', error.response?.data || error.message);
+      Alert.alert('Error', error.response?.data?.message || 'Failed to accept friend request');
+    }
+  };
+
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -39,21 +62,25 @@ const Friends = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionHeader}>Pending Friend Requests</Text>
-      <FlatList
-        data={pendingFriends}
-        keyExtractor={(item) => item.friends_id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.friendItem}>
-            <Text style={styles.text}>Username: {item.username}</Text>
-            {item.profilePicture ? (
-              <Image source={{ uri: `http://192.168.56.1${item.profilePicture}` }} style={styles.profilePicture} />
-            ) : (
-              <Text style={styles.text}>No profile picture available</Text>
-            )}
-            <Button title="Accept Friend" onPress={() => {}} />
-          </View>
-        )}
-      />
+      {pendingFriends.length === 0 ? (
+        <Text style={styles.noPendingText}>Nikt cię nie chce w przyjaciołach aktualnie, idź dotknąć trawy 🌱</Text>
+      ) : (
+        <FlatList
+          data={pendingFriends}
+          keyExtractor={(item) => item.friends_id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.friendItem}>
+              <Text style={styles.text}>Username: {item.username}</Text>
+              {item.profilePicture ? (
+                <Image source={{ uri: `http://192.168.56.1${item.profilePicture}` }} style={styles.profilePicture} />
+              ) : (
+                <Text style={styles.text}>No profile picture available</Text>
+              )}
+              <Button title="Accept Friend" onPress={() => acceptFriendRequest(item.friends_id)} />
+            </View>
+          )}
+        />
+      )}
 
       <View style={styles.separator} />
 
@@ -107,6 +134,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
+  },
+  noPendingText: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#888',
+    textAlign: 'center',
+    marginVertical: 20,
   },
 });
 
