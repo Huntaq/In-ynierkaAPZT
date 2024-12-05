@@ -1,20 +1,12 @@
 import React, { useEffect } from 'react';
-import Chart from './Chart';
 import TrophyList from './TrophyList';
 import CalendarComponent from './CalendarCompontent';
+import Notifications from './NotificationsModal';
 
 const Overview = ({
   sections,
   totalCO2,
-  savedKm,
-  earthImage,
   totalMoney,
-  handleMonthChange,
-  handleTransportChange,
-  month,
-  year,
-  transportMode,
-  userRoutes,
   currentStreak,
   longestStreak,
   meter,
@@ -28,8 +20,9 @@ const Overview = ({
   notificationPopupVisible,
   popupRef,
   currentNotificationIndex,
-  goToNotification,
   showNextNotification,
+  handleX,
+  setPopupVisible1,
 }) => {
   useEffect(() => {
     const intervalId = setInterval(showNextNotification, 5000);
@@ -38,9 +31,22 @@ const Overview = ({
       clearInterval(intervalId);
     };
   }, [notifications.length]);
+
+
   return (
-    <div className='flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
-      <div className='flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTestCol1:w-full OverviewTestCol1:contents'>
+    <div className='relative flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
+      <div className=' flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTestCol1:w-full OverviewTestCol1:contents'>
+
+        <div className="absolute bottom-[5px] right-[5px] max-h-[90px] gap-[10px]">
+          <button className='hover:scale-105' onClick={() => setPopupVisible1(true)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <path d="M28 5.5C31.814 5.5 34.524 5.504 36.58 5.78C38.59 6.05 39.75 6.558 40.596 7.404C41.442 8.25 41.95 9.41 42.22 11.422C42.496 13.478 42.5 16.186 42.5 20C42.5 20.3978 42.658 20.7794 42.9393 21.0607C43.2206 21.342 43.6022 21.5 44 21.5C44.3978 21.5 44.7794 21.342 45.0607 21.0607C45.342 20.7794 45.5 20.3978 45.5 20V19.888C45.5 16.212 45.5 13.3 45.194 11.022C44.878 8.678 44.214 6.78 42.718 5.282C41.22 3.786 39.322 3.122 36.978 2.806C34.698 2.5 31.788 2.5 28.112 2.5H28C27.6022 2.5 27.2206 2.65804 26.9393 2.93934C26.658 3.22064 26.5 3.60218 26.5 4C26.5 4.39782 26.658 4.77936 26.9393 5.06066C27.2206 5.34196 27.6022 5.5 28 5.5ZM19.888 2.5H20C20.3978 2.5 20.7794 2.65804 21.0607 2.93934C21.342 3.22064 21.5 3.60218 21.5 4C21.5 4.39782 21.342 4.77936 21.0607 5.06066C20.7794 5.34196 20.3978 5.5 20 5.5C16.186 5.5 13.478 5.504 11.42 5.78C9.41 6.05 8.25 6.558 7.404 7.404C6.558 8.25 6.05 9.41 5.78 11.42C5.504 13.478 5.5 16.186 5.5 20C5.5 20.3978 5.34196 20.7794 5.06066 21.0607C4.77936 21.342 4.39782 21.5 4 21.5C3.60218 21.5 3.22064 21.342 2.93934 21.0607C2.65804 20.7794 2.5 20.3978 2.5 20V19.888C2.5 16.212 2.5 13.3 2.806 11.022C3.122 8.678 3.786 6.78 5.282 5.282C6.78 3.786 8.678 3.122 11.022 2.806C13.302 2.5 16.212 2.5 19.888 2.5Z" fill="#3B4A3F"/>
+  <path d="M11.054 11.054C10 12.108 10 13.806 10 17.2C10 19.462 10 20.594 10.702 21.298C11.406 22 12.54 22 14.8 22H17.2C19.462 22 20.594 22 21.298 21.298C22 20.594 22 19.46 22 17.2V14.8C22 12.538 22 11.406 21.298 10.702C20.594 10 19.46 10 17.2 10C13.806 10 12.108 10 11.054 11.054ZM11.054 36.946C10 35.892 10 34.194 10 30.8C10 28.538 10 27.406 10.702 26.702C11.406 26 12.54 26 14.8 26H17.2C19.462 26 20.594 26 21.298 26.702C22 27.406 22 28.538 22 30.8V33.2C22 35.462 22 36.594 21.298 37.296C20.594 38 19.46 38 17.2 38C13.806 38 12.108 38 11.054 36.946ZM26 14.8C26 12.538 26 11.406 26.702 10.702C27.408 10 28.54 10 30.8 10C34.194 10 35.892 10 36.946 11.054C38 12.108 38 13.806 38 17.2C38 19.462 38 20.594 37.296 21.298C36.596 22 35.462 22 33.2 22H30.8C28.538 22 27.406 22 26.702 21.298C26 20.594 26 19.46 26 17.2V14.8ZM26.704 37.298C26 36.594 26 35.46 26 33.2V30.8C26 28.538 26 27.406 26.702 26.702C27.408 26 28.54 26 30.8 26H33.2C35.462 26 36.594 26 37.296 26.702C38 27.406 38 28.538 38 30.8C38 34.194 38 35.892 36.946 36.946C35.892 38 34.194 38 30.8 38C28.538 38 27.406 38 26.702 37.296" fill="#3B4A3F"/>
+  <path d="M44 26.5C44.3978 26.5 44.7794 26.658 45.0607 26.9393C45.342 27.2206 45.5 27.6022 45.5 28V28.112C45.5 31.788 45.5 34.7 45.194 36.978C44.878 39.322 44.214 41.22 42.718 42.718C41.22 44.214 39.322 44.878 36.978 45.194C34.698 45.5 31.788 45.5 28.112 45.5H28C27.6022 45.5 27.2206 45.342 26.9393 45.0607C26.658 44.7794 26.5 44.3978 26.5 44C26.5 43.6022 26.658 43.2206 26.9393 42.9393C27.2206 42.658 27.6022 42.5 28 42.5C31.814 42.5 34.524 42.496 36.58 42.22C38.59 41.95 39.75 41.442 40.596 40.596C41.442 39.75 41.95 38.59 42.22 36.578C42.496 34.524 42.5 31.814 42.5 28C42.5 27.6022 42.658 27.2206 42.9393 26.9393C43.2206 26.658 43.6022 26.5 44 26.5ZM5.5 28C5.5 27.6022 5.34196 27.2206 5.06066 26.9393C4.77936 26.658 4.39782 26.5 4 26.5C3.60218 26.5 3.22064 26.658 2.93934 26.9393C2.65804 27.2206 2.5 27.6022 2.5 28V28.112C2.5 31.788 2.5 34.7 2.806 36.978C3.122 39.322 3.786 41.22 5.282 42.718C6.78 44.214 8.678 44.878 11.022 45.194C13.302 45.5 16.212 45.5 19.888 45.5H20C20.3978 45.5 20.7794 45.342 21.0607 45.0607C21.342 44.7794 21.5 44.3978 21.5 44C21.5 43.6022 21.342 43.2206 21.0607 42.9393C20.7794 42.658 20.3978 42.5 20 42.5C16.186 42.5 13.478 42.496 11.42 42.22C9.41 41.95 8.25 41.442 7.404 40.596C6.558 39.75 6.05 38.59 5.78 36.578C5.504 34.524 5.5 31.814 5.5 28Z" fill="#3B4A3F"/>
+</svg>
+          </button>
+        </div>
+
         {sections.map((section) => {
           if (!section.visible) return null;
 
@@ -159,32 +165,7 @@ const Overview = ({
           }
         })}
       </div>
-
-      {notifications.length > 0 && (
-        <>
-          <div className={`fixed h-full w-full top-0 bg-black opacity-50 left-0 z-50  transition-all  ease-in-out ${notificationPopupVisible ? 'visible' : 'invisible'}`}></div>
-          <div className={`CustomSM:max-w-[95%] fixed border-[10px] border-[#409A55]  box-border transition-all  ease-in-out rounded h-[250px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 w-[600px] bg-white z-50 ${notificationPopupVisible ? 'visible' : 'invisible'}`} ref={popupRef}>
-            <div>
-              <div className='mt-[10px] justify-self-center'>
-                <p className='font-bold text-[30px] text-[#409A55] uppercase'>{notifications[currentNotificationIndex]?.header}</p>
-              </div>
-              <div className='mt-[10px] justify-self-center'>
-                <p className='text-[18px]'>{notifications[currentNotificationIndex]?.content}</p>
-              </div>
-            </div>
-            <div className="absolute bottom-[20px] left-1/2 transform -translate-x-1/2 flex justify-center gap-[10px]">
-              {notifications.map((_, index) => (
-                <div
-                  key={index}
-                  onClick={() => goToNotification(index)}
-                  className={`w-[20px] h-[20px] rounded-full cursor-pointer transition-all ${index === currentNotificationIndex ? 'bg-[#409A55]' : 'bg-gray-300'
-                    }`}
-                ></div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+      <Notifications notifications={notifications} notificationPopupVisible={notificationPopupVisible} popupRef={popupRef} currentNotificationIndex={currentNotificationIndex} handleX={handleX} />
     </div>
   );
 };

@@ -365,14 +365,14 @@ const UserAcc = () => {
 
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
-        setNotificationPopupVisible(false);
-        localStorage.setItem('showPopup', 'false');
+        // setNotificationPopupVisible(false);
+        // localStorage.setItem('showPopup', 'false');
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [popupRef, notificationPopupVisible]);
+  }, [popupRef]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -393,6 +393,11 @@ const UserAcc = () => {
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
+
+  function handleX(){
+    setNotificationPopupVisible(false);
+    localStorage.setItem('showPopup', 'false');
+  }
 
   const calculateStreaks = (routes) => {
     const normalizeDate = (date) => {
@@ -479,9 +484,9 @@ const UserAcc = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  const goToNotification = (index) => {
-    setCurrentNotificationIndex(index);
-  };
+  // const goToNotification = (index) => {
+  //   setCurrentNotificationIndex(index);
+  // };
   const showNextNotification = () => {
     setCurrentNotificationIndex((prevIndex) => (prevIndex + 1) % notifications.length);
   };
@@ -509,17 +514,14 @@ const UserAcc = () => {
                 handleDotClick={handleDotClick}
               />
 
-              <div className="absolute top-0 left-0 max-h-[90px]gap-[10px]">
+              <div className="absolute top-[40px] left-0 max-h-[90px]gap-[10px]">
                 {showAdminButton && (
                   <button onClick={() => navigate('/AdminPanel')} className="w-[100px] h-[40px] bg-white rounded text-black">
                     Admin
                   </button>
                 )}
-
-                <button className="w-[100px] h-[40px] bg-white  rounded text-black" onClick={() => setPopupVisible1(true)}>
-                  Layout
-                </button>
               </div>
+
               {popupVisible1 && (
                 <SettingsPopup
                   sections={sections}
@@ -554,8 +556,10 @@ const UserAcc = () => {
               notificationPopupVisible={notificationPopupVisible}
               popupRef={popupRef}
               currentNotificationIndex={currentNotificationIndex}
-              goToNotification={goToNotification}
+              // goToNotification={goToNotification}
               showNextNotification={showNextNotification}
+              handleX={handleX}
+              setPopupVisible1={setPopupVisible1}
             />
             {popupVisible && (
               <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
