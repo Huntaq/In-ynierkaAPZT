@@ -97,6 +97,10 @@ body.dark {
   }
 }
 
+.diff-browser-center {
+  text-align: -webkit-center;
+}
+
 /* 
 !!!Tu są rzeczy które muszą zostac!!!
 */

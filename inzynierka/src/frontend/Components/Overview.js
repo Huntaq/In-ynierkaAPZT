@@ -30,8 +30,8 @@ const Overview = ({
 
 
   return (
-    <div className=' flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
-      <div className=' flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTestCol1:w-full OverviewTestCol1:contents'>
+    <div className='diff-browser-center flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
+      <div className=' flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTestCol1:w-full OverviewTestCol1:contents diff-browser-center'>
 
         <div className="absolute bottom-[40px] right-[40px] max-h-[90px] gap-[10px]">
           <button className='hover:scale-105' onClick={() => setPopupVisible1(true)}>
@@ -52,8 +52,8 @@ const Overview = ({
             case 'streak':
             case 'Test':
               return (
-                <div className='flex CustomXSM:block' key={section.id}>
-                  <div className='content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[200px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                <div className='flex CustomXSM:block ' key={section.id}>
+                  <div className=' content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[200px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
                     {section.id === 'co2' && (
                       <>
                         <p className='text-[#3B4A3F] font-bold'>CO2 Saved</p>
@@ -74,7 +74,7 @@ const Overview = ({
                     )}
                     {section.id === 'streak' && (
                       <>
-                        <div className='flex'>
+                        <div className='flex '>
                           <p className='text-[#3B4A3F] font-bold'>Current Streak: </p>
                           <p className='text-[#3B4A3F] font-bold'>&nbsp; {currentStreak}</p>
                         </div>

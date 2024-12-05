@@ -7,7 +7,7 @@ const router = express.Router();
 //sciezka do przechowywania zdjec 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads';
+    const uploadPath = 'C:/xampp/htdocs/uploads';
     
     cb(null, uploadPath);
   },
@@ -102,7 +102,7 @@ router.delete('/:eventId', async (req, res) => {
     const fs = require('fs');
     
     if (imageUrl) {
-      const filePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/', imageUrl);
+      const filePath = path.join('C:/xampp/htdocs/', imageUrl);
       fs.unlink(filePath, (err) => {
         if (err) {
           console.error('error deleting image', err);
@@ -111,7 +111,7 @@ router.delete('/:eventId', async (req, res) => {
     }
 
     if (trophyImageUrl) {
-      const trophyFilePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/', trophyImageUrl);
+      const trophyFilePath = path.join('C:/xampp/htdocs/', trophyImageUrl);
       fs.unlink(trophyFilePath, (err) => {
         if (err) {
           console.error('error deleting image', err);
