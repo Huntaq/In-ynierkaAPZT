@@ -1,41 +1,7 @@
 /* 
 !!!Tu są rzeczy które muszą zostac!!!
 */
- .trophy.level-1 {
-  background-color: #a8e6a1;
-  border-color: #78c26e;
-  background: linear-gradient(135deg, #a8e6a1, #78c26e);
-}
 
-.trophy.level-2 {
-  background-color: #a1c4fd;
-  border-color: #759bc8;
-  background: linear-gradient(135deg, #a1c4fd, #759bc8);
-}
-
-.trophy.level-3 {
-  background-color: #f5c28a;
-  border-color: #d19357;
-  background: linear-gradient(135deg, #f5c28a, #d19357);
-}
-
-.trophy.level-4 {
-  background-color: #c0c0c0;
-  border-color: #9c9c9c;
-  background: linear-gradient(135deg, #c0c0c0, #9c9c9c);
-}
-
-.trophy.level-5 {
-  background-color: #ffd700;
-  border-color: #e5ac00;
-  background: linear-gradient(135deg, #ffd700, #e5ac00);
-}
-
-.trophy-level {
-  margin-top: 10px !important;
-  margin-bottom: 10px !important;
-  color: #666;
-}
 .ranking-item.first-place {
   font-weight: bold;
   background: linear-gradient(135deg, gold, #f0fa67);

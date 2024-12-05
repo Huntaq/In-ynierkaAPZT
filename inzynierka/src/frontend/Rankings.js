@@ -9,6 +9,8 @@ import second from './Components/img/ranking/2nd.png';
 import third from './Components/img/ranking/3rd.png';
 import left from './Components/img/ranking/arrow left.svg';
 import right from './Components/img/ranking/arrow right.svg';
+import Notifications from './Components/NotificationsModal';
+
 const Rankings = () => {
   const [userRoutes, setUserRoutes] = useState([]);
   const [ranking, setRanking] = useState([]);
@@ -239,6 +241,7 @@ const Rankings = () => {
             </div>
           </div>
         </div>
+        <Notifications/>
       </div>
     </div>
   );

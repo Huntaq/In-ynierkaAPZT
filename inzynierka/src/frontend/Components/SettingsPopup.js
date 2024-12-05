@@ -41,7 +41,7 @@ const SettingsPopup = ({ sections, toggleSectionVisibility1, onClose }) => {
           <div className='w-[140px] justify-items-center'>
             <p className="font-semibold mb-2">Second Row</p>
             <div className="grid-cols-2 gap-4 mb-4">
-              {sections.slice(4, 7).map((section) => (
+              {sections.slice(4, 6).map((section) => (
                 <div key={section.id} className="flex items-center">
                   <input
                     type="checkbox"
@@ -58,7 +58,7 @@ const SettingsPopup = ({ sections, toggleSectionVisibility1, onClose }) => {
           <div className='w-[140px] justify-items-center'>
             <p className="font-semibold mb-2">Third Row</p>
             <div className="grid-cols-2 gap-4">
-              {sections.slice(7, 10).map((section) => (
+              {sections.slice(6, 10).map((section) => (
                 <div key={section.id} className="flex items-center">
                   <input
                     type="checkbox"

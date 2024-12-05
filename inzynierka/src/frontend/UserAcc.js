@@ -201,24 +201,7 @@ const UserAcc = () => {
             setError('events query/server error');
           }
 
-          const showPopup = localStorage.getItem('showPopup') === 'true';
-
-          if (showPopup) {
-            const notificationsResponse = await fetch(`http://localhost:5000/api/notifications/popup`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (notificationsResponse.ok) {
-              const notificationsData = await notificationsResponse.json();
-              setNotifications(notificationsData);
-              setNotificationPopupVisible(notificationsData.length > 0);
-            } else {
-              setError('notification query/server error');
-            }
-          }
+          
         } else {
           setError('user_routes query/server error');
         }
@@ -266,11 +249,8 @@ const UserAcc = () => {
     { id: 'streak', label: 'Current Streak', visible: true },
     { id: 'Test', label: 'Test', visible: false },
     { id: 'Calendar', label: 'Calendar', visible: true },
-    { id: 'Chart', label: 'Chart', visible: true },
+    { id: 'StatsDate', label: 'StatsDate', visible: true },
     { id: 'Trophies', label: 'Trophies', visible: true },
-    { id: 'kmYear', label: 'kmYear', visible: true },
-    { id: 'kmMonth', label: 'kmMonth', visible: true },
-    { id: 'kmWeek', label: 'kmWeek', visible: true },
     // tu bedzie wiecej sekcji 
   ];
 
@@ -394,11 +374,6 @@ const UserAcc = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  function handleX(){
-    setNotificationPopupVisible(false);
-    localStorage.setItem('showPopup', 'false');
-  }
-
   const calculateStreaks = (routes) => {
     const normalizeDate = (date) => {
       const newDate = new Date(date);
@@ -487,9 +462,6 @@ const UserAcc = () => {
   // const goToNotification = (index) => {
   //   setCurrentNotificationIndex(index);
   // };
-  const showNextNotification = () => {
-    setCurrentNotificationIndex((prevIndex) => (prevIndex + 1) % notifications.length);
-  };
   const handleDotClick = (index) => {
     setCurrentIndex(index);
   };
@@ -557,8 +529,6 @@ const UserAcc = () => {
               popupRef={popupRef}
               currentNotificationIndex={currentNotificationIndex}
               // goToNotification={goToNotification}
-              showNextNotification={showNextNotification}
-              handleX={handleX}
               setPopupVisible1={setPopupVisible1}
             />
             {popupVisible && (

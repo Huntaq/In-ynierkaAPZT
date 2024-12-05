@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import Chart from './Components/Chart';
+import Notifications from './Components/NotificationsModal';
 const Statistics = (
   month,
   year,
@@ -156,6 +157,7 @@ const Statistics = (
             </div>
           </div>
         </div>
+        <Notifications/>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import emailjs from 'emailjs-com';
 import { useNavigate } from 'react-router-dom';
+import Notifications from './Components/NotificationsModal';
 
 const Settings = () => {
   const [loading, setLoading] = useState(true);
@@ -202,6 +203,7 @@ const Settings = () => {
             </div>
           </div>
         </div>
+        <Notifications/>
       </div>
     </div>
   );

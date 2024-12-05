@@ -29,53 +29,58 @@ const TrophyList = ({ runningDistance, cyclingDistance, Co2Saved, CaloriesBurned
   return (
     <div className="">
       <div className="flex flex-wrap justify-center box-border">
-        <div className={`trophy hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[220px] h-[100px] rounded-[10px] p-[10px] box-border border-[3px] border-[#ccc]`} onClick={() => handleTrophyClick('running')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border`} onClick={() => handleTrophyClick('running')}>
           <div className="">
-            <h3 className="text-center">🏃‍♂️ Running </h3>
+            <h3 className="text-center">Running </h3>
+            <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/man.png'/>
             <h3 className="text-center">Level {runningTrophy.level}</h3>
           </div>
-          <div className="w-[200px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
-            <div className="bg-[#5ca7da] h-[8px] rounded-[25px]" style={{ width: `${(100 - (runningTrophy.next / (runningTrophy.next + runningDistance)) * 100).toFixed(2)}%` }}></div>
+          <div className="w-[180px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
+            <div className="bg-[#4BD0FF] h-[8px] rounded-[25px]" style={{ width: `${(100 - (runningTrophy.next / (runningTrophy.next + runningDistance)) * 100).toFixed(2)}%` }}></div>
           </div>
         </div>
 
-        <div className={`trophy hover:cursor-pointer hover:scale-105 level-${cyclingTrophy.level} m-[10px] w-[220px] h-[100px] rounded-[10px] p-[10px] box-border border-[3px] border-[#ccc]`} onClick={() => handleTrophyClick('cycling')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${cyclingTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('cycling')}>
           <div className="">
-            <h3 className="text-center">🚴‍♂️ Cycling </h3>
+            <h3 className="text-center">Cycling </h3>
+            <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/man.png'/>
             <h3 className="text-center">Level {cyclingTrophy.level}</h3>
           </div>
-          <div className="w-[200px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
-            <div className="bg-[#5ca7da] h-[8px] rounded-[25px]" style={{ width: `${(100 - (cyclingTrophy.next / (cyclingTrophy.next + cyclingDistance)) * 100).toFixed(2)}%` }}></div>
+          <div className="w-[180px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
+            <div className="bg-[#4BD0FF] h-[8px] rounded-[25px]" style={{ width: `${(100 - (cyclingTrophy.next / (cyclingTrophy.next + cyclingDistance)) * 100).toFixed(2)}%` }}></div>
           </div>
         </div>
 
-        <div className={`trophy hover:cursor-pointer hover:scale-105  level-${co2Trophy.level} m-[10px] w-[220px] h-[100px] rounded-[10px] p-[10px] box-border border-[3px] border-[#ccc]`} onClick={() => handleTrophyClick('co2')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${co2Trophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('co2')}>
           <div className="">
-            <h3 className="text-center">🌍 CO2 Savings </h3>
+            <h3 className="text-center">CO2 Savings </h3>
+            <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/man.png'/>
             <h3 className="text-center">Level {co2Trophy.level}</h3>
           </div>
-          <div className="w-[200px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
-            <div className="bg-[#5ca7da] h-[8px] rounded-[25px]" style={{ width: `${(100 - (co2Trophy.next / (co2Trophy.next + Co2Saved)) * 100).toFixed(2)}%` }}></div>
+          <div className="w-[180px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
+            <div className="bg-[#4BD0FF] h-[8px] rounded-[25px]" style={{ width: `${(100 - (co2Trophy.next / (co2Trophy.next + Co2Saved)) * 100).toFixed(2)}%` }}></div>
           </div>
         </div>
 
-        <div className={`trophy hover:cursor-pointer hover:scale-105  level-${caloriesTrophy.level} m-[10px] w-[220px] h-[100px] rounded-[10px] p-[10px] box-border border-[3px] border-[#ccc]`} onClick={() => handleTrophyClick('calories')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${caloriesTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('calories')}>
           <div className="">
-            <h3 className="text-center">🔥 Calories Burned </h3>
+            <h3 className="text-center">Calories Burned </h3>
+            <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/man.png'/>
             <h3 className="text-center">Level {caloriesTrophy.level}</h3>
           </div>
-          <div className="w-[200px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
-            <div className="bg-[#5ca7da] h-[8px] rounded-[25px]" style={{ width: `${(100 - (caloriesTrophy.next / (caloriesTrophy.next + CaloriesBurned)) * 100).toFixed(2)}%` }}></div>
+          <div className="w-[180px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
+            <div className="bg-[#4BD0FF] h-[8px] rounded-[25px]" style={{ width: `${(100 - (caloriesTrophy.next / (caloriesTrophy.next + CaloriesBurned)) * 100).toFixed(2)}%` }}></div>
           </div>
         </div>
 
-        <div className={`trophy hover:cursor-pointer hover:scale-105 level-${moneyTrophy.level} m-[10px] w-[220px] h-[100px] rounded-[10px] p-[10px] box-border border-[3px] border-[#ccc]`} onClick={() => handleTrophyClick('money')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${moneyTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('money')}>
           <div className="">
-            <h3 className="text-center">💸 Money Saved </h3>
+            <h3 className="text-center">Money Saved </h3>
+            <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/man.png'/>
             <h3 className="text-center">Level {moneyTrophy.level}</h3>
           </div>
-          <div className="w-[200px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
-            <div className="bg-[#5ca7da] h-[8px] rounded-[25px]" style={{ width: `${(100 - (moneyTrophy.next / (moneyTrophy.next + MoneySaved)) * 100).toFixed(2)}%` }}></div>
+          <div className="w-[180px] mt-[20px] bg-[#e0e0e0] rounded-[25px]">
+            <div className="bg-[#4BD0FF] h-[8px] rounded-[25px]" style={{ width: `${(100 - (moneyTrophy.next / (moneyTrophy.next + MoneySaved)) * 100).toFixed(2)}%` }}></div>
           </div>
         </div>
       </div>

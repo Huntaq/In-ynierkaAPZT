@@ -7,6 +7,7 @@ import 'react-calendar/dist/Calendar.css';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import CalendarComponent from './Components/CalendarCompontent';
+import Notifications from './Components/NotificationsModal';
 
 Modal.setAppElement('#root');
 
@@ -100,6 +101,7 @@ const Calendar1 = () => {
             <CalendarComponent />
           </div>
         </div>
+        <Notifications/>
       </div>
     </div>
   );

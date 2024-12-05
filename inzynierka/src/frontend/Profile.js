@@ -5,6 +5,7 @@ import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import Logo from './Components/img/earthLogo.png';
+import Notifications from './Components/NotificationsModal';
 
 const Profile = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -440,6 +441,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        <Notifications/>
       </div>
     </div>
   );

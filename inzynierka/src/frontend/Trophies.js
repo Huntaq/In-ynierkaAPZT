@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import TrophyList from './Components/TrophyList';
 import confetti from "canvas-confetti";
 import { useNavigate } from 'react-router-dom';
+import Notifications from './Components/NotificationsModal';
 
 const Trophies = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -310,6 +311,7 @@ const Trophies = () => {
             )}
           </div>
         </div>
+        <Notifications/>
       </div>
     </div>
   );
