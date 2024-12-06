@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, Alert, Platform } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Modal, Alert, Platform, Image } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import haversine from 'haversine';
@@ -7,10 +7,7 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import axios from 'axios';
 import { UserContext } from './UserContex';
 
-
 const CustomMap = () => {
-  const [weatherData, setWeatherData] = useState(null);
-  const { user } = useContext(UserContext);
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
@@ -21,32 +18,16 @@ const CustomMap = () => {
     latitude: 0,
     longitude: 0,
   });
-
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState(0);
   const [isTracking, setIsTracking] = useState(false);
-  const [IsResumed, setIsResumed] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
   const [lastRecordedPosition, setLastRecordedPosition] = useState(null);
-/*
-  const fetchWeatherData = async (latitude, longitude) => {
-    try {
-      const API_KEY = 'YOUR_API_KEY'; 
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`
-      );
-      setWeatherData({
-        temperature: response.data.main.temp,
-        icon: `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`,
-      });
-    } catch (error) {
-      console.error('Error fetching weather data:', error);
-    }
-  };
-  */
+  const { user } = useContext(UserContext);
 
+  // Używane do lokalizacji
   useEffect(() => {
     let watchId;
     const requestLocationPermission = async () => {
@@ -70,7 +51,6 @@ const CustomMap = () => {
 
           if (isTracking) {
             const newCoordinate = { latitude, longitude };
-
             if (lastRecordedPosition) {
               const distance = haversine(lastRecordedPosition, newCoordinate, { unit: 'meter' });
               if (distance >= 5) {
@@ -90,10 +70,9 @@ const CustomMap = () => {
             latitude,
             longitude,
           }));
-          //fetchWeatherData(latitude, longitude);
         },
         (error) => {
-          console.log(error);
+          console.error(error);
           Alert.alert('Error', 'Unable to fetch location. Please try again.');
         },
         {
@@ -105,7 +84,6 @@ const CustomMap = () => {
       );
     };
 
-
     requestLocationPermission();
 
     return () => {
@@ -113,6 +91,7 @@ const CustomMap = () => {
     };
   }, [isTracking, lastRecordedPosition]);
 
+  // Ustawienie timera
   useEffect(() => {
     let interval = null;
 
@@ -127,32 +106,46 @@ const CustomMap = () => {
     return () => clearInterval(interval);
   }, [isTracking]);
 
+  // Formatowanie czasu
+  const formatTime = (time) => {
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = time % 60;
 
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  // Funkcje obliczeniowe
+  const calculateSavings = () => (distanceTravelled / 1000 * 0.5).toFixed(2);
+  const calculateCO2Savings = () => (distanceTravelled / 1000 * 120).toFixed(2);
+  const calculateCaloriesBurned = () => {
+    const caloriesPerKm = transportMode === 'Walking' ? 50 : 35;
+    return (distanceTravelled / 1000 * caloriesPerKm).toFixed(2);
+  };
+
+  // Wysyłanie danych do backendu
   const handleSavePress = async () => {
     try {
-      const formData = new FormData();
-      formData.append('user_id', user.id);
-      formData.append('transport_mode_id', {
-        'Walking': '1',
-        'Running': '2',
-        'Cycling': '3'
-      });
-
-
-      formData.append('distance_km', (distanceTravelled / 1000).toFixed(2));
-      formData.append('CO2', calculateCO2Savings());
-      formData.append('kcal', calculateCaloriesBurned());
-      formData.append('duration', formatTime(timeElapsed));
-      formData.append('money', calculateSavings());
-      formData.append('is_private', false);
-
-      const response = await axios.post('http://192.168.56.1:5000/api/routes', formData, {
+      const data = {
+        user_id: user.id,
+        transport_mode_id: transportMode === 'Walking' ? '1' : transportMode === 'Running' ? '2' : '3',
+        distance_km: (distanceTravelled / 1000).toFixed(2),
+        CO2: calculateCO2Savings(),
+        kcal: calculateCaloriesBurned(),
+        duration: formatTime(timeElapsed),
+        money: calculateSavings(),
+        is_private: false,
+        routeCoordinates, // Dodanie punktów trasy
+      };
+  
+      console.log('Wysyłanie danych:', data);
+  
+      const response = await axios.post('http://192.168.56.1:5000/api/routes', data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
       });
-
-
+  
       if (response.status === 201) {
         Alert.alert('Success', 'Route has been saved successfully.');
         setModalVisible(false);
@@ -160,184 +153,79 @@ const CustomMap = () => {
         throw new Error('Failed to save route.');
       }
     } catch (error) {
-      console.error('Error saving route:', error);
-      Alert.alert('Error', 'Unable to save route. Please try again.');
+      console.error('Błąd podczas zapisywania trasy:', error.response?.data || error.message);
+      Alert.alert('Błąd', 'Nie udało się zapisać trasy. Spróbuj ponownie.');
     }
   };
 
-
+  // Sterowanie
   const handleStartPress = () => {
     setIsTracking(true);
     setRouteCoordinates([]);
     setDistanceTravelled(0);
     setTimeElapsed(0);
     setLastRecordedPosition(null);
-    console.log('Start pressed');
   };
 
   const handleStopPress = () => {
     setIsTracking(false);
-    setIsResumed(false);
-    console.log('Stop pressed');
   };
-
-
-  const formatTime = (time) => {
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
-
-    const formattedHours = hours < 10 ? `0${hours}` : hours;
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-  };
-
-
-  const handleTransportModeChange = (mode) => {
-    setTransportMode(mode);
-  };
-
-
-  const calculateSavings = () => {
-    const savingsPerKm = transportMode === 'Bus' ? 1 : 0.5;
-    return (distanceTravelled / 1000 * savingsPerKm).toFixed(2);
-  };
-
-
-  const calculateCO2Savings = () => {
-    const co2PerKm = 120;
-    return (distanceTravelled / 1000 * co2PerKm).toFixed(2);
-  };
-
-
-  const calculateCaloriesBurned = () => {
-    const caloriesPerKm = transportMode === 'Walking' ? 50 : 35;
-    return (distanceTravelled / 1000 * caloriesPerKm).toFixed(2);
-  };
-
 
   const handleFinishPress = () => {
+    setIsTracking(false);
     setModalVisible(true);
   };
 
+  const handleTransportModeChange = (mode) => setTransportMode(mode);
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={region}
-        onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
-      >
-          <Marker
-            coordinate={currentPosition}
-            title={"Your Location"}
-            description={"This is where you are currently located."}
-          />
+      <MapView style={styles.map} region={region}>
+        <Marker coordinate={currentPosition} title="Your Location" />
         <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
       </MapView>
-      <View style={styles.weatherContainer}>
-          {weatherData && (
-            <>
-              <Text style={styles.weatherText}>{weatherData.temperature}°C</Text>
-              <Image
-                source={{ uri: weatherData.icon }}
-                style={styles.weatherIcon}
-              />
-            </>
-          )}
-      </View>
 
       <View style={styles.controls}>
         <Text style={styles.distanceText}>Distance: {distanceTravelled.toFixed(2)} m</Text>
         <Text style={styles.timerText}>Time: {formatTime(timeElapsed)}</Text>
-        <Text style={styles.transportText}>Mode: {transportMode}</Text>
-
         <View style={styles.modeButtons}>
-          <TouchableOpacity
-            style={[
-              styles.modeButton,
-              transportMode === 'Walking' ? styles.activeButton : null
-            ]}
-            onPress={() => handleTransportModeChange('Walking')}
-          >
-            <Text style={styles.buttonText}>Walking</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.modeButton,
-              transportMode === 'Cycling' ? styles.activeButton : null
-            ]}
-            onPress={() => handleTransportModeChange('Cycling')}
-          >
-            <Text style={styles.buttonText}>Cycling</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.modeButton,
-              transportMode === 'Running' ? styles.activeButton : null
-            ]}
-            onPress={() => handleTransportModeChange('Bus')}
-          >
-            <Text style={styles.buttonText}>Running</Text>
-          </TouchableOpacity>
+          {['Walking', 'Cycling', 'Running'].map((mode) => (
+            <TouchableOpacity
+              key={mode}
+              style={[
+                styles.modeButton,
+                transportMode === mode ? styles.activeButton : null,
+              ]}
+              onPress={() => handleTransportModeChange(mode)}
+            >
+              <Text style={styles.buttonText}>{mode}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-
         <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
           <Text style={styles.startButtonText}>Start</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
-          <Text style={styles.stopButtonText}>Pause</Text>
+          <Text style={styles.stopButtonText}>Stop</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.finishButton} onPress={handleFinishPress}>
           <Text style={styles.finishButtonText}>Finish</Text>
         </TouchableOpacity>
       </View>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+      <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Trasa ukończona!</Text>
-
-            
-            <MapView
-              style={styles.miniMap}
-              region={{
-                latitude: routeCoordinates.length > 0 ? routeCoordinates[0].latitude : 0,
-                longitude: routeCoordinates.length > 0 ? routeCoordinates[0].longitude : 0,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-            >
-              <Polyline coordinates={routeCoordinates} strokeWidth={3} strokeColor="red" />
-            </MapView>
-
-            
             <Text style={styles.modalText}>Czas: {formatTime(timeElapsed)}</Text>
             <Text style={styles.modalText}>Dystans: {(distanceTravelled / 1000).toFixed(2)} km</Text>
             <Text style={styles.modalText}>Zaoszczędzone pieniądze: {calculateSavings()} PLN</Text>
             <Text style={styles.modalText}>Zaoszczędzone CO2: {calculateCO2Savings()} g</Text>
             <Text style={styles.modalText}>Spalone kalorie: {calculateCaloriesBurned()} kcal</Text>
-
-           
-            <TouchableOpacity
-              style={[styles.button, styles.saveButton]}
-              onPress={handleSavePress}
-            >
+            <TouchableOpacity style={styles.saveButton} onPress={handleSavePress}>
               <Text style={styles.buttonText}>Zapisz</Text>
             </TouchableOpacity>
-
-            
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={() => setModalVisible(false)}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
               <Text style={styles.buttonText}>Zamknij</Text>
             </TouchableOpacity>
           </View>

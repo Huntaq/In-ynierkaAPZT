@@ -454,7 +454,7 @@ app.post('/api/friend_add', (req, res) => {
 
 
 
-app.post('/api/routes', upload.single('route_image'), (req, res) => {
+app.post('/api/routes', (req, res) => {
   const {
     user_id,
     transport_mode_id,
@@ -463,7 +463,8 @@ app.post('/api/routes', upload.single('route_image'), (req, res) => {
     kcal,
     duration,
     money,
-    is_private
+    is_private,
+    routeCoordinates, // Dodanie współrzędnych
   } = req.body;
 
   if (
@@ -474,16 +475,25 @@ app.post('/api/routes', upload.single('route_image'), (req, res) => {
     typeof kcal === 'undefined' ||
     !duration ||
     typeof money === 'undefined' ||
-    typeof is_private === 'undefined'
+    typeof is_private === 'undefined' ||
+    !Array.isArray(routeCoordinates) // Sprawdzanie, czy współrzędne to tablica
   ) {
-    return res.status(400).json({ message: 'All fields are required' });
+    return res.status(400).json({ message: 'All fields, including route coordinates, are required' });
   }
 
-  const routeImagePath = req.file ? `/uploads/${path.basename(req.file.path)}` : null;
-
   db.query(
-    'INSERT INTO user_routes (user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, route_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, routeImagePath],
+    'INSERT INTO user_routes (user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, route_coordinates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      user_id,
+      transport_mode_id,
+      distance_km,
+      CO2,
+      kcal,
+      duration,
+      money,
+      is_private,
+      JSON.stringify(routeCoordinates), // Zapis współrzędnych jako JSON
+    ],
     (err, result) => {
       if (err) {
         console.error('Error adding route:', err);
@@ -496,25 +506,24 @@ app.post('/api/routes', upload.single('route_image'), (req, res) => {
 });
 
 
+
 app.get('/api/user_routes', (req, res) => {
-  
   const userId = req.session.userId;
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
- 
   db.query('SELECT * FROM user_routes WHERE user_id = ?', [userId], (err, results) => {
     if (err) {
       console.error('Error fetching user routes:', err);
       return res.status(500).json({ message: 'Error fetching routes from database' });
     }
 
-    
     res.json(results);
   });
 });
+
 
 
 

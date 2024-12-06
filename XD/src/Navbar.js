@@ -22,6 +22,11 @@ const NavBar = () => {
         onPress={() => navigation.navigate('Settings')}>
         <Text style={styles.buttonText}>Settings</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => navigation.navigate('Statistic')}>
+        <Text style={styles.buttonText}>Statistic</Text>
+      </TouchableOpacity>
       
      
     </View>

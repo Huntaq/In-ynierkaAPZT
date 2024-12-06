@@ -8,6 +8,7 @@ import { UserProvider, UserContext } from '../src/UserContex';
 
 
 
+
 import Feed from './Feed';
 import SaveRoad from './SaveRoad';
 import Home from './Home';
@@ -19,6 +20,7 @@ import Events from './Events';
 import Friends from './Friends';
 import StartStopButton from './test';
 import FriendSearchScreen from './Friends_add';
+import Statistics from './statistic';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -68,6 +70,15 @@ const AppContent = () => {
           component={Home} 
           options={{
             title: 'Home',
+            headerRight: () => <ProfileImageButton />,
+          }} 
+        />
+
+<Stack.Screen 
+          name="Statistic" 
+          component={Statistics} 
+          options={{
+            title: 'Statistic',
             headerRight: () => <ProfileImageButton />,
           }} 
         />

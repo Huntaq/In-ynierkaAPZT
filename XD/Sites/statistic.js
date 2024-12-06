@@ -1,69 +1,167 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Picker, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { VictoryChart, VictoryBar, VictoryLine, VictoryTheme } from 'victory-native';
-import { format } from 'date-fns';
-
-const screenWidth = Dimensions.get('window').width;
+import { Picker } from '@react-native-picker/picker';
+import { format, differenceInDays } from 'date-fns';
+import { BarChart } from 'react-native-chart-kit';
 
 const Statistics = () => {
-  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM')); // Selected month
-  const [selectedFilter, setSelectedFilter] = useState('month'); // Filter for statistics
-  const [streakData, setStreakData] = useState({
-    streakDays: ['2024-11-01', '2024-11-02', '2024-11-04'], // Example streak data
-    longestStreak: 3,
-  });
-  const [stats, setStats] = useState({
-    distance: { month: 50, week: 10, year: 200 }, // Distance covered
-    co2: { month: 20, week: 5, year: 100 }, // CO2 saved
-    fuelSavings: { month: 150, week: 35, year: 600 }, // Money saved on fuel
-  });
+  const [selectedFilter, setSelectedFilter] = useState('month');
+  const [markedDates, setMarkedDates] = useState({});
+  const [streak, setStreak] = useState({ current: 0, longest: 0 });
+  const [summary, setSummary] = useState({ distance: 0, money: 0, co2: 0 });
+  const [loading, setLoading] = useState(true);
 
-  const handleMonthChange = (month) => {
-    setSelectedMonth(month);
-    // Update streakData and stats here based on the selected month
+  useEffect(() => {
+    fetchStatistics();
+  }, [selectedFilter]);
+
+  const fetchStatistics = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://192.168.56.1:5000/api/user_routes');
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data || data.length === 0) {
+        Alert.alert('No Data', 'No routes available for the selected filter.');
+        setMarkedDates({});
+        setStreak({ current: 0, longest: 0 });
+        setSummary({ distance: 0, money: 0, co2: 0 });
+        return;
+      }
+
+      // Przetwarzanie danych do kalendarza
+      const processedDates = processCalendarDates(data);
+
+      // Oblicz streak
+      const calculatedStreak = calculateStreak(Object.keys(processedDates));
+
+      // Oblicz sumaryczne wartości
+      const calculatedSummary = calculateSummary(data);
+
+      setMarkedDates(processedDates);
+      setStreak(calculatedStreak);
+      setSummary(calculatedSummary);
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+      Alert.alert('Error', 'Failed to fetch data from the server. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const renderCalendar = () => (
-    <Calendar
-      markedDates={streakData.streakDays.reduce((acc, date) => {
-        acc[date] = { marked: true, dotColor: 'green' };
-        return acc;
-      }, {})}
-      onMonthChange={(month) => handleMonthChange(month.dateString.slice(0, 7))}
-    />
-  );
-
-  const renderStatsGraph = (data, label) => (
-    <VictoryChart theme={VictoryTheme.material} width={screenWidth}>
-      <VictoryBar data={data} x="label" y="value" />
-      <Text style={styles.graphLabel}>{label}</Text>
-    </VictoryChart>
-  );
-
-  const formatDataForGraph = (data) => {
-    const labels =
-      selectedFilter === 'month'
-        ? Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`)
-        : Object.keys(data);
-    return labels.map((label, index) => ({
-      label,
-      value: data[selectedFilter] / labels.length, // For simplicity, divide values for day/month/year
-    }));
+  const processCalendarDates = (data) => {
+    const dates = {};
+    data.forEach((route) => {
+      if (route.date) {
+        const formattedDate = format(new Date(route.date), 'yyyy-MM-dd');
+        dates[formattedDate] = { marked: true, dotColor: 'green' };
+      }
+    });
+    return dates;
   };
+
+  const calculateStreak = (dates) => {
+    if (dates.length === 0) {
+      return { current: 0, longest: 0 };
+    }
+
+    const sortedDates = dates
+      .map((date) => new Date(date))
+      .sort((a, b) => a - b); // Sortuj daty rosnąco
+
+    let longestStreak = 1;
+    let currentStreak = 1;
+
+    for (let i = 1; i < sortedDates.length; i++) {
+      const diff = differenceInDays(sortedDates[i], sortedDates[i - 1]);
+      if (diff === 1) {
+        currentStreak += 1;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      } else {
+        currentStreak = 1;
+      }
+    }
+
+    const lastDate = sortedDates[sortedDates.length - 1];
+    const diffFromToday = differenceInDays(new Date(), lastDate);
+    if (diffFromToday > 1) {
+      currentStreak = 0; // Jeśli brak aktywności w ostatnich dniach, streak resetuje się
+    }
+
+    return { current: currentStreak, longest: longestStreak };
+  };
+
+  const calculateSummary = (data) => {
+    const filteredData = data.filter((route) => {
+      const routeDate = new Date(route.date);
+      const now = new Date();
+
+      if (selectedFilter === 'week') {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(now.getDate() - 7);
+        return routeDate >= oneWeekAgo && routeDate <= now;
+      } else if (selectedFilter === 'month') {
+        return (
+          routeDate.getFullYear() === now.getFullYear() &&
+          routeDate.getMonth() === now.getMonth()
+        );
+      } else if (selectedFilter === 'year') {
+        return routeDate.getFullYear() === now.getFullYear();
+      }
+      return true;
+    });
+
+    const totalDistance = filteredData.reduce((sum, route) => sum + route.distance_km, 0);
+    const totalMoney = filteredData.reduce((sum, route) => sum + route.money, 0);
+    const totalCO2 = filteredData.reduce((sum, route) => sum + route.CO2, 0);
+
+    return {
+      distance: totalDistance,
+      money: totalMoney,
+      co2: totalCO2,
+    };
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Statistics</Text>
 
-      {/* Streak - Calendar */}
+      {/* Kalendarz z oznaczeniami */}
       <View>
-        <Text style={styles.sectionTitle}>Streak</Text>
-        {renderCalendar()}
-        <Text>Longest streak: {streakData.longestStreak} days</Text>
+        <Text style={styles.sectionTitle}>Your Routes</Text>
+        <Calendar
+          markedDates={markedDates}
+          onMonthChange={(month) => {
+            console.log('Month changed to:', month.dateString);
+          }}
+        />
       </View>
 
-      {/* Filter */}
+      {/* Podsumowanie */}
+      <View style={styles.summaryContainer}>
+        <Text style={styles.summaryTitle}>Summary</Text>
+        <Text>Longest Streak: {streak.longest} days</Text>
+        <Text>Current Streak: {streak.current} days</Text>
+        <Text>Total Distance: {summary.distance.toFixed(2)} km</Text>
+        <Text>Total Money Saved: {summary.money.toFixed(2)} PLN</Text>
+        <Text>Total CO2 Saved: {summary.co2.toFixed(2)} kg</Text>
+      </View>
+
+      {/* Filtr */}
       <View style={styles.filterContainer}>
         <Text>Filter:</Text>
         <Picker
@@ -75,14 +173,6 @@ const Statistics = () => {
           <Picker.Item label="Month" value="month" />
           <Picker.Item label="Year" value="year" />
         </Picker>
-      </View>
-
-      {/* Statistics */}
-      <View>
-        <Text style={styles.sectionTitle}>Statistics</Text>
-        {renderStatsGraph(formatDataForGraph(stats.distance), 'Distance Covered (km)')}
-        {renderStatsGraph(formatDataForGraph(stats.co2), 'CO2 Saved (kg)')}
-        {renderStatsGraph(formatDataForGraph(stats.fuelSavings), 'Fuel Savings (PLN)')}
       </View>
     </ScrollView>
   );
@@ -105,11 +195,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  graphLabel: {
-    textAlign: 'center',
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: '500',
+  summaryContainer: {
+    marginVertical: 20,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    elevation: 2,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   filterContainer: {
     flexDirection: 'row',
@@ -119,6 +215,12 @@ const styles = StyleSheet.create({
   picker: {
     flex: 1,
     height: 50,
+    marginLeft: 10,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
