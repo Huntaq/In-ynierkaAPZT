@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
@@ -9,7 +8,7 @@ import second from './Components/img/ranking/2nd.png';
 import third from './Components/img/ranking/3rd.png';
 import left from './Components/img/ranking/arrow left.svg';
 import right from './Components/img/ranking/arrow right.svg';
-import Notifications from './Components/NotificationsModal';
+import BackGround from './Components/BackGround';
 
 const Rankings = () => {
   const [userRoutes, setUserRoutes] = useState([]);
@@ -197,53 +196,50 @@ const Rankings = () => {
 
   return (
 
-    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px] h-full justify-self-center gap-[10px] p-[10px]'>
-        <div className='w-[20%] max-w-[120px] rounded-[10px] bg-[#D9EDDF] justify-items-center max-h-[760px]'>
-          <Sidebar />
-        </div>
-        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
-            <Header user={user} theme={theme} toggleTheme={toggleTheme} />
-            <div className="flex justify-between w-[600px] max-w-[98%] pt-[40px]">
-              <div className="flex justify-start w-1/3">
-                {getRankingItems(rankingType).slice(1, 2)}
-              </div>
-              <div className="flex justify-center w-1/3 relative">
-                <div className="absolute top-[-40px]">
-                  {getRankingItems(rankingType).slice(0, 1)}
-                </div>
-              </div>
-              <div className="flex justify-end w-1/3 relative">
-                {getRankingItems(rankingType).slice(2, 3)}
+    <BackGround>
+      <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+        <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+          <Header user={user} theme={theme} toggleTheme={toggleTheme} />
+          <div className='font-bold m-[10px] text-[#3B4A3F] text-[24px]'>
+          {rankingType.toUpperCase()}
+          </div>
+          <div className="flex justify-between w-[600px] max-w-[98%] pt-[40px]">
+            <div className="flex justify-start w-1/3">
+              {getRankingItems(rankingType).slice(1, 2)}
+            </div>
+            <div className="flex justify-center w-1/3 relative">
+              <div className="absolute top-[-40px]">
+                {getRankingItems(rankingType).slice(0, 1)}
               </div>
             </div>
-            <div className='flex w-full justify-center max-h-[400px]'>
-              <div className="flex w-[53px] h-[53px] self-center mr-[10px]">
-                <button onClick={() => handleArrowClick('prev')}><img className='hover:scale-105' src={right} /></button>
-              </div>
-
-              <div className="w-[95%] max-w-[600px] overflow-y-scroll scrollbar-hide">
-                <div>
-                  <div className='h-[70px] CustomXXSM:h-[40px] mt-[30px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#84D49D] gap-[10px]'>
-                    <p className='font-bold text-[32px] content-center CustomXXSM:text-[16px]'>{userIndex + 1}</p>
-                    <p className='content-center CustomXXSM:text-[12px] '>{user.username}</p>
-                  </div>
-                  <div className='w-full h-[2px] bg-black mb-[10px]'></div>
-                  <ul className='CustomXXSM:text-[12px]'>
-                    {getRankingItems(rankingType).slice(3, 100)}
-                  </ul>
+            <div className="flex justify-end w-1/3 relative">
+              {getRankingItems(rankingType).slice(2, 3)}
+            </div>
+          </div>
+          <div className='flex w-full justify-center max-h-[400px]'>
+            <div className="flex w-[53px] h-[53px] self-center mr-[10px]">
+              <button onClick={() => handleArrowClick('prev')}><img className='hover:scale-105' src={right} /></button>
+            </div>
+            <div className="w-[95%] max-w-[600px] overflow-y-scroll scrollbar-hide">
+              <div>
+                <div className='h-[70px] CustomXXSM:h-[40px] mt-[30px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#84D49D] gap-[10px]'>
+                  <p className='font-bold text-[32px] content-center CustomXXSM:text-[16px]'>{userIndex + 1}</p>
+                  <p className='content-center CustomXXSM:text-[12px] '>{user.username}</p>
                 </div>
+                <div className='w-full h-[2px] bg-black mb-[10px]'></div>
+                <ul className='CustomXXSM:text-[12px]'>
+                  {getRankingItems(rankingType).slice(3, 100)}
+                </ul>
               </div>
-              <div className='flex w-[53px] h-[53px] self-center ml-[10px]'>
-                <button onClick={() => handleArrowClick('next')}><img className='hover:scale-105' src={left} /></button>
-              </div>
+            </div>
+            <div className='flex w-[53px] h-[53px] self-center ml-[10px]'>
+              <button onClick={() => handleArrowClick('next')}><img className='hover:scale-105' src={left} /></button>
             </div>
           </div>
         </div>
-        <Notifications/>
       </div>
-    </div>
+    </BackGround>
+
   );
 };
 

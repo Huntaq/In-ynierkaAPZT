@@ -7,7 +7,7 @@ const router = express.Router();
 //sciezka do przechowywania zdjec 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = 'C:/xampp/htdocs/uploads';
+    const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs';
     
     cb(null, uploadPath);
   },

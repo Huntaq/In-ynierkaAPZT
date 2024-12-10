@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '../css/stats.css';
-import Sidebar from './Components/Sidebar';
 import Header from './Components/Header';
 import earthImage from './Components/earth.png';
 import meter from './Components/meter.png';
@@ -9,12 +8,14 @@ import SettingsPopup from './Components/SettingsPopup';
 import { useNavigate } from 'react-router-dom';
 import Overview from './Components/Overview';
 import UniqueEvents from './Components/UniqueEvents';
+import BackGround from './Components/BackGround';
 
 const UserAcc = () => {
   const [user, setUser] = useState(null);
   const [userRoutes, setUserRoutes] = useState([]);
   const [runningDistance, setRunningDistance] = useState(0);
   const [cyclingDistance, setCyclingDistance] = useState(0);
+  const [walkingDistance, setWalkingDistance] = useState(0);
   const [Co2Saved, setCo2Saved] = useState(0);
   const [CaloriesBurned, setCaloriesBurned] = useState(0);
   const [MoneySaved, setMoneySaved] = useState(0);
@@ -30,12 +31,12 @@ const UserAcc = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupContent, setPopupContent] = useState({});
   const [popupVisible1, setPopupVisible1] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [notificationPopupVisible, setNotificationPopupVisible] = useState(false);
+  const [notifications] = useState([]);
+  const [notificationPopupVisible] = useState(false);
   const popupRef = useRef(null);
   const navigate = useNavigate();
   const [showAdminButton, setShowAdminButton] = useState(false);
-  const [currentNotificationIndex, setCurrentNotificationIndex] = useState(0);
+  const [currentNotificationIndex] = useState(0);
   const [events, setEvents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progressData, setProgressData] = useState({});
@@ -97,13 +98,16 @@ const UserAcc = () => {
           const cyclingDistance = routesData
             .filter(route => route.transport_mode_id === 2)
             .reduce((acc, route) => acc + route.distance_km, 0);
-
+          const walkingDistance = routesData
+            .filter(route => route.transport_mode_id === 3)
+            .reduce((acc, route) => acc + route.distance_km, 0);
           const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
           const totalCaloriesBurned = routesData.reduce((acc, route) => acc + route.kcal, 0);
           const totalMoneySaved = routesData.reduce((acc, route) => acc + route.money, 0);
 
           setRunningDistance(runningDistance);
           setCyclingDistance(cyclingDistance);
+          setWalkingDistance(walkingDistance);
           setCo2Saved(totalCo2Saved);
           setCaloriesBurned(totalCaloriesBurned);
           setMoneySaved(totalMoneySaved);
@@ -201,7 +205,7 @@ const UserAcc = () => {
             setError('events query/server error');
           }
 
-          
+
         } else {
           setError('user_routes query/server error');
         }
@@ -239,6 +243,7 @@ const UserAcc = () => {
   };
   const runningTrophy = calculateTrophyLevel(runningDistance, [10, 20, 50, 75, 100]);
   const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 20, 50, 75, 100]);
+  const walkingTrophy = calculateTrophyLevel(walkingDistance, [10, 20, 50, 75, 100]);
   const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
   const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
   const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
@@ -312,6 +317,12 @@ const UserAcc = () => {
       level: cyclingTrophy.level,
       detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
       fact: 'Cycling is great exercise for the lower body.',
+    },
+    walking: {
+      title: '🚴‍♂️ Walking',
+      level: walkingTrophy.level,
+      detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
+      fact: 'Walking is great exercise for the lower body.',
     },
     co2: {
       title: '🌍 CO2 Savings',
@@ -467,84 +478,81 @@ const UserAcc = () => {
   };
 
   return (
-    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center diff-browser-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[10px] p-[10px]'>
-        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center max-h-[760px] diff-browser-center'>
-          <Sidebar />
-        </div>
-        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start min-h-screeen items-center flex-col w-[1600px] max-w-[95%] justify-self-center  scrollbar-hide'>
+    <BackGround>
+      <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+        <div className='flex justify-start min-h-screeen items-center flex-col w-[1600px] max-w-[95%] justify-self-center  scrollbar-hide'>
 
-            <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-            <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
-              {/* <div className="CustomSM:hidden flex-[1]"></div> */}
+          <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
+          <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
+            {/* <div className="CustomSM:hidden flex-[1]"></div> */}
 
-              <UniqueEvents
-                events={events}
-                currentIndex={currentIndex}
-                progressData={progressData}
-                handleDotClick={handleDotClick}
-              />
+            <UniqueEvents
+              events={events}
+              currentIndex={currentIndex}
+              progressData={progressData}
+              handleDotClick={handleDotClick}
+            />
 
-              <div className="absolute top-[40px] left-0 max-h-[90px]gap-[10px]">
-                {showAdminButton && (
-                  <button onClick={() => navigate('/AdminPanel')} className="w-[100px] h-[40px] bg-white rounded text-black">
-                    Admin
-                  </button>
-                )}
-              </div>
-
-              {popupVisible1 && (
-                <SettingsPopup
-                  sections={sections}
-                  toggleSectionVisibility1={toggleSectionVisibility1}
-                  onClose={() => setPopupVisible1(false)}
-                />
+            <div className="absolute top-[40px] left-0 max-h-[90px]gap-[10px]">
+              {showAdminButton && (
+                <button onClick={() => navigate('/AdminPanel')} className="w-[100px] h-[40px] bg-white rounded text-black">
+                  Admin
+                </button>
               )}
             </div>
 
-            <Overview
-              sections={sections}
-              totalCO2={totalCO2}
-              savedKm={savedKm}
-              earthImage={earthImage}
-              totalMoney={totalMoney}
-              handleMonthChange={handleMonthChange}
-              handleTransportChange={handleTransportChange}
-              month={month}
-              year={year}
-              transportMode={transportMode}
-              userRoutes={userRoutes}
-              currentStreak={currentStreak}
-              longestStreak={longestStreak}
-              meter={meter}
-              runningDistance={runningDistance}
-              cyclingDistance={cyclingDistance}
-              Co2Saved={Co2Saved}
-              CaloriesBurned={CaloriesBurned}
-              MoneySaved={MoneySaved}
-              handleTrophyClick={handleTrophyClick}
-              notifications={notifications}
-              notificationPopupVisible={notificationPopupVisible}
-              popupRef={popupRef}
-              currentNotificationIndex={currentNotificationIndex}
-              // goToNotification={goToNotification}
-              setPopupVisible1={setPopupVisible1}
-            />
-            {popupVisible && (
-              <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
-                <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
-                  <p>{popupContent.title}</p>
-                  <p>Level: {popupContent.level}</p>
-                  <p>{popupContent.detail}</p>
-                  <p>{popupContent.fact}</p>
-                </div>
-              </div>
+            {popupVisible1 && (
+              <SettingsPopup
+                sections={sections}
+                toggleSectionVisibility1={toggleSectionVisibility1}
+                onClose={() => setPopupVisible1(false)}
+              />
             )}
           </div>
+
+          <Overview
+            sections={sections}
+            totalCO2={totalCO2}
+            savedKm={savedKm}
+            earthImage={earthImage}
+            totalMoney={totalMoney}
+            handleMonthChange={handleMonthChange}
+            handleTransportChange={handleTransportChange}
+            month={month}
+            year={year}
+            transportMode={transportMode}
+            userRoutes={userRoutes}
+            currentStreak={currentStreak}
+            longestStreak={longestStreak}
+            meter={meter}
+            runningDistance={runningDistance}
+            cyclingDistance={cyclingDistance}
+            walkingDistance={walkingDistance}
+            Co2Saved={Co2Saved}
+            CaloriesBurned={CaloriesBurned}
+            MoneySaved={MoneySaved}
+            handleTrophyClick={handleTrophyClick}
+            notifications={notifications}
+            notificationPopupVisible={notificationPopupVisible}
+            popupRef={popupRef}
+            currentNotificationIndex={currentNotificationIndex}
+            setPopupVisible1={setPopupVisible1}
+          />
+          {popupVisible && (
+            <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
+              <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
+                <p>{popupContent.title}</p>
+                <p>Level: {popupContent.level}</p>
+                <p>{popupContent.detail}</p>
+                <p>{popupContent.fact}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </BackGround>
+
+
   );
 };
 

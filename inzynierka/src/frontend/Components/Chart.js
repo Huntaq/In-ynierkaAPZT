@@ -6,7 +6,8 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const transportModes = {
   1: 'Running',
-  2: 'Bike'
+  2: 'Bike',
+  3: 'Walking',
 };
 
 const Chart = ({ userRoutes }) => {

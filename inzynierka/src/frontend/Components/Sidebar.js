@@ -9,7 +9,7 @@ import settings from './img/settings.svg';
 import trophies from './img/trophies.svg';
 import logout from './img/logout.svg';
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 

@@ -9,7 +9,7 @@ const router = express.Router();
 //folder do zdjęć
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = 'C:/xampp/htdocs/uploads';
+    const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads';
     
     cb(null, uploadPath);
   },
@@ -43,7 +43,7 @@ router.post('/', upload.single('file'), async (req, res) => {
     const currentProfilePicturePath = results[0]?.profilePicture;
 
     if (currentProfilePicturePath) {
-      const oldPicturePath = path.join('C:/xampp/htdocs/uploads', path.basename(currentProfilePicturePath));
+      const oldPicturePath = path.join('C:/Users/Julas/Desktop/Xamp/htdocs/uploads', path.basename(currentProfilePicturePath));
 
       fs.unlink(oldPicturePath, (err) => {
         if (err) {
@@ -83,7 +83,7 @@ router.delete('/', async (req, res) => {
 
     const currentProfilePicturePath = results[0]?.profilePicture;
     if (currentProfilePicturePath) {
-      fs.unlink(path.join('C:/xampp/htdocs/uploads', path.basename(currentProfilePicturePath)), (err) => {
+      fs.unlink(path.join('C:/Users/Julas/Desktop/Xamp/htdocs/uploads', path.basename(currentProfilePicturePath)), (err) => {
         if (err) {
           console.error('error deleting', err);
           return res.status(500).send('error deleting');

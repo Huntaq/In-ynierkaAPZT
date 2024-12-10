@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Modal from 'react-modal';
 import Header from './Components/Header';
@@ -7,7 +6,7 @@ import 'react-calendar/dist/Calendar.css';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import CalendarComponent from './Components/CalendarCompontent';
-import Notifications from './Components/NotificationsModal';
+import BackGround from './Components/BackGround';
 
 Modal.setAppElement('#root');
 
@@ -85,25 +84,20 @@ const Calendar1 = () => {
   if (error) return <p>Błąd: {error}</p>;
 
   return (
-    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[10px] p-[10px]'>
-        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center max-h-[760px]'>
-          <Sidebar />
+    <BackGround>
+      <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+        <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+          <Header
+            user={user}
+            theme={theme}
+            toggleTheme={toggleTheme}
+            toggleSidebar={toggleSidebar}
+          />
+          <CalendarComponent />
         </div>
-        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
-            <Header
-              user={user}
-              theme={theme}
-              toggleTheme={toggleTheme}
-              toggleSidebar={toggleSidebar}
-            />
-            <CalendarComponent />
-          </div>
-        </div>
-        <Notifications/>
       </div>
-    </div>
+    </BackGround>
+
   );
 };
 

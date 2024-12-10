@@ -12,6 +12,7 @@ const Overview = ({
   meter,
   runningDistance,
   cyclingDistance,
+  walkingDistance,
   Co2Saved,
   CaloriesBurned,
   MoneySaved,
@@ -145,6 +146,7 @@ const Overview = ({
                   <TrophyList
                     runningDistance={runningDistance}
                     cyclingDistance={cyclingDistance}
+                    walkingDistance={walkingDistance}
                     Co2Saved={Co2Saved}
                     CaloriesBurned={CaloriesBurned}
                     MoneySaved={MoneySaved}

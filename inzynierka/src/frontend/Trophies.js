@@ -1,17 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Sidebar from './Components/Sidebar';
 import '../css/stats.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import TrophyList from './Components/TrophyList';
 import confetti from "canvas-confetti";
 import { useNavigate } from 'react-router-dom';
-import Notifications from './Components/NotificationsModal';
+import BackGround from './Components/BackGround';
 
 const Trophies = () => {
-  const [userRoutes, setUserRoutes] = useState([]);
   const [runningDistance, setRunningDistance] = useState(0);
   const [cyclingDistance, setCyclingDistance] = useState(0);
+  const [walkingDistance, setWalkingDistance] = useState(0);
   const [Co2Saved, setCo2Saved] = useState(0);
   const [CaloriesBurned, setCaloriesBurned] = useState(0);
   const [MoneySaved, setMoneySaved] = useState(0);
@@ -94,13 +93,15 @@ const Trophies = () => {
 
             if (routesResponse.ok) {
               const routesData = await routesResponse.json();
-              setUserRoutes(routesData);
 
               const runningDistance = routesData
                 .filter(route => route.transport_mode_id === 1)
                 .reduce((acc, route) => acc + route.distance_km, 0);
               const cyclingDistance = routesData
                 .filter(route => route.transport_mode_id === 2)
+                .reduce((acc, route) => acc + route.distance_km, 0);
+              const walkingDistance = routesData
+                .filter(route => route.transport_mode_id === 3)
                 .reduce((acc, route) => acc + route.distance_km, 0);
 
               const totalCo2Saved = routesData.reduce((acc, route) => acc + route.CO2, 0);
@@ -109,6 +110,7 @@ const Trophies = () => {
 
               setRunningDistance(runningDistance);
               setCyclingDistance(cyclingDistance);
+              setWalkingDistance(walkingDistance);
               setCo2Saved(totalCo2Saved);
               setCaloriesBurned(totalCaloriesBurned);
               setMoneySaved(totalMoneySaved);
@@ -174,6 +176,7 @@ const Trophies = () => {
 
   const runningTrophy = getTrophyLevel(runningDistance);
   const cyclingTrophy = getTrophyLevel(cyclingDistance);
+  const walkingTrophy = getTrophyLevel(walkingDistance);
 
   const co2Trophy = getTrophyLevelForStats(Co2Saved, [10, 20, 50, 75, 100]);
   const caloriesTrophy = getTrophyLevelForStats(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
@@ -188,6 +191,14 @@ const Trophies = () => {
           level: runningTrophy.level,
           detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
           fact: 'Running improves cardiovascular and lung health.',
+        };
+        break;
+        case 'walking':
+        content = {
+          title: '🏃‍♂️ Walking',
+          level: walkingTrophy.level,
+          detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
+          fact: 'Walking improves cardiovascular and lung health.',
         };
         break;
       case 'cycling':
@@ -253,67 +264,65 @@ const Trophies = () => {
 
   return (
 
-    <div className='w-full h-full min-h-screen bg-[#6E9B7B] content-center'>
-      <div className='flex w-full max-w-[1440px] min-h-[800px]  h-full justify-self-center gap-[10px] p-[10px]'>
-        <div className='w-[20%] max-w-[120px]  rounded-[10px] bg-[#D9EDDF] justify-items-center max-h-[760px]'>
-          <Sidebar />
-        </div>
-        <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-          <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
-            <Header
-              user={user}
-              theme={theme}
-              toggleTheme={toggleTheme}
-              toggleSidebar={toggleSidebar}
-            />
-            <h2>🏅 Your Trophies 🏅</h2>
-            <div className="">
-              {events.length > 0 && (
-                <ul className="flex">
-                  {events.map(event => (
-                    <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
-                      <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
-                    </li>
-                  ))}
-                </ul>
-              )}
+    <BackGround>
+      <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
+        <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+          <Header
+            user={user}
+            theme={theme}
+            toggleTheme={toggleTheme}
+            toggleSidebar={toggleSidebar}
+          />
+          <h2>🏅 Your Trophies 🏅</h2>
+          <div className="">
+            {events.length > 0 && (
+              <ul className="flex">
+                {events.map(event => (
+                  <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
+                    <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+                  </li>
+                ))}
+              </ul>
+            )}
 
-              {selectedEvent && (
-                <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
-                  <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn" ref={popupRef}>
-                    <span className="" onClick={handleCloseEventModal}>&times;</span>
-                    <div className=''><p>! Congratiulations !</p></div>
-                    <div className=''><p>Trophy earned by competing in</p></div>
-                    <div className=''><p>{selectedEvent.title} Event!</p></div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="">
-              <TrophyList
-                runningDistance={runningDistance}
-                cyclingDistance={cyclingDistance}
-                Co2Saved={Co2Saved}
-                CaloriesBurned={CaloriesBurned}
-                MoneySaved={MoneySaved}
-                handleTrophyClick={handleTrophyClick}
-              />
-            </div>
-            {popupVisible && (
-              <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
-                <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
-                  <p>{popupContent.title}</p>
-                  <p>Level: {popupContent.level}</p>
-                  <p>{popupContent.detail}</p>
-                  <p>{popupContent.fact}</p>
+            {selectedEvent && (
+              <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
+                <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn" ref={popupRef}>
+                  <span className="" onClick={handleCloseEventModal}>&times;</span>
+                  <div className=''><p>! Congratiulations !</p></div>
+                  <div className=''><p>Trophy earned by competing in</p></div>
+                  <div className=''><p>{selectedEvent.title} Event!</p></div>
                 </div>
               </div>
             )}
           </div>
+          <div className="">
+            <TrophyList
+              runningDistance={runningDistance}
+              walkingDistance={walkingDistance}
+              cyclingDistance={cyclingDistance}
+              Co2Saved={Co2Saved}
+              CaloriesBurned={CaloriesBurned}
+              MoneySaved={MoneySaved}
+              handleTrophyClick={handleTrophyClick}
+            />
+          </div>
+          {popupVisible && (
+            <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
+              <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
+                <p>{popupContent.title}</p>
+                <p>Level: {popupContent.level}</p>
+                <p>{popupContent.detail}</p>
+                <p>{popupContent.fact}</p>
+              </div>
+            </div>
+          )}
         </div>
-        <Notifications/>
       </div>
-    </div>
+    </BackGround>
+
+
+
   );
 };
 

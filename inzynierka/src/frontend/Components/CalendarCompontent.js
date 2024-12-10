@@ -85,11 +85,13 @@ const CalendarComponent = () => {
     const getTransportModeName = (id) => {
         switch (id) {
             case 1:
-                return 'Bieganie';
+                return 'Running';
             case 2:
-                return 'Rower';
+                return 'Bike';
+            case 3:
+                return 'Walking';
             default:
-                return 'Nieznany tryb';
+                return 'Unknown';
         }
     };
 
@@ -120,7 +122,7 @@ const CalendarComponent = () => {
                 className="fixed bg-white z-50 w-[95%] max-w-[600px] h-auto p-[20px] rounded-[20px] top-[40%] left-[50%] translate-x-[-50%] translate-y-[-50%] "
                 overlayClassName="fixed top-0 left-0 bg-black bg-opacity-60 w-full h-full"
             >
-                <h2>Aktywności z dnia {selectedDate.toLocaleDateString()}</h2>
+                <h2>Activities on {selectedDate.toLocaleDateString()}</h2>
                 {dailyActivities.length > 0 ? (
                     <ul>
                         {dailyActivities.map((activity, index) => (
@@ -132,7 +134,7 @@ const CalendarComponent = () => {
                 ) : (
                     <p>Brak aktywności na ten dzień.</p>
                 )}
-                <button className='bg-black text-white w-[150px] h-[60px] rounded-[10px] hover:scale-105' onClick={closeModal}>Zamknij</button>
+                <button className='bg-[#84D49D] text-white mt-[15px] w-[150px] h-[60px] rounded-[10px] hover:scale-105' onClick={closeModal}>Close</button>
             </Modal>
         </div>
     );
