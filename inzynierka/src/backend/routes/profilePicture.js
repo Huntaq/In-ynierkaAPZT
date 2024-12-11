@@ -9,7 +9,7 @@ const router = express.Router();
 //folder do zdjęć
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs/uploads';
+    const uploadPath = 'C:/xampp/htdocs/uploads';
     
     cb(null, uploadPath);
   },
