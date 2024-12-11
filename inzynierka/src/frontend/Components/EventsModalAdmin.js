@@ -201,13 +201,13 @@ const EventsModalAdmin = ({
 									</div>
 									<div className="row">
 										<div className="unique-event-item">
-											<div
-												className="unique-event-background"
-												style={
-													eventImage
-														? {
-															backgroundImage: `url(${URL.createObjectURL(eventImage)})`,
-														}
+											<img
+												className="unique-event-background w-[400px] h-auto"
+												src={
+													trophyImage
+														? 
+															URL.createObjectURL(trophyImage)
+														
 														: {}
 												}
 											/>
@@ -223,14 +223,14 @@ const EventsModalAdmin = ({
 											</div>
 
 										</div>
-										<div className="trophy-preview">
-											<div
-												className="unique-event-background"
-												style={
+										<div className="relative w-[150px] h-[150px] rounded-[50%] ">
+											<img
+												className="unique-event-background w-[150px] h-[150px] rounded-[50%]"
+												src={
 													trophyImage
-														? {
-															backgroundImage: `url(${URL.createObjectURL(trophyImage)})`,
-														}
+														? 
+															URL.createObjectURL(trophyImage)
+														
 														: {}
 												}
 											/>

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import '../../css/SettingsPopup.css';
 
 const SettingsPopup = ({ sections, toggleSectionVisibility1, onClose }) => {
     const popupRef = useRef(null);

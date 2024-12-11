@@ -3,6 +3,7 @@ import TrophyList from './TrophyList';
 import CalendarComponent from './CalendarCompontent';
 import Notifications from './NotificationsModal';
 
+
 const Overview = ({
   sections,
   totalCO2,

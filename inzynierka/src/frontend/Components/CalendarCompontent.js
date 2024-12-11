@@ -119,12 +119,12 @@ const CalendarComponent = () => {
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 contentLabel="Daily Activities"
-                className="fixed bg-white z-50 w-[95%] max-w-[600px] h-auto p-[20px] rounded-[20px] top-[40%] left-[50%] translate-x-[-50%] translate-y-[-50%] "
+                className="fixed bg-white z-50 w-[95%] max-w-[600px] h-auto p-[30px] rounded-[20px] top-[40%] left-[50%] translate-x-[-50%] translate-y-[-50%] "
                 overlayClassName="fixed top-0 left-0 bg-black bg-opacity-60 w-full h-full"
             >
-                <h2>Activities on {selectedDate.toLocaleDateString()}</h2>
+                <p className='text-[24px] mb-[15px]'>Activities on {selectedDate.toLocaleDateString()}</p>
                 {dailyActivities.length > 0 ? (
-                    <ul>
+                    <ul className='text-[18px] font-bold'>
                         {dailyActivities.map((activity, index) => (
                             <li key={index}>
                                 {getTransportModeName(activity.transport_mode_id)} - {activity.distance_km} km - {activity.duration} - CO2: {activity.CO2} kg - kcal: {activity.kcal}
@@ -132,9 +132,9 @@ const CalendarComponent = () => {
                         ))}
                     </ul>
                 ) : (
-                    <p>Brak aktywności na ten dzień.</p>
+                    <p className='text-[18px] font-bold'>No activity that day</p>
                 )}
-                <button className='bg-[#84D49D] text-white mt-[15px] w-[150px] h-[60px] rounded-[10px] hover:scale-105' onClick={closeModal}>Close</button>
+                <button className='bg-[#84D49D] text-white mt-[15px] w-[120px] h-[40px] rounded-[10px] hover:scale-105' onClick={closeModal}>Close</button>
             </Modal>
         </div>
     );

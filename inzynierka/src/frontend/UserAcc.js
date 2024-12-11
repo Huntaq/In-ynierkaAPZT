@@ -355,12 +355,8 @@ const UserAcc = () => {
   useEffect(() => {
 
     const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        // setNotificationPopupVisible(false);
-        // localStorage.setItem('showPopup', 'false');
-      }
-    };
 
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [popupRef]);
@@ -470,9 +466,7 @@ const UserAcc = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  // const goToNotification = (index) => {
-  //   setCurrentNotificationIndex(index);
-  // };
+
   const handleDotClick = (index) => {
     setCurrentIndex(index);
   };
@@ -484,7 +478,6 @@ const UserAcc = () => {
 
           <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
           <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
-            {/* <div className="CustomSM:hidden flex-[1]"></div> */}
 
             <UniqueEvents
               events={events}

@@ -34,33 +34,29 @@ const Sidebar = () => {
 
             <nav className='text-center mt-[20px] max-w-[95%] justify-items-center place-self-center diff-browser-center'>
                 <ul className='[&>li]:cursor-pointer [&>li]:w-[95%] [&>li]:max-w-[95%] [&>li]:min-w-[95%] [&>li]:p-[10px] [&>li]:mt-[10px] justify-items-center [&>li]:text-[#3B4A3F] [&>li]:rounded [&>li]:font-bold'>
-                    <li className={`${location.pathname === '/UserAcc' ? 'bg-[#5ca86e] hover:bg-[#409A55]' : 'hover:bg-[#409A55]'}`} onClick={() => goToPage('/UserAcc')}>
+                    <li className={`${location.pathname === '/UserAcc' ? 'bg-[#6E9B7B] ' : 'hover:bg-[#6E9B7B]'}`} onClick={() => goToPage('/UserAcc')}>
                         <img src={Home} alt='Home' className='w-[40px] h-[40px] justify-self-center' />
                         <p className='CustomXSM:hidden'>Home</p>
                     </li>
-                    <li className={`${location.pathname === '/Statistics' ? 'bg-[#5ca86e] hover:bg-[#409A55]' : 'hover:bg-[#409A55]'}`} onClick={() => goToPage('/Statistics')}>
+                    <li className={`${location.pathname === '/Statistics' ? 'bg-[#6E9B7B] ' : 'hover:bg-[#6E9B7B]'}`} onClick={() => goToPage('/Statistics')}>
                         <img src={Chart} alt='Chart' className='w-[40px] h-[40px] justify-self-center' />
                         <p className='CustomXSM:hidden'>Statistics</p>
                     </li>
-                    <li className={`${location.pathname === '/Rankings' ? 'bg-[#5ca86e] hover:bg-[#409A55]' : 'hover:bg-[#409A55]'}`} onClick={() => goToPage('/Rankings')}>
+                    <li className={`${location.pathname === '/Rankings' ? 'bg-[#6E9B7B] ' : 'hover:bg-[#6E9B7B]'}`} onClick={() => goToPage('/Rankings')}>
                         <img src={crown} alt='crown' className='w-[40px] h-[40px] justify-self-center' />
                         <p className='CustomXSM:hidden'>Rankings</p>
                     </li>
-                    <li className={`${location.pathname === '/Trophies' ? 'bg-[#5ca86e] hover:bg-[#409A55]' : 'hover:bg-[#409A55]'}`} onClick={() => goToPage('/Trophies')}>
+                    <li className={`${location.pathname === '/Trophies' ? 'bg-[#6E9B7B] ' : 'hover:bg-[#6E9B7B]'}`} onClick={() => goToPage('/Trophies')}>
                         <img src={trophies} alt='trophy' className='w-[40px] h-[40px] justify-self-center' />
                         <p className='CustomXSM:hidden'>Trophies</p>
                     </li>
-                    <li className={`${location.pathname === '/Calendar' ? 'bg-[#5ca86e] hover:bg-[#409A55]' : 'hover:bg-[#409A55]'}`} onClick={() => goToPage('/Calendar')}>
-                        <img src={Calendar} alt='Calendar' className='w-[40px] h-[40px] justify-self-center' />
-                        <p className='CustomXSM:hidden'>Calendar</p>
-                    </li>
-                    <li className={`${location.pathname === '/Settings' ? 'bg-[#5ca86e] hover:bg-[#409A55]' : 'hover:bg-[#409A55]'}`} onClick={() => goToPage('/Settings')}>
+                    <li className={`${location.pathname === '/Settings' ? 'bg-[#6E9B7B] ' : 'hover:bg-[#6E9B7B]'}`} onClick={() => goToPage('/Settings')}>
                         <img src={settings} alt='settings' className='w-[40px] h-[40px] justify-self-center' />
                         <p className='CustomXSM:hidden'>Settings</p>
                     </li>
                 </ul>
             </nav>
-            <div className="mt-[30px] rounded w-[90px] p-[10px] hover:bg-[#409A55] justify-items-center justify-center max-w-[95%] text-[#3B4A3F] font-bold self-center " onClick={() => handleLogout('/')}>
+            <div className="mt-[120px] rounded w-[90px] p-[10px] hover:bg-[#6E9B7B] justify-items-center justify-center max-w-[95%] text-[#3B4A3F] font-bold self-center " onClick={() => handleLogout('/')}>
                 <img src={logout} alt='logout' className='w-[40px] h-[40px] justify-self-center' />
                 <a href="."className='CustomXSM:hidden'>Logout</a>
             </div>

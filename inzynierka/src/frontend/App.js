@@ -5,7 +5,6 @@ import Register from './Register';
 import UserAcc from './UserAcc';
 import '../css/index.css';
 import Trophies from './Trophies';
-import Calendar1 from './Calendar';
 import Profile from './Profile';
 import Settings from './Settings';
 import Rankings from './Rankings';
@@ -21,7 +20,6 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/UserAcc" element={<UserAcc />} />
           <Route path="/Trophies" element={<Trophies />}/>
-          <Route path="/Calendar"  element={<Calendar1 />} />
           <Route path="/Profile"  element={<Profile />} />
           <Route path="/Settings"  element={<Settings />} />
           <Route path="/Rankings"  element={<Rankings />} />

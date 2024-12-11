@@ -4,7 +4,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
   if (events.length === 0) return null;
 
   return (
-    <div className="relative CustomSM:max-w-[95%] max-w-[820px] w-[100%] h-[150px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
+    <div className="relative CustomSM:max-w-[95%] max-w-[920px] w-[100%] h-[150px]  text-white  shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
       <div className="bg-none">
         <div
           className="absolute top-0 left-0 w-full h-full bg-cover rounded-[5px] transition ease-in duration-800"
