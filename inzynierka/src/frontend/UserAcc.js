@@ -524,7 +524,7 @@ const UserAcc = () => {
         <div className='flex justify-start min-h-screeen items-center flex-col w-[1600px] max-w-[95%] justify-self-center  scrollbar-hide'>
 
           <Header user={user} theme={theme} toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
-          <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[10px]'>
+          <div className='CustomSM:contents flex justify-center w-full pr-[10px] pl-[10px] box-border mt-[5px]'>
 
             <UniqueEvents
               events={events}

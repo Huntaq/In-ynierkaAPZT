@@ -29,7 +29,7 @@ const Overview = ({
   const km = (totalCO2 / emisionPerKM).toFixed(0);
 
   return (
-    <div className='diff-browser-center flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
+    <div className='diff-browser-center mt-[10px] flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
       <div className=' flex flex-col gap-[10px] w-[200px] min-w-[200px] OverviewTestCol1:w-full OverviewTestCol1:contents diff-browser-center'>
 
         <div className="absolute bottom-[40px] right-[40px] max-h-[90px] gap-[10px]">
