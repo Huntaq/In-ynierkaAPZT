@@ -268,6 +268,8 @@ const UserAcc = () => {
     setLoading(false);
   };
 
+  //poziomy trofeów
+
   const calculateTrophyLevel = (value, thresholds) => {
     const levels = [
       { level: 5, color: 'gold' },
@@ -290,12 +292,14 @@ const UserAcc = () => {
 
     return { level: 0, color: 'grey', next: thresholds[0] - value };
   };
-  const runningTrophy = calculateTrophyLevel(runningDistance, [10, 20, 50, 75, 100]);
-  const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 20, 50, 75, 100]);
-  const walkingTrophy = calculateTrophyLevel(walkingDistance, [10, 20, 50, 75, 100]);
-  const co2Trophy = calculateTrophyLevel(Co2Saved, [10, 20, 50, 75, 100]);
-  const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
-  const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 200, 500, 1000]);
+  const runningTrophy = calculateTrophyLevel(runningDistance, [10, 25, 50, 100, 200]);
+  const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 25, 50, 100, 200]);
+  const walkingTrophy = calculateTrophyLevel(walkingDistance, [10, 25, 50, 100, 200]);
+  const co2Trophy = calculateTrophyLevel(Co2Saved, [5, 15, 25, 50, 100]);
+  const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2500, 5000, 10000, 15000]);
+  const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 250, 500, 1000]);
+
+  //dashboard
 
   const defaultSections = [
     { id: 'co2', label: 'CO2 Saved', visible: true },
@@ -351,6 +355,8 @@ const UserAcc = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
     }, 5000);
 
+
+    //modal
     return () => clearInterval(interval);
   }, [events.length]);
 
