@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import TrophyList from './TrophyList';
 import CalendarComponent from './CalendarCompontent';
 import Notifications from './NotificationsModal';
 
@@ -11,16 +10,12 @@ const Overview = ({
   currentStreak,
   longestStreak,
   meter,
-  runningDistance,
-  cyclingDistance,
-  walkingDistance,
-  Co2Saved,
-  CaloriesBurned,
-  MoneySaved,
-  handleTrophyClick,
   notifications,
   showNextNotification,
   setPopupVisible1,
+  totalThisYear,
+  totalThisMonth,
+  totalThisWeek,
 }) => {
   useEffect(() => {
     const intervalId = setInterval(showNextNotification, 5000);
@@ -30,6 +25,8 @@ const Overview = ({
     };
   }, [notifications.length]);
 
+  const emisionPerKM= 0.12;
+  const km = (totalCO2 / emisionPerKM).toFixed(0);
 
   return (
     <div className='diff-browser-center flex flex-wrap w-full max-w-[1200px] gap-[10px] justify-center'>
@@ -55,34 +52,34 @@ const Overview = ({
             case 'Test':
               return (
                 <div className='flex CustomXSM:block ' key={section.id}>
-                  <div className=' content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[200px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                  <div className=' content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[150px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
                     {section.id === 'co2' && (
-                      <>
-                        <p className='text-[#3B4A3F] font-bold'>CO2 Saved</p>
-                        <div className=' flex'>
-                          <p className='text-[#3B4A3F] font-bold'>{totalCO2.toFixed(2)}</p>
-                          <p className='text-[#3B4A3F] font-bold'>KG</p>
+                      <div className=' w-full place-items-start pl-[20px]'>
+                        <p className='flex text-[#B5B5B5] font-bold mb-[20px] w-full justify-start mt-[5px]'>CO2 Saved</p>
+                        <div className='flex h-[95px] gap-[10px]'>
+                          <p className='text-[#3B4A3F] font-bold text-[50px] self-end'>{totalCO2.toFixed(0)}</p>
+                          <p className='text-[#3B4A3F] font-bold self-end mb-[12px]'>KG</p>
                         </div>
-                      </>
+                      </div>
                     )}
                     {section.id === 'pln' && (
-                      <>
-                        <p className='text-[#3B4A3F] font-bold'>PLN Saved</p>
-                        <div className='flex'>
-                          <p className='text-[#3B4A3F] font-bold'>{totalMoney.toFixed(2)}</p>
-                          <p className='text-[#3B4A3F] font-bold'>PLN</p>
+                      <div className='h-auto w-full pl-[20px]'>
+                        <p className='flex text-[#B5B5B5] font-bold mb-[20px] w-full justify-start mt-[5px]'>PLN Saved</p>
+                        <div className='flex h-[95px] gap-[10px]'>
+                          <p className='text-[#3B4A3F] font-bold text-[50px] self-end'>{totalMoney.toFixed(0)}</p>
+                          <p className='text-[#3B4A3F] font-bold self-end mb-[12px]'>PLN</p>
                         </div>
-                      </>
+                      </div>
                     )}
                     {section.id === 'streak' && (
-                      <>
-                        <div className='flex '>
-                          <p className='text-[#3B4A3F] font-bold'>Current Streak: </p>
-                          <p className='text-[#3B4A3F] font-bold'>&nbsp; {currentStreak}</p>
+                      <div className=' w-full place-items-start pl-[20px]'>
+                      <p className='text-[#B5B5B5] font-bold'>YOUR STREAK</p>
+                        <div className='flex gap-[20px] ml-[-20px]'>
+                          <p className='text-[#3B4A3F] w-auto font-bold text-[50px]'>&nbsp; {currentStreak}</p>
+                          <img src={meter} alt='Earth' className='w-[80px] h-[80px]' />
                         </div>
-                        <img src={meter} alt='Earth' className='w-[80px] h-[80px]' />
-                        <p className='text-[#3B4A3F] font-bold'>Longest Streak 🔥: {longestStreak}</p>
-                      </>
+                        <p className='text-[#B5B5B5] text-[12px] font-bold'>Longest Streak : {longestStreak}</p>
+                      </div>
                     )}
                     {section.id === 'Test' && (
                       <>
@@ -110,21 +107,17 @@ const Overview = ({
                   <CalendarComponent />
                 </div>
               );
-
-            case 'StatsDate':
-              return (
-                <div key={section.id} className='flex gap-[10px] CustomXSM:block content-center justify-items-center mt-[5px]   max-w-[100%]  p-[5px]'>
-                  <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
-                    <p> KM THIS YEAR </p>
+              case 'Info':
+                return (
+                  <div className='w-[600px] max-w-[100%]' key={section.id}>
+                    <div className='content-center justify-items-center w-[400px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                    <div className='place-items-start ml-[25px] '>
+                      <p className='text-[#3B4A3F] text-[28px] font-bold'> Czy wiesz, że? </p>
+                      <p className='text-[16px] text-start'>Zaoszczędziłeś tyle CO₂, ile powstałoby przy przejechaniu około {km} kilometrów samochodem.</p>
+                    </div>
                   </div>
-                  <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
-                    <p> KM THIS MONTH </p>
                   </div>
-                  <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
-                    <p> KM THIS WEEK </p>
-                  </div>
-                </div>
-              );
+                );
 
             default:
               return null;
@@ -139,20 +132,20 @@ const Overview = ({
           switch (section.id) {
             case 'Trophies':
               return (
-                // <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]' key={section.id}>
-                //   <p> KM THIS YEAR </p>
-                // </div>
+                
                 <div className=' mt-[5px] trohpies mt-[5px] w-[600px] max-w-[100%]  m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.1]' key={section.id}>
-                  {/* <h2 className='justify-self-center'>🏅 Your Trophies 🏅</h2> */}
-                  <TrophyList
-                    runningDistance={runningDistance}
-                    cyclingDistance={cyclingDistance}
-                    walkingDistance={walkingDistance}
-                    Co2Saved={Co2Saved}
-                    CaloriesBurned={CaloriesBurned}
-                    MoneySaved={MoneySaved}
-                    handleTrophyClick={handleTrophyClick}
-                  />
+                 <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                    <p className='text-[16px] text-[#3B4A3F] font-semibold'>THIS YEAR </p>
+                    <p className='text-[24px] text-[#3B4A3F] font-semibold'>{totalThisYear.toFixed(0)} KM</p>
+                  </div>
+                  <div className='content-center justify-items-center m-[5px] mt-[15px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                    <p className='text-[16px] text-[#3B4A3F] font-semibold'>THIS MONTH </p>
+                    <p className='text-[24px] text-[#3B4A3F] font-semibold'>{totalThisMonth.toFixed(0)} KM</p>
+                  </div>
+                  <div className='content-center justify-items-center m-[5px] mt-[15px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                    <p className='text-[16px] text-[#3B4A3F] font-semibold'>THIS WEEK </p>
+                    <p className='text-[24px] text-[#3B4A3F] font-semibold'> {totalThisWeek.toFixed(0)} KM</p>
+                  </div>
                 </div>
               );
 

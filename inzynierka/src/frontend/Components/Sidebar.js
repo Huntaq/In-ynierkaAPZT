@@ -56,7 +56,7 @@ const Sidebar = () => {
                     </li>
                 </ul>
             </nav>
-            <div className="mt-[120px] rounded w-[90px] p-[10px] hover:bg-[#6E9B7B] justify-items-center justify-center max-w-[95%] text-[#3B4A3F] font-bold self-center " onClick={() => handleLogout('/')}>
+            <div className="mt-[120px] rounded w-[90px] p-[10px] hover:cursor-pointer justify-items-center justify-center max-w-[95%] text-[#3B4A3F] font-bold self-center " onClick={() => handleLogout('/')}>
                 <img src={logout} alt='logout' className='w-[40px] h-[40px] justify-self-center' />
                 <a href="."className='CustomXSM:hidden'>Logout</a>
             </div>

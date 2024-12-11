@@ -41,6 +41,7 @@ body.dark {
   border: none !important;
   border-radius: 15px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  max-width: 100%;
 }
 
 .react-calendar__navigation {
@@ -70,8 +71,7 @@ body.dark {
   text-align: center;
   cursor: pointer;
   margin-bottom: 2px !important;
-  padding: 8px;
-  
+  padding: 6px;
 }
 .react-calendar__tile--highlighted {
   background-color: #84D49D!important; 

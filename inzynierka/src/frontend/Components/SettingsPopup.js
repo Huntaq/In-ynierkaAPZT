@@ -57,7 +57,7 @@ const SettingsPopup = ({ sections, toggleSectionVisibility1, onClose }) => {
           <div className='w-[140px] justify-items-center'>
             <p className="font-semibold mb-2">Third Row</p>
             <div className="grid-cols-2 gap-4">
-              {sections.slice(6, 10).map((section) => (
+              {sections.slice(6).map((section) => (
                 <div key={section.id} className="flex items-center">
                   <input
                     type="checkbox"

@@ -40,6 +40,11 @@ const UserAcc = () => {
   const [events, setEvents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progressData, setProgressData] = useState({});
+  const [totalThisYear, settotalThisYear] = useState(0);
+  const [totalThisMonth, settotalThisMonth] = useState(0);
+  const [totalThisWeek, settotalThisWeek] = useState(0);
+
+
 
   useEffect(() => {
 
@@ -91,6 +96,50 @@ const UserAcc = () => {
           const routesData = await routesResponse.json();
           setUserRoutes(routesData);
           calculateStreaks(routesData);
+
+          const now = new Date();
+
+          const isSameYear = (date) => new Date(date).getFullYear() === now.getFullYear();
+
+          const isSameMonth = (date) => {
+            const d = new Date(date);
+            return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+          };
+
+          const isSameWeek = (date) => {
+            const d = new Date(date);
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay());
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+
+            return d >= startOfWeek && d <= endOfWeek;
+          };
+
+          const totalThisYearTemp = routesData
+            .filter(route => isSameYear(route.date))
+            .reduce((sum, route) => sum + route.distance_km, 0);
+
+          settotalThisYear(totalThisYearTemp);
+
+          const totalThisMonthTemp = routesData
+            .filter(route => isSameMonth(route.date))
+            .reduce((sum, route) => sum + route.distance_km, 0);
+
+            settotalThisMonth(totalThisMonthTemp);
+
+
+          const totalThisWeekTemp = routesData
+            .filter(route => isSameWeek(route.date))
+            .reduce((sum, route) => sum + route.distance_km, 0);
+
+            settotalThisWeek(totalThisWeekTemp);
+
+
+
 
           const runningDistance = routesData
             .filter(route => route.transport_mode_id === 1)
@@ -254,8 +303,8 @@ const UserAcc = () => {
     { id: 'streak', label: 'Current Streak', visible: true },
     { id: 'Test', label: 'Test', visible: false },
     { id: 'Calendar', label: 'Calendar', visible: true },
-    { id: 'StatsDate', label: 'StatsDate', visible: true },
-    { id: 'Trophies', label: 'Trophies', visible: true },
+    { id: 'Info', label: 'Info', visible: true },
+    { id: 'Trophies', label: 'Stats', visible: true },
     // tu bedzie wiecej sekcji 
   ];
 
@@ -461,8 +510,6 @@ const UserAcc = () => {
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 30);
 
-  const averageCO2PerKm = 0.12;
-  const savedKm = totalCO2 / averageCO2PerKm;
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -504,9 +551,11 @@ const UserAcc = () => {
           </div>
 
           <Overview
+            totalThisWeek={totalThisWeek}
+            totalThisMonth={totalThisMonth}
+            totalThisYear={totalThisYear}
             sections={sections}
             totalCO2={totalCO2}
-            savedKm={savedKm}
             earthImage={earthImage}
             totalMoney={totalMoney}
             handleMonthChange={handleMonthChange}

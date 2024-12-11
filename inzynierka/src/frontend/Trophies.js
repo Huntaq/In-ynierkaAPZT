@@ -273,7 +273,6 @@ const Trophies = () => {
             toggleTheme={toggleTheme}
             toggleSidebar={toggleSidebar}
           />
-          <h2>🏅 Your Trophies 🏅</h2>
           <div className="">
             {events.length > 0 && (
               <ul className="flex">
