@@ -353,7 +353,7 @@ const UserAcc = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
-    }, 5000);
+    }, 8000);
 
 
     //modal

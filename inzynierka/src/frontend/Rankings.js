@@ -164,7 +164,7 @@ const Rankings = () => {
             )}
             {showImage && userData.profilePicture && (
               <img
-                src={`http://localhost${userData.profilePicture}`}
+                src={`http://localhost:3000${userData.profilePicture}`}
                 alt="Profile"
                 className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full ${borderClass}`}
               />

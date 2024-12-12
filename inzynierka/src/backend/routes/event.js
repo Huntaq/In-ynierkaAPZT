@@ -7,7 +7,7 @@ const router = express.Router();
 //sciezka do przechowywania zdjec 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = 'C:/Users/Julas/Desktop/Xamp/htdocs';
+    const uploadPath = '../../public/uploads';
     
     cb(null, uploadPath);
   },
@@ -53,11 +53,11 @@ router.get('/thropies/:id', (req, res) => {
         let trophyImageUrl = null;
 
         if (files && files.image && files.image[0]) {
-          imageUrl = `uploads/${files.image[0].originalname}`;
+          imageUrl = `../../public/uploads/${files.image[0].originalname}`;
         }
       
         if (files && files.trophyImage && files.trophyImage[0]) {
-          trophyImageUrl = `uploads/${files.trophyImage[0].originalname}`;
+          trophyImageUrl = `../../public/uploads/${files.trophyImage[0].originalname}`;
         }
 
         const sqlInsertEvent = `
@@ -102,7 +102,7 @@ router.delete('/:eventId', async (req, res) => {
     const fs = require('fs');
     
     if (imageUrl) {
-      const filePath = path.join('C:/xampp/htdocs/', imageUrl);
+      const filePath = path.join('./', imageUrl);
       fs.unlink(filePath, (err) => {
         if (err) {
           console.error('error deleting image', err);
@@ -111,7 +111,7 @@ router.delete('/:eventId', async (req, res) => {
     }
 
     if (trophyImageUrl) {
-      const trophyFilePath = path.join('C:/xampp/htdocs/', trophyImageUrl);
+      const trophyFilePath = path.join('./', trophyImageUrl);
       fs.unlink(trophyFilePath, (err) => {
         if (err) {
           console.error('error deleting image', err);

@@ -202,11 +202,11 @@ const EventsModalAdmin = ({
 									<div className="row">
 										<div className="unique-event-item">
 											<img
-												className="unique-event-background w-[400px] h-auto"
+												className="unique-event-background w-[400px] h-auto max-h-[200px]"
 												src={
-													trophyImage
+													eventImage
 														? 
-															URL.createObjectURL(trophyImage)
+															URL.createObjectURL(eventImage)
 														
 														: {}
 												}
@@ -297,7 +297,7 @@ const EventsModalAdmin = ({
 									<td>
 										{event.image && (
 											<img
-											src={`http://localhost/uploads/${event.image.split('/').pop()}`}
+											src={`http://localhost:3000/uploads/${event.image.split('/').pop()}`}
 											alt={event.title}
 											className="event-image"
 										  />
@@ -306,7 +306,7 @@ const EventsModalAdmin = ({
 									<td>
 										{event.TrophyImage && (
 											<img
-											src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`}
+											src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`}
 											alt={event.TrophyImage}
 											className="event-image"
 										  />

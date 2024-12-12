@@ -278,7 +278,7 @@ const Trophies = () => {
               <ul className="flex">
                 {events.map(event => (
                   <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
-                    <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+                    <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
                   </li>
                 ))}
               </ul>

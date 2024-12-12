@@ -209,7 +209,7 @@ const Profile = () => {
                       <a href="/Profile" className='' style={{ textDecoration: 'none' }}>
                         {user && (previewUrl || user.profilePicture) ? (
                           <img
-                            src={previewUrl || `http://localhost/uploads/${user.profilePicture.split('/').pop()}`}
+                            src={previewUrl || `http://localhost:3000/uploads/${user.profilePicture.split('/').pop()}`}
                             alt="Profile"
                             className='w-[100px] h-[100px] rounded-[50%]'
                           />

@@ -9,7 +9,9 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div
           className="absolute top-0 left-0 w-full h-full bg-cover rounded-[5px] transition ease-in duration-800"
           style={{
-            backgroundImage: `url(http://localhost/uploads/${events[currentIndex].image.split('/').pop()})`,
+            backgroundImage: `url(http://localhost:3000/uploads/${events[currentIndex].image.split('/').pop()})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         />
 

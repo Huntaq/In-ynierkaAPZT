@@ -39,7 +39,7 @@ const Header = ({ user, theme, toggleTheme}) => {
         <a href="/Profile" className='' >
           {user && user.profilePicture ? (
             <img
-              src={`http://localhost/uploads/${user.profilePicture.split('/').pop()}`}
+              src={`http://localhost:3000/uploads/${user.profilePicture.split('/').pop()}`}
               alt="Profile"
               className='w-[60px] h-[60px] rounded-[50%] hover:scale-105 shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'
             />
