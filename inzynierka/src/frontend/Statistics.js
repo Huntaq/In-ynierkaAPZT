@@ -35,7 +35,6 @@ const Statistics = (
       startDate = startOfYear(now);
       endDate = endOfYear(now);
     }
-
     return routes.reduce((sum, route) => {
       const routeDate = parseISO(route.date);
       if (isWithinInterval(routeDate, { start: startDate, end: endDate })) {

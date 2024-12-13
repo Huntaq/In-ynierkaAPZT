@@ -19,6 +19,8 @@ const Rankings = () => {
   const [user, setUser] = useState(null);
   const [rankingType, setRankingType] = useState('total_CO2');
   const navigate = useNavigate();
+  const [userIndex, setUserIndex] = useState(-1);
+  const [rankingChanged, setRankingChanged] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -82,6 +84,11 @@ const Rankings = () => {
             }));
 
             setRanking(parsedRanking);
+
+            const index = parsedRanking.findIndex(entry => entry.user_id === userId);
+
+            setUserIndex(index);
+
           } else {
             setError('ranking query/server error');
           }
@@ -98,6 +105,8 @@ const Rankings = () => {
 
     fetchUserData();
   }, [navigate]);
+
+
 
   useEffect(() => {
     document.body.className = theme;
@@ -134,6 +143,7 @@ const Rankings = () => {
     }
 
     setRankingType(`total_${rankingTypes[currentIndex]}`);
+    setRankingChanged(true);
   };
 
   const getRankingItems = (type) => {
@@ -143,7 +153,7 @@ const Rankings = () => {
       const userData = usernameMap[entry.user_id] || { username: 'Unknown User', profilePicture: '' };
       const showImage = index < 3;
 
-      const userClass = index < 3 ? 'text-[#3B4A3F] text-center relative ' : 'h-[70px] CustomXXSM:h-[40px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#F1FCF3] gap-[10px]';
+      const userClass = index < 3 ? 'text-[#3B4A3F] text-center relative ' : ' h-[45px] shadow-[0px_4px_4px_rgba(11,14,52,0.2)]  CustomXXSM:h-[40px] text-black w-full  mb-[10px] pr-[25px] pl-[25px] p-[5px] rounded-[15px] flex box-border bg-[#F1FCF3] gap-[10px]';
 
       let borderClass = '';
       if (index === 0) {
@@ -156,32 +166,40 @@ const Rankings = () => {
 
       return (
         entry[type] !== undefined && (
-          <ul key={entry.user_id} className={`${userClass}`}>
+          <ul key={entry.user_id} className={`${userClass} justify-between `}>
             {showImage && !userData.profilePicture && (
-              <div className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full flex items-center justify-center ${borderClass}`}>
-                <span className="text-black text-xl bg-white w-full h-full rounded-full content-center">{userData.username.charAt(0).toUpperCase()}</span>
+              <div className={`mb-[35px]  CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full flex items-center justify-center ${borderClass}`}>
+                <span className=" text-black  text-xl bg-white w-full h-full rounded-full content-center ">{userData.username.charAt(0).toUpperCase()}</span>
               </div>
             )}
             {showImage && userData.profilePicture && (
               <img
                 src={`http://localhost:3000${userData.profilePicture}`}
                 alt="Profile"
-                className={`mb-[35px] CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full ${borderClass}`}
+                className={`mb-[35px]  CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full ${borderClass}`}
               />
             )}
             {index === 0 && <img alt='first' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={first} />}
             {index === 1 && <img alt='second' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={second} />}
             {index === 2 && <img alt='third' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={third} />}
-            {index >= 3 && <span className='font-bold text-[32px] content-center CustomXXSM:text-[16px]'>{index + 1} </span>}
-            <span className='content-center'>
+            {index >= 3 && <span className='font-bold text-[24px] content-center CustomXXSM:text-[16px] '>{index + 1} </span>}
+            <span className=' content-center font-400 text-[20px]'>
               {userData.username.length > 12 ? userData.username.slice(0, 10) + '...' : userData.username}
             </span>
-            <span className="block content-center">{formatValue(entry[type], rankingType)}</span>
+            <span className="block content-center ">{formatValue(entry[type], rankingType)}</span>
           </ul>
         )
       );
     });
   };
+
+  useEffect(() => {
+    const sortedRanking = [...ranking].sort((a, b) => b[rankingType] - a[rankingType]);
+    setRanking(sortedRanking);
+    const index = sortedRanking.findIndex(entry => entry.user_id === user?.id);
+    setUserIndex(index);
+    setRankingChanged(false);
+  }, [rankingType, rankingChanged, user]);
 
 
   if (loading) return <p>Ładowanie...</p>;
@@ -192,18 +210,17 @@ const Rankings = () => {
     return map;
   }, {});
 
-  const userIndex = ranking.findIndex(entry => entry.user_id === user?.id);
 
   return (
 
     <BackGround>
       <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-        <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+        <div className='flex relative justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
           <Header user={user} theme={theme} toggleTheme={toggleTheme} />
-          <div className='font-bold m-[10px] text-[#3B4A3F] text-[24px]'>
-          {rankingType.toUpperCase()}
+          <div className='absolute top-[15px] font-bold m-[10px] text-[#3B4A3F] text-[16px]'>
+            Total {rankingType.split('_').slice(-1)[0]}
           </div>
-          <div className="flex justify-between w-[600px] max-w-[98%] pt-[40px]">
+          <div className="flex justify-between w-[600px] max-w-[98%] pt-[30px]">
             <div className="flex justify-start w-1/3">
               {getRankingItems(rankingType).slice(1, 2)}
             </div>
@@ -217,22 +234,22 @@ const Rankings = () => {
             </div>
           </div>
           <div className='flex w-full justify-center max-h-[400px]'>
-            <div className="flex w-[53px] h-[53px] self-center mr-[10px]">
+            <div className="flex w-[53px] h-[53px] self-center CustomXSM:mr-[10px] mr-[50px]">
               <button onClick={() => handleArrowClick('prev')}><img className='hover:scale-105' src={right} /></button>
             </div>
-            <div className="w-[95%] max-w-[600px] overflow-y-scroll scrollbar-hide">
+            <div className="w-[95%] max-w-[450px] overflow-y-scroll scrollbar-hide">
               <div>
-                <div className='h-[70px] CustomXXSM:h-[40px] mt-[30px] text-black w-full justify-center mb-[10px] p-[5px] rounded-[5px] flex box-border bg-[#84D49D] gap-[10px]'>
-                  <p className='font-bold text-[32px] content-center CustomXXSM:text-[16px]'>{userIndex + 1}</p>
-                  <p className='content-center CustomXXSM:text-[12px] '>{user.username}</p>
+                <div className='justify-between h-[45px] shadow-[0px_4px_4px_rgba(11,14,52,0.2)]  CustomXXSM:h-[40px] mt-[20px] text-black w-full  mb-[10px] p-[5px] rounded-[15px] flex box-border bg-[#84D49D] gap-[10px]'>
+                  <p className='ml-[20px] font-bold text-[28px] content-center CustomXXSM:text-[16px]'>{userIndex === -1 ? '-' : userIndex + 1}</p>
+                  <p className='content-center text-[24px] CustomXXSM:text-[12px] font-400'>{user.username}</p>
+                  <span className="block content-center mr-[20px]">{formatValue(ranking[userIndex]?.[rankingType], rankingType)}</span>
                 </div>
-                <div className='w-full h-[2px] bg-black mb-[10px]'></div>
-                <ul className='CustomXXSM:text-[12px]'>
+                <ul className=' CustomXXSM:text-[12px] '>
                   {getRankingItems(rankingType).slice(3, 100)}
                 </ul>
               </div>
             </div>
-            <div className='flex w-[53px] h-[53px] self-center ml-[10px]'>
+            <div className='flex w-[53px] h-[53px] self-center ml-[50px] CustomXSM:ml-[10px]'>
               <button onClick={() => handleArrowClick('next')}><img className='hover:scale-105' src={left} /></button>
             </div>
           </div>

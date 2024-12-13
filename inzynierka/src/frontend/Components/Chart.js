@@ -24,8 +24,10 @@ const Chart = ({ userRoutes }) => {
   if (weekOrMonth === 'week') {
     startCount = new Date(today);
     startCount.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+    startCount.setHours(0, 0, 0, 0);
     labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     dailyDistances = Array(7).fill(0);
+    
 
     userRoutes.forEach(route => {
       const routeDate = new Date(route.date);

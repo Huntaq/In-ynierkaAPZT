@@ -3,7 +3,6 @@ import '../css/stats.css';
 import Header from './Components/Header';
 import { jwtDecode } from "jwt-decode";
 import TrophyList from './Components/TrophyList';
-import confetti from "canvas-confetti";
 import { useNavigate } from 'react-router-dom';
 import BackGround from './Components/BackGround';
 
@@ -25,20 +24,6 @@ const Trophies = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const navigate = useNavigate();
-
-  const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 360,
-      origin: { y: 0.6 },
-      colors: ['#ff0', '#0f0', '#00f', '#f00', '#0ff', '#f0f'],
-      scalar: 2,
-    });
-  };
-
-  const handleTrophyEventClickConfetti = () => {
-    triggerConfetti();
-  };
 
   const getTrophyLevel = (distance) => {
     if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
@@ -159,7 +144,6 @@ const Trophies = () => {
   };
   const handleTrophyEventClick = (event) => {
     setSelectedEvent(event);
-    handleTrophyEventClickConfetti();
   };
   const handleCloseEventModal = () => {
     setSelectedEvent(null);
@@ -190,7 +174,7 @@ const Trophies = () => {
           title: 'Running',
           level: runningTrophy.level,
           detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
-          fact: 'Next threshold:',
+          fact: runningTrophy.level < 5 ? `Next threshold: level ${runningTrophy.level + 1}; ${runningTrophy.next.toFixed(2)} km left` : '',
         };
         break;
         case 'walking':
@@ -198,7 +182,7 @@ const Trophies = () => {
           title: 'Walking',
           level: walkingTrophy.level,
           detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
-          fact: 'Next threshold:',
+          fact: walkingTrophy.level < 5 ? `Next threshold: level ${walkingTrophy.level + 1}; ${walkingTrophy.next.toFixed(2)} km left` : '',
         };
         break;
       case 'cycling':
@@ -206,7 +190,7 @@ const Trophies = () => {
           title: 'Cycling',
           level: cyclingTrophy.level,
           detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
-          fact: 'Next threshold:',
+          fact: cyclingTrophy.level < 5 ? `Next threshold: level ${cyclingTrophy.level + 1}; ${cyclingTrophy.next.toFixed(2)} km left` : '',
         };
         break;
       case 'co2':
@@ -214,7 +198,7 @@ const Trophies = () => {
           title: 'CO2 Savings',
           level: co2Trophy.level,
           detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
-          fact: 'Next threshold:',
+          fact: co2Trophy.level < 5 ? `Next threshold: level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(2)} kg left` : '',
         };
         break;
       case 'calories':
@@ -222,7 +206,7 @@ const Trophies = () => {
           title: 'Calories Burned',
           level: caloriesTrophy.level,
           detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
-          fact: 'Next threshold:',
+          fact: caloriesTrophy.level < 5 ? `Next threshold: level ${caloriesTrophy.level + 1}; ${caloriesTrophy.next.toFixed(2)} kcal left` : '',
         };
         break;
       case 'money':
@@ -230,7 +214,7 @@ const Trophies = () => {
           title: 'Money Saved',
           level: moneyTrophy.level,
           detail: `Money saved: ${MoneySaved.toFixed(2)} zł`,
-          fact: 'Next threshold:',
+          fact: moneyTrophy.level < 5 ? `Next threshold: level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(2)} money left` : '',
         };
         break;
       default:
@@ -274,6 +258,17 @@ const Trophies = () => {
             toggleSidebar={toggleSidebar}
           />
           <div className="">
+            <TrophyList
+              runningDistance={runningDistance}
+              walkingDistance={walkingDistance}
+              cyclingDistance={cyclingDistance}
+              Co2Saved={Co2Saved}
+              CaloriesBurned={CaloriesBurned}
+              MoneySaved={MoneySaved}
+              handleTrophyClick={handleTrophyClick}
+            />
+          </div>
+          <div className="">
             {events.length > 0 && (
               <ul className="flex">
                 {events.map(event => (
@@ -295,17 +290,7 @@ const Trophies = () => {
               </div>
             )}
           </div>
-          <div className="">
-            <TrophyList
-              runningDistance={runningDistance}
-              walkingDistance={walkingDistance}
-              cyclingDistance={cyclingDistance}
-              Co2Saved={Co2Saved}
-              CaloriesBurned={CaloriesBurned}
-              MoneySaved={MoneySaved}
-              handleTrophyClick={handleTrophyClick}
-            />
-          </div>
+          
           {popupVisible && (
             <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
               <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
