@@ -65,7 +65,11 @@ const Chart = ({ userRoutes }) => {
       {
         label: 'Kilometers',
         data: dailyDistances,
-        backgroundColor: 'rgba(211, 211, 211, 0.8)',
+        backgroundColor: '#4BD0FF',
+        borderRadius: {
+          topLeft: 8,
+          topRight: 8,
+        }
       },
     ],
   };
@@ -106,7 +110,7 @@ const Chart = ({ userRoutes }) => {
         <select
           value={weekOrMonth}
           onChange={(e) => setWeekOrMonth(e.target.value)}
-          className="rounded-[7px] border-[1px] bg-[#F1FCF3] p-[5px] border-[#3B4A3F]"
+          className="rounded-[7px] border-[1px] bg-[#F1FCF3] p-[5px] border-[#B5B5B5] text-[#3B4A3F]"
         >
           <option value="week">Week</option>
           <option value="month">Month</option>
@@ -115,7 +119,7 @@ const Chart = ({ userRoutes }) => {
         <select
           value={transportMode}
           onChange={(e) => setTransportMode(parseInt(e.target.value, 10))}
-          className="rounded-[7px] border-[1px] bg-[#F1FCF3] p-[5px] border-[#3B4A3F]"
+          className="rounded-[7px] border-[1px] bg-[#F1FCF3] p-[5px] border-[#B5B5B5] text-[#3B4A3F]"
         >
           {Object.entries(transportModes).map(([modeId, modeName]) => (
             <option key={modeId} value={modeId}>

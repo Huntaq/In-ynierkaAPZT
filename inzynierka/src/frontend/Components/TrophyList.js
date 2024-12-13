@@ -29,8 +29,8 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
 
   return (
     <div className="">
-      <div className="flex flex-wrap justify-center box-border text-[#3B4A3F]">
-        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border`} onClick={() => handleTrophyClick('running')}>
+      <div className="flex flex-wrap justify-center box-border text-[#3B4A3F] ">
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('running')}>
           <div className="">
             <h3 className="text-center font-normal">Running </h3>
             <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/marathon.svg'/>
@@ -41,7 +41,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
           </div>
         </div>
 
-        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${walkingTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('walking')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${walkingTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)] `} onClick={() => handleTrophyClick('walking')}>
           <div className="">
             <h3 className="text-center">Walking </h3>
             <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/hiking.svg'/>
@@ -52,7 +52,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
           </div>
         </div>
 
-        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${cyclingTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('cycling')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${cyclingTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('cycling')}>
           <div className="">
             <h3 className="text-center">Cycling </h3>
             <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/mountain_cycling.svg'/>
@@ -63,7 +63,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
           </div>
         </div>
 
-        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${co2Trophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('co2')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${co2Trophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('co2')}>
           <div className="">
             <h3 className="text-center">CO2 Savings </h3>
             <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/save_earth.svg'/>
@@ -74,7 +74,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
           </div>
         </div>
 
-        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${caloriesTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('calories')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${caloriesTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('calories')}>
           <div className="">
             <h3 className="text-center">Calories Burned </h3>
             <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/burned_blue.svg'/>
@@ -85,7 +85,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
           </div>
         </div>
 
-        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${moneyTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border `} onClick={() => handleTrophyClick('money')}>
+        <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${moneyTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('money')}>
           <div className="">
             <h3 className="text-center">Money Saved </h3>
             <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/savings.svg'/>

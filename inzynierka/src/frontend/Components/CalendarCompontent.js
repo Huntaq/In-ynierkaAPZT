@@ -127,7 +127,7 @@ const CalendarComponent = () => {
                     <ul className='text-[18px] font-bold'>
                         {dailyActivities.map((activity, index) => (
                             <li key={index}>
-                                {getTransportModeName(activity.transport_mode_id)} - {activity.distance_km} km - {activity.duration} - CO2: {activity.CO2} kg - kcal: {activity.kcal}
+                                {getTransportModeName(activity.transport_mode_id)} - {activity.distance_km} km // {activity.duration} // CO2: {activity.CO2} kg // kcal: {activity.kcal}
                             </li>
                         ))}
                     </ul>

@@ -111,9 +111,9 @@ const Overview = ({
                 return (
                   <div className='w-[600px] max-w-[100%]' key={section.id}>
                     <div className='content-center justify-items-center w-[400px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
-                    <div className='place-items-start ml-[25px] '>
-                      <p className='text-[#3B4A3F] text-[28px] font-bold'> Czy wiesz, że? </p>
-                      <p className='text-[16px] text-start'>Zaoszczędziłeś tyle CO₂, ile powstałoby przy przejechaniu około {km} kilometrów samochodem.</p>
+                    <div className='place-items-start m-[25px] '>
+                      <p className='text-[#3B4A3F] text-[28px] font-bold'> Do you know that... </p>
+                      <p className='text-[16px] text-start'>You have saved as much CO₂ as would be produced by driving approximately {km} kilometers by car.</p>
                     </div>
                   </div>
                   </div>
@@ -135,7 +135,7 @@ const Overview = ({
                 
                 <div className=' mt-[5px] trohpies mt-[5px] w-[600px] max-w-[100%]  m-auto rounded-[10px] shadow-[5px_5px_10px_rgba(0,0,0,0.1]' key={section.id}>
                  <div className='content-center justify-items-center m-[5px] mt-[5px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
-                    <p className='text-[16px] text-[#3B4A3F] font-semibold'>THIS YEAR </p>
+                    <p className='text-[16px] text-[#B5B5B5] font-semibold'>THIS YEAR </p>
                     <p className='text-[24px] text-[#3B4A3F] font-semibold'>{totalThisYear.toFixed(0)} KM</p>
                   </div>
                   <div className='content-center justify-items-center m-[5px] mt-[15px] w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
@@ -147,6 +147,11 @@ const Overview = ({
                     <p className='text-[24px] text-[#3B4A3F] font-semibold'> {totalThisWeek.toFixed(0)} KM</p>
                   </div>
                 </div>
+
+
+
+
+
               );
 
             default:

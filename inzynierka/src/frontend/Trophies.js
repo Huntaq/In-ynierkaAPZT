@@ -187,50 +187,50 @@ const Trophies = () => {
     switch (trophyType) {
       case 'running':
         content = {
-          title: '🏃‍♂️ Running',
+          title: 'Running',
           level: runningTrophy.level,
           detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
-          fact: 'Running improves cardiovascular and lung health.',
+          fact: 'Next threshold:',
         };
         break;
         case 'walking':
         content = {
-          title: '🏃‍♂️ Walking',
+          title: 'Walking',
           level: walkingTrophy.level,
           detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
-          fact: 'Walking improves cardiovascular and lung health.',
+          fact: 'Next threshold:',
         };
         break;
       case 'cycling':
         content = {
-          title: '🚴‍♂️ Cycling',
+          title: 'Cycling',
           level: cyclingTrophy.level,
           detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
-          fact: 'Cycling is great exercise for the lower body.',
+          fact: 'Next threshold:',
         };
         break;
       case 'co2':
         content = {
-          title: '🌍 CO2 Savings',
+          title: 'CO2 Savings',
           level: co2Trophy.level,
           detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
-          fact: 'Saving CO2 helps combat climate change.',
+          fact: 'Next threshold:',
         };
         break;
       case 'calories':
         content = {
-          title: '🔥 Calories Burned',
+          title: 'Calories Burned',
           level: caloriesTrophy.level,
           detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
-          fact: 'Burning calories improves overall body fitness.',
+          fact: 'Next threshold:',
         };
         break;
       case 'money':
         content = {
-          title: '💸 Money Saved',
+          title: 'Money Saved',
           level: moneyTrophy.level,
           detail: `Money saved: ${MoneySaved.toFixed(2)} zł`,
-          fact: 'Saving money allows for future investments.',
+          fact: 'Next threshold:',
         };
         break;
       default:
@@ -278,7 +278,7 @@ const Trophies = () => {
               <ul className="flex">
                 {events.map(event => (
                   <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
-                    <img className='w-[100px] h-[100px] m-auto rounded-[50%] border-black border-[2px]' src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+                    <img className='w-[100px] h-[100px] m-auto rounded-[50%] shadow-[0px_4px_4px_rgba(11,14,52,0.20)] m-[15px]' src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
                   </li>
                 ))}
               </ul>

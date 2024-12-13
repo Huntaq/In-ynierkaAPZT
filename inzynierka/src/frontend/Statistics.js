@@ -133,22 +133,22 @@ const Statistics = (
             <Chart month={month} year={year} transportMode={transportMode} userRoutes={userRoutes} />
           </div>
           <div className='flex flex-wrap w-full mt-[20px] gap-[10px] justify-center text-center max-w-[95%]'>
-            <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center'>
+            <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center text-[#3B4A3F]'>
               <div>
                 <h3>Distance traveled this week:</h3>
-                <p className='font-bold'>{distanceThisWeek.toFixed(2)} km</p>
+                <p className='font-bold text-[#3B4A3F]'>{distanceThisWeek.toFixed(2)} km</p>
               </div>
             </div>
             <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center'>
               <div>
                 <h3>Distance traveled this month:</h3>
-                <p className='font-bold'>{distanceThisMonth.toFixed(2)} km</p>
+                <p className='font-bold text-[#3B4A3F]'>{distanceThisMonth.toFixed(2)} km</p>
               </div>
             </div>
             <div className='w-full h-[100px] max-w-[300px] bg-[#F1FCF3] p-[10px] rounded-[7px] content-center'>
               <div >
                 <h3>Distance traveled this year:</h3>
-                <p className='font-bold'>{distanceThisYear.toFixed(2)} km</p>
+                <p className='font-bold text-[#3B4A3F]'>{distanceThisYear.toFixed(2)} km</p>
               </div>
             </div>
           </div>
