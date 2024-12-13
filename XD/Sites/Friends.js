@@ -32,6 +32,24 @@ const Friends = () => {
     }
   }, [user]);
 
+  const removeFriend = async (friendId) => {
+    try {
+      console.log('Attempting to remove friend with ID:', friendId); // Log the friendId
+  
+      const response = await axios.delete(`http://192.168.56.1:5000/api/friends/${friendId}`, {
+        withCredentials: true,
+      });
+  
+      Alert.alert('Success', response.data.message);
+  
+      // Update the friends list after removal
+      setFriends((prevFriends) => prevFriends.filter((friend) => friend.friends_id !== friendId));
+    } catch (error) {
+      console.error('Error removing friend:', error.response?.data || error.message);
+      Alert.alert('Error', error.response?.data?.message || 'Failed to remove friend');
+    }
+  };
+
   const acceptFriendRequest = async (friendId) => {
     try {
       const response = await axios.post(
@@ -42,11 +60,9 @@ const Friends = () => {
 
       Alert.alert('Success', response.data.message);
 
-      
       const updatedPendingFriends = pendingFriends.filter((friend) => friend.friends_id !== friendId);
       setPendingFriends(updatedPendingFriends);
 
-      
       const responseAccepted = await axios.get('http://192.168.56.1:5000/api/friends', { withCredentials: true });
       setFriends(responseAccepted.data.results || []);
     } catch (error) {
@@ -96,7 +112,7 @@ const Friends = () => {
             ) : (
               <Text style={styles.text}>No profile picture available</Text>
             )}
-            <Button title="Remove Friend" onPress={() => {}} />
+            <Button title="Remove Friend" onPress={() => removeFriend(item.friends_id)} />
           </View>
         )}
       />

@@ -1,57 +1,8 @@
-import React, { useState } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
-
-const StartStopButton = () => {
-  const [buttonState, setButtonState] = useState('start'); 
-
-  const handleStartPress = () => {
-    setButtonState('stop');
-  };
-
-  const handleResumePress = () => {
-    setButtonState('start');
-  };
-
-  const handleFinishPress = () => {
-    setButtonState('finished'); 
-  };
-
-  return (
-    <View style={styles.container}>
-      {buttonState === 'start' && (
-        <Button 
-          title="Start" 
-          onPress={handleStartPress} 
-        />
-      )}
-      {buttonState === 'stop' && (
-        <Button 
-          title="Stop" 
-          onPress={() => setButtonState('split')}
-        />
-      )}
-      {buttonState === 'split' && (
-        <>
-          <Button 
-            title="Resume" 
-            onPress={handleResumePress} 
-          />
-          <Button 
-            title="Finish" 
-            onPress={handleFinishPress} 
-          />
-        </>
-      )}
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
-export default StartStopButton;
+/*<Image
+                source={
+                  mode === 'Walking'
+                    ? require('../assets/images/solar_walking-bold.png')
+                    : mode === 'Cycling'
+                    ? require('../assets/images/solar_bicycling-bold.png')
+                    : require('../assets/images/solar_running-2-bold.png')
+                }*/

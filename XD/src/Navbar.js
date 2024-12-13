@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const NavBar = () => {
   const navigation = useNavigation();
+
+
 
   return (
     <View style={styles.navbar}>
@@ -17,6 +19,7 @@ const NavBar = () => {
         onPress={() => navigation.navigate('Feed')}>
         <Text style={styles.buttonText}>Feed</Text>
       </TouchableOpacity>
+      
       <TouchableOpacity 
         style={styles.button} 
         onPress={() => navigation.navigate('Settings')}>

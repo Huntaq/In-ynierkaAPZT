@@ -1,118 +1,260 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { format } from 'date-fns';
-import { Picker } from '@react-native-picker/picker';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from 'react-native';
+import axios from 'axios';
+import NavBar from '../src/Navbar';
 
-const screenWidth = Dimensions.get('window').width;
+const FAQ = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-const Statistics = () => {
-  const [selectedFilter, setSelectedFilter] = useState('month');
-  const [markedDates, setMarkedDates] = useState({});
+  const questions = [
+    {
+      question: 'Jak zrobić chlebek bananowy?',
+      answer: `Składniki:
+      - 3 dojrzałe banany
+      - 1/2 szklanki roztopionego masła
+      - 1 szklanka cukru
+      - 1 jajko
+      - 1 łyżeczka ekstraktu waniliowego
+      - 1 1/2 szklanki mąki pszennej
+      - 1 łyżeczka proszku do pieczenia
+      - 1/4 łyżeczki soli
+      
+      Opcjonalnie:
+      - 1/2 szklanki posiekanych orzechów włoskich lub pekanów
+      - 1/2 szklanki czekolady
+      
+      Instrukcje:
+      1. Rozgrzej piekarnik do 175°C (350°F). Wysmaruj formę do pieczenia lub wyłóż ją papierem do pieczenia.
+      2. Zgnieć banany widelcem.
+      3. Dodaj roztopione masło do bananów i wymieszaj.
+      4. Dodaj cukier, jajko i ekstrakt waniliowy. Wymieszaj.
+      5. W osobnej misce wymieszaj mąkę, proszek do pieczenia i sól. Dodaj do mokrych składników i wymieszaj.
+      6. Dodaj opcjonalne składniki, jeśli używasz.
+      7. Wlej ciasto do formy i piecz przez 60-70 minut, aż patyczek wyjdzie suchy.
+      8. Ostudź przed podaniem.`,
+    },
+  ];
+
+  const toggleFAQ = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const handleQuestionPress = (answer) => {
+    setSelectedQuestion(answer);
+    setModalVisible(true);
+  };
+
+  return (
+    <View style={styles.faqContainer}>
+      <TouchableOpacity style={styles.faqHeader} onPress={toggleFAQ}>
+        <Text style={styles.faqTitle}>FAQ</Text>
+      </TouchableOpacity>
+
+      {isExpanded &&
+        questions.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.faqItem}
+            onPress={() => handleQuestionPress(item.answer)}
+          >
+            <Text style={styles.faqQuestion}>{item.question}</Text>
+          </TouchableOpacity>
+        ))}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <ScrollView>
+              <Text style={styles.modalText}>{selectedQuestion}</Text>
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Zamknij</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    fetchCalendarData();
+    fetchNotifications();
   }, []);
 
-  const fetchCalendarData = async () => {
+  const fetchNotifications = async () => {
     try {
-      const response = await fetch('/api/user_routes');
-      if (!response.ok) {
-        throw new Error('Failed to fetch user routes');
-      }
-      const data = await response.json();
-
-      // Przetwarzanie danych do kalendarza
-      const processedDates = processCalendarDates(data);
-      setMarkedDates(processedDates);
+      const response = await axios.get('http://192.168.56.1:5000/api/notifications');
+      setNotifications(response.data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching calendar data:', error);
+      Alert.alert('Error', 'Unable to fetch notifications.');
       setLoading(false);
     }
   };
 
-  const processCalendarDates = (data) => {
-    const dates = {};
-    data.forEach((route) => {
-      dates[route.date] = { marked: true, dotColor: 'green' }; // Oznaczenie dni
-    });
-    return dates;
+  const toggleNotifications = () => {
+    setIsExpanded(!isExpanded);
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Statistics</Text>
+    <View style={styles.notificationsContainer}>
+      <TouchableOpacity style={styles.notificationsHeader} onPress={toggleNotifications}>
+        <Text style={styles.notificationsTitle}>Notifications</Text>
+      </TouchableOpacity>
 
-      {/* Kalendarz z oznaczeniami */}
-      <View>
-        <Text style={styles.sectionTitle}>Your Routes</Text>
-        <Calendar
-          markedDates={markedDates}
-          onMonthChange={(month) => {
-            console.log('Month changed to:', month.dateString);
-          }}
-        />
-      </View>
+      {isExpanded &&
+        (loading ? (
+          <Text>Loading...</Text>
+        ) : (
+          notifications.map((item, index) => (
+            <View key={index} style={styles.notificationCard}>
+              <Text style={styles.notificationHeader}>{item.header}</Text>
+              <Text style={styles.notificationContent}>{item.content}</Text>
+              <Text style={styles.notificationDate}>
+                {new Date(item.created_at).toLocaleString()}
+              </Text>
+            </View>
+          ))
+        ))}
+    </View>
+  );
+};
 
-      {/* Filter */}
-      <View style={styles.filterContainer}>
-        <Text>Filter:</Text>
-        <Picker
-          selectedValue={selectedFilter}
-          style={styles.picker}
-          onValueChange={(itemValue) => setSelectedFilter(itemValue)}
-        >
-          <Picker.Item label="Week" value="week" />
-          <Picker.Item label="Month" value="month" />
-          <Picker.Item label="Year" value="year" />
-        </Picker>
-      </View>
-    </ScrollView>
+const Settings = () => {
+  return (
+    <View style={styles.container}>
+      <FAQ />
+      <View style={styles.separator} />
+      <Notifications />
+      <NavBar />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    backgroundColor: '#F1FCF3',
   },
-  title: {
+  separator: {
+    width: '90%',
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 5,
+  },
+  faqContainer: {
+    width: '90%',
+    marginVertical: 10,
+  },
+  faqHeader: {
+    backgroundColor: '#F1FCF3',
+    padding: 15,
+    borderRadius: 10,
+  },
+  faqTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+    color: '#000',
+    textAlign: 'left',
   },
-  sectionTitle: {
-    fontSize: 20,
+  faqItem: {
+    backgroundColor: '#F1FCF3',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  faqQuestion: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  picker: {
-    flex: 1,
-    height: 50,
-    marginLeft: 10,
-  },
-  loaderContainer: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    maxHeight: '80%',
+  },
+  modalText: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 10,
+  },
+  closeButton: {
+    backgroundColor: '#FF6347',
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  notificationsContainer: {
+    width: '90%',
+    marginVertical: 10,
+  },
+  notificationsHeader: {
+    backgroundColor: '#F1FCF3',
+    padding: 15,
+    borderRadius: 10,
+  },
+  notificationsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'left',
+  },
+  notificationCard: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  notificationHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  notificationContent: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  notificationDate: {
+    fontSize: 14,
+    color: 'gray',
   },
 });
 
-export default Statistics;
+export default Settings;

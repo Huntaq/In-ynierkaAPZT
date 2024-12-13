@@ -93,6 +93,7 @@ app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res
 
 
 
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -108,6 +109,13 @@ app.post('/api/login', (req, res) => {
 
     const user = results[0];
 
+    // Check if the user is banned
+    if (user.is_banned) {
+      return res.status(403).json({
+        message: 'Your account is banned. Please contact support for assistance.',
+      });
+    }
+
     bcrypt.compare(password, user.password_hash, (err, result) => {
       if (err) {
         console.error('Password comparison error:', err);
@@ -115,7 +123,8 @@ app.post('/api/login', (req, res) => {
       }
 
       if (result) {
-        req.session.userId = user.id;  
+        req.session.userId = user.id; // Set the user ID in the session
+
         res.json({
           message: 'Login successful',
           user: {
@@ -128,7 +137,7 @@ app.post('/api/login', (req, res) => {
             profilePicture: user.profilePicture
               ? `${baseURL}:${port1}${user.profilePicture}`
               : null,
-            posts: [],
+            posts: [], // Placeholder for user's posts
           },
         });
       } else {
@@ -378,29 +387,60 @@ app.post('/api/friends_accept', (req, res) => {
   });
 });
 
-app.delete('/api/friends/:friendId', (req, res) => {
+app.delete('/api/friends/:id', (req, res) => {
   const userId = req.session.userId;
-  const { friendId } = req.params;
+  const { id } = req.params; // Treat `id` as the `friend_id` to match against the `id` column in the database
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
   }
 
-  const query = `DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)`;
-  
-  db.query(query, [userId, friendId, friendId, userId], (err, result) => {
+  // Log the delete request details
+  console.log('Delete Request:', { userId, id });
+
+  // Query to check if the relationship exists by the `id` column
+  const checkQuery = `
+    SELECT * FROM friends
+    WHERE id = ?
+  `;
+
+  db.query(checkQuery, [id], (err, results) => {
     if (err) {
-      console.error('Error deleting friend from database:', err);
-      return res.status(500).json({ message: 'Error deleting friend' });
+      console.error('Error checking friend relationship:', err);
+      return res.status(500).json({ message: 'Database error' });
     }
 
-    if (result.affectedRows === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ message: 'No matching friend found' });
     }
 
-    return res.status(200).json({ message: 'Friend removed successfully' });
+    // Log the results from the check
+    console.log('Relationship Found:', results);
+
+    // Proceed to delete the row using the `id` column
+    const deleteQuery = `
+      DELETE FROM friends
+      WHERE id = ?
+    `;
+
+    db.query(deleteQuery, [id], (err, result) => {
+      if (err) {
+        console.error('Error deleting friend from database:', err);
+        return res.status(500).json({ message: 'Error deleting friend' });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'No matching friend found' });
+      }
+
+      // Log successful deletion
+      console.log('Deletion Successful:', result);
+
+      res.status(200).json({ message: 'Friend removed successfully' });
+    });
   });
 });
+
 
 app.post('/api/search_friend', (req, res) => {
   const searchUsername = req.body.username; 
@@ -451,7 +491,21 @@ app.post('/api/friend_add', (req, res) => {
 
 
 
+app.get('/api/notifications', (req, res) => {
+  const userId = req.session.userId;
 
+ 
+
+  
+  db.query('SELECT * FROM notifications_popup', (err, results) => {
+    if (err) {
+      console.error('Error fetching notifications:', err);
+      return res.status(500).json({ message: 'Error fetching notifications from the database' });
+    }
+
+    res.json(results);
+  });
+});
 
 
 app.post('/api/routes', (req, res) => {

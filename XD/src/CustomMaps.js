@@ -4,10 +4,12 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import haversine from 'haversine';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+
 import { UserContext } from './UserContex';
 
 const CustomMap = () => {
+  const navigation = useNavigation();
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
@@ -21,13 +23,14 @@ const CustomMap = () => {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState(0);
   const [isTracking, setIsTracking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [transportMode, setTransportMode] = useState('Walking');
   const [modalVisible, setModalVisible] = useState(false);
   const [lastRecordedPosition, setLastRecordedPosition] = useState(null);
+  const [isStarted, setIsStarted] = useState(false);
   const { user } = useContext(UserContext);
 
-  // Używane do lokalizacji
   useEffect(() => {
     let watchId;
     const requestLocationPermission = async () => {
@@ -49,7 +52,7 @@ const CustomMap = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
 
-          if (isTracking) {
+          if (isTracking && !isPaused) {
             const newCoordinate = { latitude, longitude };
             if (lastRecordedPosition) {
               const distance = haversine(lastRecordedPosition, newCoordinate, { unit: 'meter' });
@@ -89,13 +92,12 @@ const CustomMap = () => {
     return () => {
       Geolocation.clearWatch(watchId);
     };
-  }, [isTracking, lastRecordedPosition]);
+  }, [isTracking, isPaused, lastRecordedPosition]);
 
-  // Ustawienie timera
   useEffect(() => {
     let interval = null;
 
-    if (isTracking) {
+    if (isTracking && !isPaused) {
       interval = setInterval(() => {
         setTimeElapsed((prevTime) => prevTime + 1);
       }, 1000);
@@ -104,9 +106,20 @@ const CustomMap = () => {
     }
 
     return () => clearInterval(interval);
-  }, [isTracking]);
+  }, [isTracking, isPaused]);
 
-  // Formatowanie czasu
+  const calculateCalories = (distance) => {
+    const weight = 70; // Example weight in kg
+    const metValues = {
+      Walking: 3.8,
+      Running: 9.8,
+      Cycling: 7.5,
+    };
+    const met = metValues[transportMode] || 3.8; // Default to walking
+    const caloriesPerMeter = (met * weight) / (60 * 1000); // Calories per meter based on MET
+    return (distance * caloriesPerMeter).toFixed(2);
+  };
+
   const formatTime = (time) => {
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
@@ -115,68 +128,33 @@ const CustomMap = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Funkcje obliczeniowe
-  const calculateSavings = () => (distanceTravelled / 1000 * 0.5).toFixed(2);
-  const calculateCO2Savings = () => (distanceTravelled / 1000 * 120).toFixed(2);
-  const calculateCaloriesBurned = () => {
-    const caloriesPerKm = transportMode === 'Walking' ? 50 : 35;
-    return (distanceTravelled / 1000 * caloriesPerKm).toFixed(2);
-  };
-
-  // Wysyłanie danych do backendu
-  const handleSavePress = async () => {
-    try {
-      const data = {
-        user_id: user.id,
-        transport_mode_id: transportMode === 'Walking' ? '1' : transportMode === 'Running' ? '2' : '3',
-        distance_km: (distanceTravelled / 1000).toFixed(2),
-        CO2: calculateCO2Savings(),
-        kcal: calculateCaloriesBurned(),
-        duration: formatTime(timeElapsed),
-        money: calculateSavings(),
-        is_private: false,
-        routeCoordinates, // Dodanie punktów trasy
-      };
-  
-      console.log('Wysyłanie danych:', data);
-  
-      const response = await axios.post('http://192.168.56.1:5000/api/routes', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.status === 201) {
-        Alert.alert('Success', 'Route has been saved successfully.');
-        setModalVisible(false);
-      } else {
-        throw new Error('Failed to save route.');
-      }
-    } catch (error) {
-      console.error('Błąd podczas zapisywania trasy:', error.response?.data || error.message);
-      Alert.alert('Błąd', 'Nie udało się zapisać trasy. Spróbuj ponownie.');
-    }
-  };
-
-  // Sterowanie
   const handleStartPress = () => {
     setIsTracking(true);
+    setIsStarted(true);
+    setIsPaused(false);
     setRouteCoordinates([]);
     setDistanceTravelled(0);
     setTimeElapsed(0);
     setLastRecordedPosition(null);
   };
 
-  const handleStopPress = () => {
-    setIsTracking(false);
+  const handlePausePress = () => {
+    setIsPaused((prev) => !prev);
   };
 
   const handleFinishPress = () => {
     setIsTracking(false);
+    setIsStarted(false);
     setModalVisible(true);
-  };
-
-  const handleTransportModeChange = (mode) => setTransportMode(mode);
+    console.log('Route Coordinates:', routeCoordinates); // Add this to debug
+    navigation.navigate('SummaryScreen', {
+        distance: (distanceTravelled / 1000).toFixed(2), // Pass distance in km
+        time: formatTime(timeElapsed), // Pass formatted time
+        calories: calculateCalories(distanceTravelled), // Pass calories
+        transportMode, // Pass the selected transport mode
+        routeCoordinates, // Pass the route coordinates
+    });
+};
 
   return (
     <View style={styles.container}>
@@ -184,225 +162,193 @@ const CustomMap = () => {
         <Marker coordinate={currentPosition} title="Your Location" />
         <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
       </MapView>
-
+      {!isStarted && <Text style={styles.textText}>Choose your form of transport</Text>}
       <View style={styles.controls}>
-        <Text style={styles.distanceText}>Distance: {distanceTravelled.toFixed(2)} m</Text>
-        <Text style={styles.timerText}>Time: {formatTime(timeElapsed)}</Text>
-        <View style={styles.modeButtons}>
-          {['Walking', 'Cycling', 'Running'].map((mode) => (
-            <TouchableOpacity
-              key={mode}
-              style={[
-                styles.modeButton,
-                transportMode === mode ? styles.activeButton : null,
-              ]}
-              onPress={() => handleTransportModeChange(mode)}
-            >
-              <Text style={styles.buttonText}>{mode}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
-          <Text style={styles.startButtonText}>Start</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
-          <Text style={styles.stopButtonText}>Stop</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.finishButton} onPress={handleFinishPress}>
-          <Text style={styles.finishButtonText}>Finish</Text>
-        </TouchableOpacity>
-      </View>
+      {!isStarted ? (
+  <View style={styles.transportModeContainer}>
+    {['Walking', 'Cycling', 'Running'].map((mode) => (
+      <TouchableOpacity
+        key={mode}
+        style={[
+          styles.transportButton,
+          transportMode === mode ? styles.activeTransportButton : null,
+        ]}
+        onPress={() => setTransportMode(mode)}
+      >
+        <Image
+          source={
+            mode === 'Walking'
+              ? require('../assets/images/solar_walking-bold.png')
+              : mode === 'Cycling'
+              ? require('../assets/images/solar_bicycling-bold.png')
+              : require('../assets/images/solar_running-2-bold.png')
+          }
+          style={styles.transportIcon}
+        />
+        <Text style={styles.ModeText}>{mode}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+) : (
+  <View style={styles.selectedTransportContainer}>
+    <Image
+      source={
+        transportMode === 'Walking'
+          ? require('../assets/images/solar_walking-bold.png')
+          : transportMode === 'Cycling'
+          ? require('../assets/images/solar_bicycling-bold.png')
+          : require('../assets/images/solar_running-2-bold.png')
+      }
+      style={styles.selectedTransportIcon}
+    />
+    <Text style={styles.selectedTransportText}>{transportMode}</Text>
+  </View>
+)}
 
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Trasa ukończona!</Text>
-            <Text style={styles.modalText}>Czas: {formatTime(timeElapsed)}</Text>
-            <Text style={styles.modalText}>Dystans: {(distanceTravelled / 1000).toFixed(2)} km</Text>
-            <Text style={styles.modalText}>Zaoszczędzone pieniądze: {calculateSavings()} PLN</Text>
-            <Text style={styles.modalText}>Zaoszczędzone CO2: {calculateCO2Savings()} g</Text>
-            <Text style={styles.modalText}>Spalone kalorie: {calculateCaloriesBurned()} kcal</Text>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSavePress}>
-              <Text style={styles.buttonText}>Zapisz</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-              <Text style={styles.buttonText}>Zamknij</Text>
-            </TouchableOpacity>
+
+        {!isStarted ? (
+          <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
+            <Text style={styles.buttonText}>Start</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.statsContainer}>
+            <Text style={styles.statsText}>
+              Distance: <Text style={styles.boldText}>{(distanceTravelled / 1000).toFixed(2)} km</Text>
+            </Text>
+            <Text style={styles.statsText}>
+              Time: <Text style={styles.boldText}>{formatTime(timeElapsed)}</Text>
+            </Text>
+            <Text style={styles.statsText}>
+              Calories: <Text style={styles.boldText}>{calculateCalories(distanceTravelled)} kcal</Text>
+            </Text>
+            <View style={styles.actionButtons}>
+              <TouchableOpacity style={styles.pauseButton} onPress={handlePausePress}>
+                <Text style={styles.PausText}>{isPaused ? 'Resume' : 'Pause'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.finishButton} onPress={handleFinishPress}>
+                <Text style={styles.buttonText}>Finish</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'Top', // Wyśrodkowanie pionowe
+    alignItems: 'top',     // Wyśrodkowanie poziome
+    backgroundColor: '#F1FCF3',
   },
+  
 
   map: {
-    ...StyleSheet.absoluteFillObject,
+    width: 400, // Lub inna wartość, np. '100%' dla szerokości
+    height: 420,  // Stała wysokość w pikselach
+    marginBottom: 20,
+    
   },
-
   controls: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    right: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flex: 0.3,
+    backgroundColor: '#F1FCF3',
     padding: 10,
     borderRadius: 10,
   },
-
-  distanceText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-
-  timerText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-
-  transportText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 10,
-    fontWeight: 'bold',
-  },
-
-  modeButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
-  },
-
-  modeButton: {
-    backgroundColor: '#D3D3D3',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-  },
-
-  activeButton: {
-    backgroundColor: '#8A2BE2',
-  },
-
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-
   startButton: {
-    backgroundColor: '#8A2BE2',
+    marginTop: 20,
+    backgroundColor: '#84D49D',
+    paddingVertical: 15,
     borderRadius: 10,
-    paddingVertical: 10,
-    marginVertical: 5,
-    justifyContent: 'center',
     alignItems: 'center',
+    width: 300,
+    alignSelf: 'center',
   },
-
-  stopButton: {
-    backgroundColor: '#FF6347',
-    borderRadius: 10,
-    paddingVertical: 10,
-    marginVertical: 5,
-    justifyContent: 'center',
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  textText: {
     alignItems: 'center',
-  },
-
-  finishButton: {
-    backgroundColor: '#FF0000',
-    borderRadius: 10,
-    paddingVertical: 10,
-    marginVertical: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  saveButton: {
-    backgroundColor: '#32CD32',
-    marginTop: 10,
-  },
-
-  startButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-
-  stopButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-
-  finishButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
-
-  modalTitle: {
+    alignSelf: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
 
-  modalText: {
-    fontSize: 16,
+  },
+  statsText: {
+    fontSize: 20,
     textAlign: 'center',
     marginVertical: 5,
   },
-
-  miniMap: {
-    width: '100%',
-    height: 100,
-    marginBottom: 20,
-  },
-
-  cancelButton: {
-    backgroundColor: '#FF6347',
-    marginTop: 10,
-  },
-  weatherContainer: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    padding: 10,
+  pauseButton: {
+    borderWidth: 1,
+    borderColor: '#84D49D',
+    marginTop: 20,
+    backgroundColor: '#F1FCF3',
+    paddingVertical: 15,
+    flex: 1,
+    marginRight: 5,
     borderRadius: 10,
     alignItems: 'center',
+  },
+  finishButton: {
+    marginTop: 20,
+    backgroundColor: '#FE756A',
+    paddingVertical: 15,
+    flex: 1,
+    marginLeft: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  transportModeContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 15,
   },
-  weatherText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginRight: 5,
+  transportButton: {
+    alignItems: 'center',
   },
-  weatherIcon: {
+  activeTransportButton: {
+    backgroundColor: '#FE756A',
+    borderRadius: 10,
+    padding: 5,
+  },
+  transportIcon: {
     width: 50,
     height: 50,
+  },
+  buttonText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  
+  ModeText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  PausText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#84D49D',
+  },
+  selectedTransportContainer: {
+    alignItems: 'center', // Center both icon and text
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  selectedTransportIcon: {
+    width: 50,
+    height: 50,
+    marginBottom: 5, // Add space between the icon and text
+  },
+  selectedTransportText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   
   

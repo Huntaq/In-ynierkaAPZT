@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert, Modal, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Picker } from '@react-native-picker/picker';
-import { format, differenceInDays } from 'date-fns';
-import { BarChart } from 'react-native-chart-kit';
+import { format, differenceInDays, isSameWeek, isSameMonth, isSameYear } from 'date-fns';
 
 const Statistics = () => {
   const [selectedFilter, setSelectedFilter] = useState('month');
@@ -11,10 +10,19 @@ const Statistics = () => {
   const [streak, setStreak] = useState({ current: 0, longest: 0 });
   const [summary, setSummary] = useState({ distance: 0, money: 0, co2: 0 });
   const [loading, setLoading] = useState(true);
+  const [activities, setActivities] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [dailyActivities, setDailyActivities] = useState([]);
 
   useEffect(() => {
     fetchStatistics();
-  }, [selectedFilter]);
+  }, []);
+
+  useEffect(() => {
+    filterActivities();
+  }, [selectedFilter, activities]);
 
   const fetchStatistics = async () => {
     setLoading(true);
@@ -32,27 +40,45 @@ const Statistics = () => {
         setMarkedDates({});
         setStreak({ current: 0, longest: 0 });
         setSummary({ distance: 0, money: 0, co2: 0 });
+        setActivities([]);
         return;
       }
 
-      // Przetwarzanie danych do kalendarza
-      const processedDates = processCalendarDates(data);
-
-      // Oblicz streak
-      const calculatedStreak = calculateStreak(Object.keys(processedDates));
-
-      // Oblicz sumaryczne wartości
-      const calculatedSummary = calculateSummary(data);
-
-      setMarkedDates(processedDates);
-      setStreak(calculatedStreak);
-      setSummary(calculatedSummary);
+      setActivities(data);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching statistics:', error);
       Alert.alert('Error', 'Failed to fetch data from the server. Please try again later.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const filterActivities = () => {
+    const now = new Date();
+
+    const filtered = activities.filter((activity) => {
+      const activityDate = new Date(activity.date);
+
+      if (selectedFilter === 'week') {
+        return isSameWeek(activityDate, now);
+      } else if (selectedFilter === 'month') {
+        return isSameMonth(activityDate, now);
+      } else if (selectedFilter === 'year') {
+        return isSameYear(activityDate, now);
+      }
+      return true; // Domyślnie brak filtrowania
+    });
+
+    setFilteredActivities(filtered);
+
+    const processedDates = processCalendarDates(filtered);
+    const calculatedSummary = calculateSummary(filtered);
+    const calculatedStreak = calculateStreak(Object.keys(processedDates));
+
+    setMarkedDates(processedDates);
+    setSummary(calculatedSummary);
+    setStreak(calculatedStreak);
   };
 
   const processCalendarDates = (data) => {
@@ -98,34 +124,25 @@ const Statistics = () => {
   };
 
   const calculateSummary = (data) => {
-    const filteredData = data.filter((route) => {
-      const routeDate = new Date(route.date);
-      const now = new Date();
-
-      if (selectedFilter === 'week') {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(now.getDate() - 7);
-        return routeDate >= oneWeekAgo && routeDate <= now;
-      } else if (selectedFilter === 'month') {
-        return (
-          routeDate.getFullYear() === now.getFullYear() &&
-          routeDate.getMonth() === now.getMonth()
-        );
-      } else if (selectedFilter === 'year') {
-        return routeDate.getFullYear() === now.getFullYear();
-      }
-      return true;
-    });
-
-    const totalDistance = filteredData.reduce((sum, route) => sum + route.distance_km, 0);
-    const totalMoney = filteredData.reduce((sum, route) => sum + route.money, 0);
-    const totalCO2 = filteredData.reduce((sum, route) => sum + route.CO2, 0);
+    const totalDistance = data.reduce((sum, route) => sum + route.distance_km, 0);
+    const totalMoney = data.reduce((sum, route) => sum + route.money, 0);
+    const totalCO2 = data.reduce((sum, route) => sum + route.CO2, 0);
 
     return {
       distance: totalDistance,
       money: totalMoney,
       co2: totalCO2,
     };
+  };
+
+  const handleDayPress = (day) => {
+    setSelectedDate(day.dateString);
+    const filteredActivities = filteredActivities.filter((activity) => {
+      const activityDate = format(new Date(activity.date), 'yyyy-MM-dd');
+      return activityDate === day.dateString;
+    });
+    setDailyActivities(filteredActivities);
+    setModalVisible(true);
   };
 
   if (loading) {
@@ -140,27 +157,6 @@ const Statistics = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Statistics</Text>
 
-      {/* Kalendarz z oznaczeniami */}
-      <View>
-        <Text style={styles.sectionTitle}>Your Routes</Text>
-        <Calendar
-          markedDates={markedDates}
-          onMonthChange={(month) => {
-            console.log('Month changed to:', month.dateString);
-          }}
-        />
-      </View>
-
-      {/* Podsumowanie */}
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryTitle}>Summary</Text>
-        <Text>Longest Streak: {streak.longest} days</Text>
-        <Text>Current Streak: {streak.current} days</Text>
-        <Text>Total Distance: {summary.distance.toFixed(2)} km</Text>
-        <Text>Total Money Saved: {summary.money.toFixed(2)} PLN</Text>
-        <Text>Total CO2 Saved: {summary.co2.toFixed(2)} kg</Text>
-      </View>
-
       {/* Filtr */}
       <View style={styles.filterContainer}>
         <Text>Filter:</Text>
@@ -173,6 +169,48 @@ const Statistics = () => {
           <Picker.Item label="Month" value="month" />
           <Picker.Item label="Year" value="year" />
         </Picker>
+      </View>
+
+      {/* Kalendarz z oznaczeniami */}
+      <View>
+        <Text style={styles.sectionTitle}>Your Routes</Text>
+        <Calendar
+          markedDates={markedDates}
+          onDayPress={handleDayPress}
+        />
+      </View>
+
+      {/* Modal Szczegółów */}
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Activities for {selectedDate}</Text>
+          <ScrollView>
+            {dailyActivities.map((activity, index) => (
+              <View key={index} style={styles.activityContainer}>
+                <Text>Distance: {activity.distance_km} km</Text>
+                <Text>Money Saved: {activity.money} PLN</Text>
+                <Text>CO2 Saved: {activity.CO2} kg</Text>
+                <Text>Duration: {activity.duration}</Text>
+              </View>
+            ))}
+          </ScrollView>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {/* Podsumowanie */}
+      <View style={styles.summaryContainer}>
+        <Text style={styles.summaryTitle}>Summary</Text>
+        <Text>Longest Streak: {streak.longest} days</Text>
+        <Text>Current Streak: {streak.current} days</Text>
+        <Text>Total Distance: {summary.distance.toFixed(2)} km</Text>
+        <Text>Total Money Saved: {summary.money.toFixed(2)} PLN</Text>
+        <Text>Total CO2 Saved: {summary.co2.toFixed(2)} g</Text>
       </View>
     </ScrollView>
   );
@@ -195,6 +233,44 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  picker: {
+    flex: 1,
+    height: 50,
+    marginLeft: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#fff',
+  },
+  activityContainer: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  closeButton: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   summaryContainer: {
     marginVertical: 20,
     padding: 10,
@@ -206,21 +282,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  picker: {
-    flex: 1,
-    height: 50,
-    marginLeft: 10,
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

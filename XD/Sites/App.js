@@ -15,12 +15,15 @@ import Home from './Home';
 import Settings from './Settings';
 import Profile from './Profile';
 import Log from './Log';
-import RegistrationForm from '../src/Rejestracja';
+import RegistrationOne from '../src/RegistationOne';
 import Events from './Events';
 import Friends from './Friends';
 import StartStopButton from './test';
+import RegistrationTwo from '../src/RegistrationTwo';
+import SummaryScreen from './SummaryScreen';
 import FriendSearchScreen from './Friends_add';
 import Statistics from './statistic';
+import Startsite from './Start_site';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -53,14 +56,14 @@ const AppContent = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Logowanie">
-        <Stack.Screen name="Logowanie" component={Log} />
+      <Stack.Navigator initialRouteName="startsite">
+        <Stack.Screen name="startsite" component={Startsite} />
         
         <Stack.Screen 
           name="ADD Friends" 
           component={FriendSearchScreen} 
           options={{
-            title: 'Friends',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }} 
         />
@@ -69,25 +72,42 @@ const AppContent = () => {
           name="Home" 
           component={Home} 
           options={{
-            title: 'Home',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }} 
         />
+        <Stack.Screen 
+          name="SummaryScreen" 
+          component={SummaryScreen} 
+          options={{
+            title: 'EcoSphera',
+            headerRight: () => <ProfileImageButton />,
+          }} 
+        />
+        
 
 <Stack.Screen 
           name="Statistic" 
           component={Statistics} 
           options={{
-            title: 'Statistic',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }} 
         />
         
         <Stack.Screen 
+          name="Log" 
+          component={Log} 
+          options={{
+            title: 'EcoSphera',
+            
+          }} 
+        />
+        <Stack.Screen 
           name="Feed" 
           component={Feed} 
           options={{
-            title: 'Feed',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }} 
         />
@@ -96,7 +116,7 @@ const AppContent = () => {
           name="Details" 
           component={SaveRoad} 
           options={{
-            title: 'Details',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }} 
         />
@@ -105,14 +125,14 @@ const AppContent = () => {
           name="Profile" 
           component={Profile}
           options={{
-            title: 'Profile',
+            title: 'EcoSphera',
           }}
         />
         <Stack.Screen 
           name="Events" 
           component={Events}
           options={{
-            title: 'Events',
+            title: 'EcoSphera',
           }}
         />
         
@@ -120,7 +140,7 @@ const AppContent = () => {
           name="Settings" 
           component={Settings} 
           options={{
-            title: 'Settings',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }}
         />
@@ -128,16 +148,24 @@ const AppContent = () => {
           name="Friends" 
           component={Friends} 
           options={{
-            title: 'Friends',
+            title: 'EcoSphera',
             headerRight: () => <ProfileImageButton />,
           }}
         />
         
         <Stack.Screen 
-          name="RegistrationForm" 
-          component={RegistrationForm} 
+          name="RegistrationOne" 
+          component={RegistrationOne} 
           options={{
-            title: 'RegistrationForm'
+            title: 'EcoSphera'
+           
+          }}
+        />
+        <Stack.Screen 
+          name="RegistrationTwo" 
+          component={RegistrationTwo} 
+          options={{
+            title: 'EcoSphera'
            
           }}
         />
@@ -175,14 +203,14 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 40,
     height: 40,
-    borderRadius: 20, // This makes the image circular
+    borderRadius: 20, 
     overflow: 'hidden',
     marginRight: 10,
   },
   defaultProfileImage: {
     width: 40,
     height: 40,
-    borderRadius: 20, // Ensures the default profile image is also circular
+    borderRadius: 20, 
     backgroundColor: '#ccc',
     justifyContent: 'center',
     alignItems: 'center',
