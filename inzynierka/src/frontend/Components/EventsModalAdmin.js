@@ -336,7 +336,7 @@ const EventsModalAdmin = ({
 
 
 			{isModalOpen && selectedEvent && (
-				<ModalInfo>
+				<ModalInfo height={"auto"}>
 						<h2 className="text-xl font-semibold mb-4">{selectedEvent.title}</h2>
 						<div className="flex">
 							<p><strong>Image:</strong></p>
