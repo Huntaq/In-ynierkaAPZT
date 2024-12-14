@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoginRegisterBackground from './Components/LoginRegisterBackground';
 const Register = () => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -136,112 +137,114 @@ const Register = () => {
     };
 
     return (
-        <div className='flex flex-col items-center justify-center w-full h-screen bg-gray-100'>
+        <LoginRegisterBackground>
+            <div className='flex flex-col items-center justify-center w-full h-screen bg-gray-100'>
 
-            <div className='mb-4 flex justify-between max-w-[300px] w-full'>
-                <h2 className='text-2xl font-bold text-gray-700'>Register</h2>
-                {errorMessageDuplicate && <p className="text-red-500 self-center">{errorMessageDuplicate}</p>}
-                {successMessage && <p className='text-green-500'>{successMessage}</p>}
-            </div>
-
-            <div className='w-full max-w-[300px]'>
-                <div className='mb-4'>
-                    <div className='flex justify-between max-w-[300px]'>
-                        <p className='text-gray-600'>Nickname</p>
-                        {nameError && <p className='text-red-500 '>{nameError}</p>}
-                    </div>
-
-                    <input
-                        className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder='Enter your nickname'
-                    />
+                <div className='mb-4 flex justify-between max-w-[300px] w-full'>
+                    <h2 className='text-2xl font-bold text-gray-700'>Register</h2>
+                    {errorMessageDuplicate && <p className="text-red-500 self-center">{errorMessageDuplicate}</p>}
+                    {successMessage && <p className='text-green-500'>{successMessage}</p>}
                 </div>
 
-                <div className='mb-4'>
-                    <div className='flex justify-between max-w-[300px]'>
-                        <p className='text-gray-600'>Password</p>
-                        {passwordError && <p className='text-red-500'>{passwordError}</p>}
-                    </div>
-                    <div className='relative flex w-full min-w-[350px]'>
+                <div className='w-full max-w-[300px]'>
+                    <div className='mb-4'>
+                        <div className='flex justify-between max-w-[300px]'>
+                            <p className='text-gray-600'>Nickname</p>
+                            {nameError && <p className='text-red-500 '>{nameError}</p>}
+                        </div>
+
                         <input
-                            type={showPassword ? 'text' : 'password'}
                             className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder='Enter your password'
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder='Enter your nickname'
                         />
-                        <button
-                            type='button'
-                            className='absolute mt-[10px]  left-[250px]  text-blue-500 hover:underline'
-                            onClick={() => setShowPassword(!showPassword)}
+                    </div>
+
+                    <div className='mb-4'>
+                        <div className='flex justify-between max-w-[300px]'>
+                            <p className='text-gray-600'>Password</p>
+                            {passwordError && <p className='text-red-500'>{passwordError}</p>}
+                        </div>
+                        <div className='relative flex w-full min-w-[350px]'>
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder='Enter your password'
+                            />
+                            <button
+                                type='button'
+                                className='absolute mt-[10px]  left-[250px]  text-blue-500 hover:underline'
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className='mb-4'>
+                        <div className='flex justify-between max-w-[300px]'>
+                            <p className='text-gray-600'>E-mail</p>
+                            {emailError && <p className='text-red-500'>{emailError}</p>}
+                        </div>
+                        <input
+                            type='email'
+                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder='Enter your email'
+                        />
+                    </div>
+
+                    <div className='mb-4'>
+                        <div className='flex justify-between max-w-[300px]'>
+                            <p className='text-gray-600'>Age</p>
+                            {ageError && <p className='text-red-500'>{ageError}</p>}
+                        </div>
+
+                        <input
+                            type='number'
+                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            value={age}
+                            onChange={(e) => setAge(e.target.value)}
+                            placeholder='Enter your age'
+                        />
+                    </div>
+
+                    <div className='mb-4'>
+                        <div className='flex justify-between max-w-[300px]'>
+                            <p className='text-gray-600'>Gender</p>
+                            {genderError && <p className='text-red-500'>{genderError}</p>}
+                        </div>
+                        <select
+                            className='p-2 text-gray-600 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
                         >
-                            {showPassword ? 'Hide' : 'Show'}
+                            <option value=''>Select Gender</option>
+                            <option value='M'>Male</option>
+                            <option value='F'>Female</option>
+                        </select>
+                    </div>
+                    <div className='flex items-center justify-between'>
+                        <button
+                            className='w-full max-w-[120px] p-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300'
+                            onClick={() => window.location.href = '../'}
+                        >
+                            Go back
+                        </button>
+                        <button
+                            className='w-full max-w-[120px] p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 ml-2'
+                            onClick={handleRegister}
+                        >
+                            Register
                         </button>
                     </div>
                 </div>
-
-                <div className='mb-4'>
-                    <div className='flex justify-between max-w-[300px]'>
-                        <p className='text-gray-600'>E-mail</p>
-                        {emailError && <p className='text-red-500'>{emailError}</p>}
-                    </div>
-                    <input
-                        type='email'
-                        className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder='Enter your email'
-                    />
-                </div>
-
-                <div className='mb-4'>
-                    <div className='flex justify-between max-w-[300px]'>
-                        <p className='text-gray-600'>Age</p>
-                        {ageError && <p className='text-red-500'>{ageError}</p>}
-                    </div>
-
-                    <input
-                        type='number'
-                        className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        value={age}
-                        onChange={(e) => setAge(e.target.value)}
-                        placeholder='Enter your age'
-                    />
-                </div>
-
-                <div className='mb-4'>
-                    <div className='flex justify-between max-w-[300px]'>
-                        <p className='text-gray-600'>Gender</p>
-                        {genderError && <p className='text-red-500'>{genderError}</p>}
-                    </div>
-                    <select
-                        className='p-2 text-gray-600 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                    >
-                        <option value=''>Select Gender</option>
-                        <option value='M'>Male</option>
-                        <option value='F'>Female</option>
-                    </select>
-                </div>
-                <div className='flex items-center justify-between'>
-                    <button
-                        className='w-full max-w-[120px] p-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300'
-                        onClick={() => window.location.href = '../'}
-                    >
-                        Go back
-                    </button>
-                    <button
-                        className='w-full max-w-[120px] p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 ml-2'
-                        onClick={handleRegister}
-                    >
-                        Register
-                    </button>
-                </div>
             </div>
-        </div>
+        </LoginRegisterBackground>
     );
 };
 

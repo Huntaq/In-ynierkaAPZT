@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import TrophyList from './Components/TrophyList';
 import { useNavigate } from 'react-router-dom';
 import BackGround from './Components/BackGround';
+import ModalInfo from './Components/ModalInfo';
 
 const Trophies = () => {
   const [runningDistance, setRunningDistance] = useState(0);
@@ -174,7 +175,7 @@ const Trophies = () => {
           fact: runningTrophy.level < 5 ? `Next threshold: level ${runningTrophy.level + 1}; ${runningTrophy.next.toFixed(2)} km left` : '',
         };
         break;
-        case 'walking':
+      case 'walking':
         content = {
           title: 'Walking',
           level: walkingTrophy.level,
@@ -240,7 +241,7 @@ const Trophies = () => {
     };
   }, [popupVisible, selectedEvent]);
 
-  function OpenEvents(){
+  function OpenEvents() {
     setEventsOpen(!EventsOpen);
   }
 
@@ -258,60 +259,56 @@ const Trophies = () => {
             toggleTheme={toggleTheme}
             toggleSidebar={toggleSidebar}
           />
-          <button onClick={OpenEvents} className='w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies':'Show level trophies'}</button>
+          <button onClick={OpenEvents} className='w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies' : 'Show level trophies'}</button>
           {EventsOpen ? (
             <div className="">
-            <TrophyList
-              runningDistance={runningDistance}
-              walkingDistance={walkingDistance}
-              cyclingDistance={cyclingDistance}
-              Co2Saved={Co2Saved}
-              CaloriesBurned={CaloriesBurned}
-              MoneySaved={MoneySaved}
-              handleTrophyClick={handleTrophyClick}
-            />
-          </div>
-          ):(
+              <TrophyList
+                runningDistance={runningDistance}
+                walkingDistance={walkingDistance}
+                cyclingDistance={cyclingDistance}
+                Co2Saved={Co2Saved}
+                CaloriesBurned={CaloriesBurned}
+                MoneySaved={MoneySaved}
+                handleTrophyClick={handleTrophyClick}
+              />
+            </div>
+          ) : (
             <div className="mt-[20px] ">
-            {events.length > 0 && (
-              <ul className="flex gap-[20px]">
-                {events.map(event => (
-                  <li key={event.id} className=" hover:scale-105 hover:cursor-pointer" onClick={() => handleTrophyEventClick(event)}>
-                    <div className='flex w-[350px] h-[150px] bg-white rounded-[12px]'>
+              {events.length > 0 && (
+                <ul className="flex gap-[20px]">
+                  {events.map(event => (
+                    <li key={event.id} className=" hover:scale-105 hover:cursor-pointer" onClick={() => handleTrophyEventClick(event)}>
+                      <div className='flex w-[350px] h-[150px] bg-white rounded-[12px]'>
                         <img className='w-[150px] h-[150px] rounded-[12px] shadow-[0px_4px_4px_rgba(11,14,52,0.20)]' src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
                         <div className='justify-items-center m-auto p-[10px]'>
-                        <p className='font-semibold text-center content-center'>{event.title}</p>
-                        <p className='font-500 text-center content-center'>{event.description}</p>
-                        <button className='w-[130px] h-[40px] bg-[#84D49D] text-white rounded-[20px] mt-[10px]'>Achived!</button>
+                          <p className='font-semibold text-center content-center'>{event.title}</p>
+                          <p className='font-500 text-center content-center'>{event.description}</p>
+                          <button className='w-[130px] h-[40px] bg-[#84D49D] text-white rounded-[20px] mt-[10px]'>Achived!</button>
                         </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-            {selectedEvent && (
-              <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
-                <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn text-center justify-center" ref={popupRef}>
+              {selectedEvent && (
+                <ModalInfo ref={popupRef}>
                   <div className=''><p className='font-medium text-center text-xl'>Congratulations!</p></div>
                   <div className=''><p>Trophy earned by competing in</p></div>
                   <div className=''><p className='text-2xl'>{selectedEvent.title} Event</p></div>
-                </div>
-              </div>
-            )}
-          </div>
-          )}
-          
-          
-          {popupVisible && (
-            <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">
-              <div className="animate-fadeIn p-[30px] bg-[#fff] rounded-[15px] w-[95%] max-w-[500px] h-[300px] text-center" ref={popupRef}>
-                <p>{popupContent.title}</p>
-                <p>Level: {popupContent.level}</p>
-                <p>{popupContent.detail}</p>
-                <p>{popupContent.fact}</p>
-              </div>
+                </ModalInfo>
+              )}
             </div>
+          )}
+
+
+          {popupVisible && (
+            <ModalInfo ref={popupRef}>
+              <p>{popupContent.title}</p>
+              <p>Level: {popupContent.level}</p>
+              <p>{popupContent.detail}</p>
+              <p>{popupContent.fact}</p>
+            </ModalInfo>
           )}
         </div>
       </div>
