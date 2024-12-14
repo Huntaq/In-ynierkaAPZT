@@ -292,7 +292,7 @@ const Trophies = () => {
               )}
 
               {selectedEvent && (
-                <ModalInfo ref={popupRef}>
+                <ModalInfo ref={popupRef} >
                   <div className=''><p className='font-medium text-center text-xl'>Congratulations!</p></div>
                   <div className=''><p>Trophy earned by competing in</p></div>
                   <div className=''><p className='text-2xl'>{selectedEvent.title} Event</p></div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ModalInfo from "./ModalInfo";
 
 
 const EventsModalAdmin = ({
@@ -335,8 +336,7 @@ const EventsModalAdmin = ({
 
 
 			{isModalOpen && selectedEvent && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+				<ModalInfo>
 						<h2 className="text-xl font-semibold mb-4">{selectedEvent.title}</h2>
 						<div className="flex">
 							<p><strong>Image:</strong></p>
@@ -354,7 +354,7 @@ const EventsModalAdmin = ({
 								<img
 									src={`http://localhost:3000/uploads/${selectedEvent.TrophyImage.split('/').pop()}`}
 									alt={selectedEvent.TrophyImage}
-									className="event-image mb-4"
+									className="h-[160px] w-[160px] rounded-[4px] mb-4"
 								/>
 							)}
 						</div>
@@ -363,13 +363,12 @@ const EventsModalAdmin = ({
 						<div className="flex justify-end mt-4">
 							<button
 								onClick={handleCloseModal}
-								className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+								className="bg-[#84D49D] text-white font-medium px-4 py-2 rounded hover:bg-[#6E9B7B]"
 							>
 								Close
 							</button>
 						</div>
-					</div>
-				</div>
+						</ModalInfo>
 			)}
 		</>
 	);

@@ -74,7 +74,7 @@ const Login = () => {
             <div className='flex flex-col mb-4'>
               <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Username</label>
               <input
-                className='p-2 border mb-4 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                className='p-2 border mb-4 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
                 placeholder='Username'
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -82,7 +82,7 @@ const Login = () => {
               />
               <label className="block  text-m font-medium text-[#3B4A3F] ">Password</label>
               <input
-                className='p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2'
+                className='p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D] mt-2'
                 type='password'
                 placeholder='Password'
                 value={password}

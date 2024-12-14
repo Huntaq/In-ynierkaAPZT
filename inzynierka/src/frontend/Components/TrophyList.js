@@ -28,7 +28,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
   const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
 
   return (
-    <div className="grid grid-cols-3 gap-4 justify-items-center box-border text-[#3B4A3F]">
+    <div className="grid grid-cols-3 gap-4 justify-items-center box-border text-[#3B4A3F] CustomSM:grid-cols-2 CustomXXSM:grid-cols-1">
       <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('running')}>
         <div className="">
           <h3 className="text-center">Running </h3>
