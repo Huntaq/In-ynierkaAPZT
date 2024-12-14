@@ -172,7 +172,7 @@ const Trophies = () => {
           title: 'Running',
           level: runningTrophy.level,
           detail: `Distance covered: ${runningDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
-          fact: runningTrophy.level < 5 ? `Next threshold: Level ${runningTrophy.level + 1}- ${runningTrophy.next.toFixed(2)} km left` : '',
+          fact: runningTrophy.level < 5 ? `Next threshold: Level ${runningTrophy.level + 1}- ${runningTrophy.next.toFixed(2)} km left` : 'Amazing! You`ve conquered all levels!',
         };
         break;
       case 'walking':
@@ -180,7 +180,7 @@ const Trophies = () => {
           title: 'Walking',
           level: walkingTrophy.level,
           detail: `Distance covered: ${walkingDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
-          fact: walkingTrophy.level < 5 ? `Next threshold: Level ${walkingTrophy.level + 1}; ${walkingTrophy.next.toFixed(2)} km left` : '',
+          fact: walkingTrophy.level < 5 ? `Next threshold: Level ${walkingTrophy.level + 1}; ${walkingTrophy.next.toFixed(2)} km left` : 'Congrats! You`ve completed all levels!',
         };
         break;
       case 'cycling':
@@ -188,7 +188,7 @@ const Trophies = () => {
           title: 'Cycling',
           level: cyclingTrophy.level,
           detail: `Distance covered: ${cyclingDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
-          fact: cyclingTrophy.level < 5 ? `Next threshold: Level ${cyclingTrophy.level + 1}; ${cyclingTrophy.next.toFixed(2)} km left` : '',
+          fact: cyclingTrophy.level < 5 ? `Next threshold: Level ${cyclingTrophy.level + 1}; ${cyclingTrophy.next.toFixed(2)} km left` : 'All levels finished! Great job!',
         };
         break;
       case 'co2':
@@ -196,7 +196,7 @@ const Trophies = () => {
           title: 'CO2 Savings',
           level: co2Trophy.level,
           detail: `CO2 saved: ${Co2Saved.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg`,
-          fact: co2Trophy.level < 5 ? `Next threshold: Level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(2)} kg left` : '',
+          fact: co2Trophy.level < 5 ? `Next threshold: Level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(2)} kg left` : 'Mission complete! All levels done!',
         };
         break;
       case 'calories':
@@ -204,7 +204,7 @@ const Trophies = () => {
           title: 'Calories Burned',
           level: caloriesTrophy.level,
           detail: `Calories burned: ${CaloriesBurned.toLocaleString('pl-PL')} kcal`,
-          fact: caloriesTrophy.level < 5 ? `Next threshold: Level ${caloriesTrophy.level + 1} - ${caloriesTrophy.next.toFixed()} kcal left` : '',
+          fact: caloriesTrophy.level < 5 ? `Next threshold: Level ${caloriesTrophy.level + 1} - ${caloriesTrophy.next.toFixed()} kcal left` : 'Congrats! All levels achieved!',
         };
         break;
       case 'money':
@@ -212,7 +212,7 @@ const Trophies = () => {
           title: 'Money Saved',
           level: moneyTrophy.level,
           detail: `Money saved: ${MoneySaved.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} PLN`,
-          fact: moneyTrophy.level < 5 ? `Next threshold: Level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(2)} money left` : '',
+          fact: moneyTrophy.level < 5 ? `Next threshold: Level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(2)} money left` : 'You`re a master! All levels completed!',
         };
         break;
       default:
