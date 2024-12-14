@@ -8,3 +8,11 @@ body {
   margin: 0;
   font-family: 'Maven Pro', sans-serif !important;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+
+#AppName {
+  margin: 0;
+  font-family: "Fjalla One", sans-serif;
+  font-style: normal;
+}

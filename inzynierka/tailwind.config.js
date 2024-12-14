@@ -4,6 +4,7 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx,html}",
   ],
   theme: {
+    
     extend: {
       backgroundImage: {
         'progress-gradient': 'repeating-linear-gradient(30deg, #5ca86e 0, #5ca86e 10px, #409A55 10px, #409A55 20px)',
@@ -28,6 +29,7 @@ module.exports = {
         CustomXXSM: { max: '500px' },
         OverviewTest: { max: '1118px' },
         OverviewTestCol1: { max: '897px' },
+        CustomLogin: { max: '700px'},
       },
     },
   },
