@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import SidebarAdmin from './Components/SidebarAdmin';
 import "../css/adminPanel.css";
-import UserModalAdmin from "./Components/UserModalAdmin";
+import UserModalAdmin from "./Components/UserListAdmin";
 import EventsModalAdmin from "./Components/EventsModalAdmin";
 import NotificationsModalAdmin from "./Components/NotificationsModalAdmin";
 import OverviewModalAdmin from "./Components/OverviewModalAdmin";

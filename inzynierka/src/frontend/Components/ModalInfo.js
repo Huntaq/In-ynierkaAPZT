@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ModalInfo = React.forwardRef(({ children, height = '300px' }, ref) => {
+const ModalInfo = React.forwardRef(({ children, height = '500px' }, ref) => {
   return (
     <>
       <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">

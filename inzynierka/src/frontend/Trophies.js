@@ -171,48 +171,48 @@ const Trophies = () => {
         content = {
           title: 'Running',
           level: runningTrophy.level,
-          detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
-          fact: runningTrophy.level < 5 ? `Next threshold: level ${runningTrophy.level + 1}; ${runningTrophy.next.toFixed(2)} km left` : '',
+          detail: `Distance covered: ${runningDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
+          fact: runningTrophy.level < 5 ? `Next threshold: Level ${runningTrophy.level + 1}- ${runningTrophy.next.toFixed(2)} km left` : '',
         };
         break;
       case 'walking':
         content = {
           title: 'Walking',
           level: walkingTrophy.level,
-          detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
-          fact: walkingTrophy.level < 5 ? `Next threshold: level ${walkingTrophy.level + 1}; ${walkingTrophy.next.toFixed(2)} km left` : '',
+          detail: `Distance covered: ${walkingDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
+          fact: walkingTrophy.level < 5 ? `Next threshold: Level ${walkingTrophy.level + 1}; ${walkingTrophy.next.toFixed(2)} km left` : '',
         };
         break;
       case 'cycling':
         content = {
           title: 'Cycling',
           level: cyclingTrophy.level,
-          detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
-          fact: cyclingTrophy.level < 5 ? `Next threshold: level ${cyclingTrophy.level + 1}; ${cyclingTrophy.next.toFixed(2)} km left` : '',
+          detail: `Distance covered: ${cyclingDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
+          fact: cyclingTrophy.level < 5 ? `Next threshold: Level ${cyclingTrophy.level + 1}; ${cyclingTrophy.next.toFixed(2)} km left` : '',
         };
         break;
       case 'co2':
         content = {
           title: 'CO2 Savings',
           level: co2Trophy.level,
-          detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
-          fact: co2Trophy.level < 5 ? `Next threshold: level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(2)} kg left` : '',
+          detail: `CO2 saved: ${Co2Saved.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg`,
+          fact: co2Trophy.level < 5 ? `Next threshold: Level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(2)} kg left` : '',
         };
         break;
       case 'calories':
         content = {
           title: 'Calories Burned',
           level: caloriesTrophy.level,
-          detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
-          fact: caloriesTrophy.level < 5 ? `Next threshold: level ${caloriesTrophy.level + 1}; ${caloriesTrophy.next.toFixed(2)} kcal left` : '',
+          detail: `Calories burned: ${CaloriesBurned.toLocaleString('pl-PL')} kcal`,
+          fact: caloriesTrophy.level < 5 ? `Next threshold: Level ${caloriesTrophy.level + 1} - ${caloriesTrophy.next.toFixed()} kcal left` : '',
         };
         break;
       case 'money':
         content = {
           title: 'Money Saved',
           level: moneyTrophy.level,
-          detail: `Money saved: ${MoneySaved.toFixed(2)} zł`,
-          fact: moneyTrophy.level < 5 ? `Next threshold: level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(2)} money left` : '',
+          detail: `Money saved: ${MoneySaved.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} PLN`,
+          fact: moneyTrophy.level < 5 ? `Next threshold: Level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(2)} money left` : '',
         };
         break;
       default:
@@ -304,8 +304,9 @@ const Trophies = () => {
 
           {popupVisible && (
             <ModalInfo ref={popupRef}>
-              <p>{popupContent.title}</p>
-              <p>Level: {popupContent.level}</p>
+              <p className='font-medium text-xl'>{popupContent.title}</p>
+              <img src='./imagesTrophy/trophy-modal.svg' className='mt-4 mb-2 h-auto w-[260px] justify-self-center'/>
+              <p className='font-medium text-2xl'>Level: {popupContent.level}</p>
               <p>{popupContent.detail}</p>
               <p>{popupContent.fact}</p>
             </ModalInfo>
