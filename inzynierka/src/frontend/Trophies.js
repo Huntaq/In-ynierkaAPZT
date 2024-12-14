@@ -23,6 +23,7 @@ const Trophies = () => {
   const popupRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [EventsOpen, setEventsOpen] = useState(true);
   const navigate = useNavigate();
 
   const getTrophyLevel = (distance) => {
@@ -113,7 +114,6 @@ const Trophies = () => {
 
             if (eventsResponse.ok) {
               const eventsData = await eventsResponse.json();
-
               const filteredEvents = eventsData.filter(event => {
                 const userIdsArray = event.user_ids ? event.user_ids.split(',').map(id => parseInt(id, 10)) : [];
                 return userIdsArray.includes(id);
@@ -144,9 +144,6 @@ const Trophies = () => {
   };
   const handleTrophyEventClick = (event) => {
     setSelectedEvent(event);
-  };
-  const handleCloseEventModal = () => {
-    setSelectedEvent(null);
   };
   useEffect(() => {
     document.body.className = theme;
@@ -243,6 +240,10 @@ const Trophies = () => {
     };
   }, [popupVisible, selectedEvent]);
 
+  function OpenEvents(){
+    setEventsOpen(!EventsOpen);
+  }
+
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
 
@@ -257,7 +258,9 @@ const Trophies = () => {
             toggleTheme={toggleTheme}
             toggleSidebar={toggleSidebar}
           />
-          <div className="">
+          <button onClick={OpenEvents} className='w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies':'Show level trophies'}</button>
+          {EventsOpen ? (
+            <div className="">
             <TrophyList
               runningDistance={runningDistance}
               walkingDistance={walkingDistance}
@@ -268,12 +271,20 @@ const Trophies = () => {
               handleTrophyClick={handleTrophyClick}
             />
           </div>
-          <div className="">
+          ):(
+            <div className="mt-[20px] ">
             {events.length > 0 && (
-              <ul className="flex">
+              <ul className="flex gap-[20px]">
                 {events.map(event => (
-                  <li key={event.id} className="hover:scale-105 hover:cursor-pointer " onClick={() => handleTrophyEventClick(event)}>
-                    <img className='w-[100px] h-[100px] m-auto rounded-[50%] shadow-[0px_4px_4px_rgba(11,14,52,0.20)] m-[15px]' src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+                  <li key={event.id} className=" hover:scale-105 hover:cursor-pointer" onClick={() => handleTrophyEventClick(event)}>
+                    <div className='flex w-[350px] h-[150px] bg-white rounded-[12px]'>
+                        <img className='w-[150px] h-[150px] rounded-[12px] shadow-[0px_4px_4px_rgba(11,14,52,0.20)]' src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`} alt={event.title} />
+                        <div className='justify-items-center m-auto p-[10px]'>
+                        <p className='font-semibold text-center content-center'>{event.title}</p>
+                        <p className='font-500 text-center content-center'>{event.description}</p>
+                        <button className='w-[130px] h-[40px] bg-[#84D49D] text-white rounded-[20px] mt-[10px]'>Achived!</button>
+                        </div>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -289,6 +300,8 @@ const Trophies = () => {
               </div>
             )}
           </div>
+          )}
+          
           
           {popupVisible && (
             <div className="fixed justify-center items-center top-0 left-0 w-full h-full flex bg-black bg-opacity-60 z-50">

@@ -25,7 +25,7 @@ router.get('/thropies/:id', (req, res) => {
     if (!token) {
       return res.status(401).json({ error: 'Token is required' });
     }  
-    const sqlQuery = 'SELECT id, title, image, TrophyImage, user_ids FROM events WHERE FIND_IN_SET(?, user_ids) > 0';
+    const sqlQuery = 'SELECT id, title, description, image, TrophyImage, user_ids FROM events WHERE FIND_IN_SET(?, user_ids) > 0';
     
     db.query(sqlQuery,[id], (err, results) => {
       if (err) {
