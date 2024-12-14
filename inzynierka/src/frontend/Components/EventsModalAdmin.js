@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 
 const EventsModalAdmin = ({
@@ -28,6 +28,35 @@ const EventsModalAdmin = ({
 	handleDeleteEvent,
 	eventsError
 }) => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedEvent, setSelectedEvent] = useState(null);
+
+	const handleDateChange = (type, value) => {
+		if (type === "start") {
+			if (endDate && new Date(value) > new Date(endDate)) {
+				alert("Start date cannot be later than end date.");
+				return;
+			}
+			setStartDate(value);
+		} else if (type === "end") {
+			if (startDate && new Date(value) < new Date(startDate)) {
+				alert("End date cannot be earlier than start date.");
+				return;
+			}
+			setEndDate(value);
+		}
+	};
+
+	const handleOpenModal = (event) => {
+		setSelectedEvent(event);
+		setIsModalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setIsModalOpen(false);
+		setSelectedEvent(null);
+	};
+
 	return (
 		<>
 			<div className="row AdminModal ">
@@ -100,14 +129,13 @@ const EventsModalAdmin = ({
 													<input
 														type="date"
 														value={startDate}
-														onChange={(e) => setStartDate(e.target.value)}
+														onChange={(e) => handleDateChange("start", e.target.value)}
 														className="inputAdmin"
 													/>
-
 													<input
 														type="date"
 														value={endDate}
-														onChange={(e) => setEndDate(e.target.value)}
+														onChange={(e) => handleDateChange("end", e.target.value)}
 														className="inputAdmin"
 													/>
 												</div>
@@ -152,107 +180,107 @@ const EventsModalAdmin = ({
 
 							{currentStep === 2 && (
 								<>
-								<div className="row FormAdmin">
-									<div className="event-form">
-										<div className="row">
-											<p>Select event image:</p>
+									<div className="row FormAdmin">
+										<div className="event-form">
+											<div className="row">
+												<p>Select event image:</p>
+											</div>
+											<input
+												type="file"
+												accept="image/*"
+												onChange={(e) => setEventImage(e.target.files[0])}
+												className="input"
+											/>
+											<div className="row">
+												<p>Select trophy image:</p>
+											</div>
+											<input
+												type="file"
+												accept="image/*"
+												onChange={(e) => setTrophyImage(e.target.files[0])}
+												className="input"
+											/>
 										</div>
-										<input
-											type="file"
-											accept="image/*"
-											onChange={(e) => setEventImage(e.target.files[0])}
-											className="input"
-										/>
-										<div className="row">
-											<p>Select trophy image:</p>
-										</div>
-										<input
-											type="file"
-											accept="image/*"
-											onChange={(e) => setTrophyImage(e.target.files[0])}
-											className="input"
-										/>
+
 									</div>
-									
-								</div>
-								<div className="row ButtonRight">
-								<button
-									onClick={() => setCurrentStep(1)}
-									className="button-next"
-								>
-									Previous
-								</button>
-								<button
-									onClick={() => setCurrentStep(3)}
-									className="button-next"
-								>
-									Next
-								</button>
-							</div>
-							</>
+									<div className="row ButtonRight">
+										<button
+											onClick={() => setCurrentStep(1)}
+											className="button-next"
+										>
+											Previous
+										</button>
+										<button
+											onClick={() => setCurrentStep(3)}
+											className="button-next"
+										>
+											Next
+										</button>
+									</div>
+								</>
 							)}
 
 							{currentStep === 3 && (
 								<>
-								<div className="row FormAdmin">
-									<div className="row">
-										<p>Event Preview</p>
-										<p>Trophy Preview</p>
-									</div>
-									<div className="row">
-										<div className="unique-event-item">
-											<img
-												className="unique-event-background w-[400px] h-auto max-h-[200px]"
-												src={
-													eventImage
-														? 
+									<div className="row FormAdmin">
+										<div className="row">
+											<p>Event Preview</p>
+											<p>Trophy Preview</p>
+										</div>
+										<div className="row">
+											<div className="unique-event-item">
+												<img
+													className="unique-event-background w-[400px] h-auto max-h-[200px]"
+													src={
+														eventImage
+															?
 															URL.createObjectURL(eventImage)
-														
-														: {}
-												}
-											/>
-											<div className="unique-event-header">
-												<h3 className="unique-event-title">
-													{eventTitle || "Event Title"}
-												</h3>
-											</div>
-											<div className="unique-event-footer">
-												<p className="unique-event-description">
-													{eventDescription || "Event description goes here."}
-												</p>
-											</div>
 
-										</div>
-										<div className="relative w-[150px] h-[150px] rounded-[50%] ">
-											<img
-												className="unique-event-background w-[150px] h-[150px] rounded-[50%]"
-												src={
-													trophyImage
-														? 
+															: {}
+													}
+												/>
+												<div className="unique-event-header">
+													<h3 className="unique-event-title">
+														{eventTitle || "Event Title"}
+													</h3>
+												</div>
+												<div className="unique-event-footer">
+													<p className="unique-event-description">
+														{eventDescription || "Event description goes here."}
+													</p>
+												</div>
+
+											</div>
+											<div className="relative w-[150px] h-[150px] rounded-[50%] ">
+												<img
+													className="unique-event-background w-[150px] h-[150px] rounded-[50%]"
+													src={
+														trophyImage
+															?
 															URL.createObjectURL(trophyImage)
-														
-														: {}
-												}
-											/>
+
+															: {}
+													}
+												/>
+											</div>
 										</div>
+
 									</div>
-									
-								</div>
-								<div className="row ButtonRight">
-								<button
-									onClick={() => setCurrentStep(2)}
-									className="button-next"
-								>
-									Previous
-								</button>
-								<button
-									onClick={handleEventSubmit}
-									className="button-next"
-								>
-									Create
-								</button>
-							</div>
-							</>
+									<div className="row ButtonRight">
+										<button
+											onClick={() => setCurrentStep(2)}
+											className="button-next"
+										>
+											Previous
+										</button>
+										<button
+											onClick={handleEventSubmit}
+											className="button-next"
+										>
+											Create
+										</button>
+									</div>
+								</>
 							)}
 						</div>
 					</>
@@ -276,12 +304,7 @@ const EventsModalAdmin = ({
 								<th>End Date</th>
 								<th>Type</th>
 								<th>Distance (km)</th>
-								<th>Image</th>
-								<th>Trophy</th>
-								<th>Status</th>
-								<th>User IDs</th>
-								<th>Change Status</th>
-								<th>Delete</th>
+								<th>Details</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -294,39 +317,7 @@ const EventsModalAdmin = ({
 									<td>{new Date(event.endDate).toLocaleDateString()}</td>
 									<td>{event.type}</td>
 									<td>{event.distance}</td>
-									<td>
-										{event.image && (
-											<img
-											src={`http://localhost:3000/uploads/${event.image.split('/').pop()}`}
-											alt={event.title}
-											className="event-image"
-										  />
-										)}
-									</td>
-									<td>
-										{event.TrophyImage && (
-											<img
-											src={`http://localhost:3000/uploads/${event.TrophyImage.split('/').pop()}`}
-											alt={event.TrophyImage}
-											className="event-image"
-										  />
-										)}
-									</td>
-									<td>{event.status}</td>
-									<td>{event.user_ids.join(", ")}</td>
-									<td>
-										<button
-											onClick={() =>
-												handleToggleEventStatus(event.id, event.status)
-											}>
-											{event.status === "active" ? "Deactivate" : "Activate"}
-										</button>
-									</td>
-									<td>
-										<button onClick={() => handleDeleteEvent(event.id)}>
-											Delete
-										</button>
-									</td>
+									<td ><button className="w-[100px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105"  onClick={() => handleOpenModal(event)}>Details</button></td>
 								</tr>
 							))}
 						</tbody>
@@ -341,6 +332,45 @@ const EventsModalAdmin = ({
 					Create Event
 				</button>
 			</div>
+
+
+			{isModalOpen && selectedEvent && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+					<div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+						<h2 className="text-xl font-semibold mb-4">{selectedEvent.title}</h2>
+						<div className="flex">
+							<p><strong>Image:</strong></p>
+							{selectedEvent.image && (
+								<img
+									src={`http://localhost:3000/uploads/${selectedEvent.image.split('/').pop()}`}
+									alt={selectedEvent.title}
+									className="event-image mb-4"
+								/>
+							)}
+						</div>
+						<div className="flex">
+							<p><strong>Trophy:</strong></p>
+							{selectedEvent.TrophyImage && (
+								<img
+									src={`http://localhost:3000/uploads/${selectedEvent.TrophyImage.split('/').pop()}`}
+									alt={selectedEvent.TrophyImage}
+									className="event-image mb-4"
+								/>
+							)}
+						</div>
+						<p><strong>Status:</strong> {selectedEvent.status}</p>
+						<p><strong>User IDs:</strong> {selectedEvent.user_ids.join(", ")}</p>
+						<div className="flex justify-end mt-4">
+							<button
+								onClick={handleCloseModal}
+								className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+							>
+								Close
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</>
 	);
 };

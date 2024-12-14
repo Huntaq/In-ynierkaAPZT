@@ -33,6 +33,9 @@ const AdminPanel = () => {
 	const [activeModal, setActiveModal] = useState('');
 	const [currentStep, setCurrentStep] = useState(1);
 	const [trophyImage, setTrophyImage] = useState(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedUserId, setSelectedUserId] = useState(null);
+	const [actionType, setActionType] = useState(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -272,6 +275,7 @@ const AdminPanel = () => {
 			}
 		}
 	};
+
 	const handleToggleEventStatus = async (eventId, currentStatus) => {
 		const token = localStorage.getItem("authToken");
 		const newStatus = currentStatus === "active" ? "inactive" : "active";
@@ -305,6 +309,7 @@ const AdminPanel = () => {
 			}
 		}
 	};
+
 	const handleDeleteEvent = async (eventId) => {
 		const token = localStorage.getItem("authToken");
 		if (token) {
@@ -331,6 +336,28 @@ const AdminPanel = () => {
 			}
 		}
 	};
+
+	const openModal = (userId, action) => {
+		setSelectedUserId(userId);
+		setActionType(action);
+		setIsModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setSelectedUserId(null);
+		setActionType(null);
+		setIsModalOpen(false);
+	};
+
+	const confirmAction = async () => {
+		if (actionType === "ban") {
+			await banUser(selectedUserId);
+		} else if (actionType === "unban") {
+			await unbanUser(selectedUserId);
+		}
+		closeModal();
+	};
+
 	const banUser = async (userId) => {
 		const token = localStorage.getItem("authToken");
 
@@ -381,19 +408,23 @@ const AdminPanel = () => {
 
 				if (response.ok) {
 					const decodedToken = jwtDecode(token);
-					const userId = decodedToken.id;
 					const sessionKey = decodedToken.sessionKey;
-					const updatedBans = await fetchAllUsers(token, sessionKey, userId);
+					const updatedBans = await fetchAllUsers(
+						token,
+						sessionKey,
+						decodedToken.id
+					);
 					setUsers(updatedBans);
 				} else {
-					alert("Error UnBanning user");
+					alert("Error Unbanning user");
 				}
 			} catch (error) {
-				console.error("Error UnBanning user:", error);
-				alert("Error UnBanning user");
+				console.error("Error Unbanning user:", error);
+				alert("Error Unbanning user");
 			}
 		}
 	};
+
 	const toggleSidebar = () => {
 		setSidebarOpen(!sidebarOpen);
 	};
@@ -415,6 +446,7 @@ const AdminPanel = () => {
 			</div>
 			{activeModal === 'events' && (
 				<EventsModalAdmin
+					actionType={actionType}
 					trophyImage={trophyImage}
 					setTrophyImage={setTrophyImage}
 					currentStep={currentStep}
@@ -451,6 +483,9 @@ const AdminPanel = () => {
 			)}
 			{activeModal === 'users' && (
 				<UserModalAdmin
+					confirmAction={confirmAction}
+					isModalOpen={isModalOpen}
+					closeModal={closeModal}
 					searchUsername={searchUsername}
 					setSearchUsername={setSearchUsername}
 					searchId={searchId}
@@ -458,6 +493,7 @@ const AdminPanel = () => {
 					filteredUsers={filteredUsers}
 					banUser={banUser}
 					unbanUser={unbanUser}
+					openModal={openModal}
 				/>
 			)}
 			{activeModal === 'overview' && (
