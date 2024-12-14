@@ -31,7 +31,7 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
     <div className="grid grid-cols-3 gap-4 justify-items-center box-border text-[#3B4A3F]">
       <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[200px] h-[250px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('running')}>
         <div className="">
-          <h3 className="text-center font-normal">Running </h3>
+          <h3 className="text-center">Running </h3>
           <img className='justify-self-center m-[10px] h-[100px]' src='./imagesTrophy/marathon.svg' />
           <h3 className="text-center text-xl font-medium">Level {runningTrophy.level}</h3>
         </div>

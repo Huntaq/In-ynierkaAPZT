@@ -281,11 +281,10 @@ const Trophies = () => {
 
             {selectedEvent && (
               <div className="flex fixed top-0 left-0 z-50 w-full h-full justify-center items-center bg-black bg-opacity-60">
-                <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn" ref={popupRef}>
-                  <span className="" onClick={handleCloseEventModal}>&times;</span>
-                  <div className=''><p>! Congratiulations !</p></div>
+                <div className="bg-white p-[20px] rounded-[20px] w-[95%] h-[300px] max-w-[600px] relative animate-fadeIn text-center justify-center" ref={popupRef}>
+                  <div className=''><p className='font-medium text-center text-xl'>Congratulations!</p></div>
                   <div className=''><p>Trophy earned by competing in</p></div>
-                  <div className=''><p>{selectedEvent.title} Event!</p></div>
+                  <div className=''><p className='text-2xl'>{selectedEvent.title} Event</p></div>
                 </div>
               </div>
             )}
