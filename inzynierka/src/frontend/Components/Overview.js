@@ -142,11 +142,6 @@ const Overview = ({
                     <p className='text-[24px] text-[#3B4A3F] font-semibold'> {totalThisWeek.toFixed(0)} KM</p>
                   </div>
                 </div>
-
-
-
-
-
               );
 
             default:

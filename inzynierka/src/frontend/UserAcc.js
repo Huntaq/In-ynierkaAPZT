@@ -305,11 +305,9 @@ const UserAcc = () => {
     { id: 'co2', label: 'CO2 Saved', visible: true },
     { id: 'pln', label: 'PLN Saved', visible: true },
     { id: 'streak', label: 'Current Streak', visible: true },
-    { id: 'Test', label: 'Test', visible: false },
     { id: 'Calendar', label: 'Calendar', visible: true },
     { id: 'Info', label: 'Info', visible: true },
     { id: 'Trophies', label: 'Stats', visible: true },
-    // tu bedzie wiecej sekcji 
   ];
 
   const [sections, setSections] = useState(() => {
