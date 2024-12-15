@@ -252,14 +252,16 @@ const Trophies = () => {
 
     <BackGround>
       <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
-        <div className='flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
+        <div className=' flex justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center relative'>
           <Header
             user={user}
             theme={theme}
             toggleTheme={toggleTheme}
             toggleSidebar={toggleSidebar}
           />
-          <button onClick={OpenEvents} className='w-[170px] h-[60px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies' : 'Show level trophies'}</button>
+          <div className='w-[170px] h-[40px] absolute top-[20px] left-1/2 -translate-x-1/2 CustomXXSM:top-[90px]'>
+            <button onClick={OpenEvents} className='w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies' : 'Show level trophies'}</button>
+          </div>
           {EventsOpen ? (
             <div className="">
               <TrophyList
@@ -271,6 +273,7 @@ const Trophies = () => {
                 MoneySaved={MoneySaved}
                 handleTrophyClick={handleTrophyClick}
               />
+              
             </div>
           ) : (
             <div className="mt-[20px] ">

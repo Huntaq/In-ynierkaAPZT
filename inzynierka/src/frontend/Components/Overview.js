@@ -75,7 +75,7 @@ const Overview = ({
                       <p className='text-[#B5B5B5] font-bold'>Your Streak</p>
                         <div className='flex gap-[20px] ml-[-20px]'>
                           <p className='text-[#3B4A3F] w-auto font-bold text-[50px]'>&nbsp; {currentStreak}</p>
-                          <img src={meter} alt='Earth' className='w-[80px] h-[80px]' />
+                          <img src={meter} alt='Earth' className='w-[80px] h-[80px] CustomXSM:w-[60px] CustomXSM:h-[60px]' />
                         </div>
                         <p className='text-[#B5B5B5] text-[12px] font-bold'>Longest Streak : {longestStreak}</p>
                       </div>

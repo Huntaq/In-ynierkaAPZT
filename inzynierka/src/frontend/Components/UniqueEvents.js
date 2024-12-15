@@ -16,7 +16,7 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         />
 
         <div className="relative flex items-center justify-between m-[10px]">
-          <h3 className="text-[28px] font-medium uppercase">{events[currentIndex].title}</h3>
+          <h3 className="text-[28px] font-medium uppercase CustomXSM:text-[20px] CustomXXSM:text-[16px]">{events[currentIndex].title}</h3>
           <div className="flex flex-col justify-center w-[150px]">
             <div className="w-full bg-white h-[20px] overflow-hidden rounded-[4px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
               <div className="h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress "
@@ -29,10 +29,10 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
           <p className="pl-[10px] text-white uppercase">{events[currentIndex].description}</p>
         </div>
         <div className="relative flex justify-between mt-[40px] text-center CustomXSM:mt-[20px]">
-          <p className="flex-1 text-white font-medium">Start Date: {new Date(events[currentIndex].startDate).toLocaleDateString("en-gb",
+          <p className="flex-1 text-white font-medium OverviewTestCol1:text-[12px]">Start Date: {new Date(events[currentIndex].startDate).toLocaleDateString("en-gb",
             {
               day:"2-digit",
-              month: "long",
+              month: "short",
               year: "numeric"
             }
           )}</p>
@@ -45,10 +45,10 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
             />
           ))}
         </div>
-          <p className="flex-1 text-white font-medium ">End Date: {new Date(events[currentIndex].endDate).toLocaleDateString("en-gb",
+          <p className="flex-1 text-white font-medium OverviewTestCol1:text-[12px]">End Date: {new Date(events[currentIndex].endDate).toLocaleDateString("en-gb",
             {
               day:"2-digit",
-              month: "long",
+              month: "short",
               year: "numeric"
             })}</p>
         </div>

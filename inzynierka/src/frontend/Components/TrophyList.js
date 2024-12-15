@@ -28,11 +28,11 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
   const moneyTrophy = getTrophyLevelForStats(MoneySaved, [50, 100, 200, 500, 1000]);
 
   return (
-    <div className="grid grid-cols-3 gap-4 justify-items-center box-border text-[#3B4A3F] CustomTrophiesL:grid-cols-2 CustomTrophiesSM:grid-cols-1">
-      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[260px] h-[350px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('running')}>
+    <div className="grid grid-cols-3 gap-3 justify-items-center box-border text-[#3B4A3F] CustomTrophiesL:grid-cols-2 CustomTrophiesSM:grid-cols-1 CustomXXSM:mt-[70px]">
+      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${runningTrophy.level} m-[10px] w-[260px] h-[310px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('running')}>
         <div className="">
           <h3 className="text-center text-xl font-medium">Running </h3>
-          <img className='justify-self-center m-[10px] h-[200px]' src='./imagesTrophy/marathon.svg' />
+          <img className='justify-self-center m-[10px] h-[170px]' src='./imagesTrophy/marathon.svg' />
           <h3 className="text-center text-xl font-medium">Level {runningTrophy.level}</h3>
         </div>
         <div className="w-[140px] mt-[20px] bg-gray-300 rounded justify-self-center">
@@ -40,10 +40,10 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
         </div>
       </div>
 
-      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${walkingTrophy.level} m-[10px] w-[260px] h-[350px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)] `} onClick={() => handleTrophyClick('walking')}>
+      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${walkingTrophy.level} m-[10px] w-[260px] h-[310px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)] `} onClick={() => handleTrophyClick('walking')}>
         <div className="">
           <h3 className="text-center font-medium">Walking </h3>
-          <img className='justify-self-center m-[10px] h-[200px]' src='./imagesTrophy/hiking.svg' />
+          <img className='justify-self-center m-[10px] h-[170px]' src='./imagesTrophy/hiking.svg' />
           <h3 className="text-center text-xl font-medium">Level {walkingTrophy.level}</h3>
         </div>
         <div className="w-[140px] mt-[20px] bg-gray-300 rounded justify-self-center ">
@@ -51,10 +51,10 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
         </div>
       </div>
 
-      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${cyclingTrophy.level} m-[10px] w-[260px] h-[350px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('cycling')}>
+      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${cyclingTrophy.level} m-[10px] w-[260px] h-[310px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('cycling')}>
         <div className="">
           <h3 className="text-center font-medium">Cycling </h3>
-          <img className='justify-self-center m-[10px] h-[200px]' src='./imagesTrophy/mountain_cycling.svg' />
+          <img className='justify-self-center m-[10px] h-[170px]' src='./imagesTrophy/mountain_cycling.svg' />
           <h3 className="text-center text-xl font-medium">Level {cyclingTrophy.level}</h3>
         </div>
         <div className="w-[140px] mt-[20px] bg-gray-300 rounded justify-self-center">
@@ -62,10 +62,10 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
         </div>
       </div>
 
-      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${co2Trophy.level} m-[10px] w-[260px] h-[350px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('co2')}>
+      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${co2Trophy.level} m-[10px] w-[260px] h-[310px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('co2')}>
         <div className="">
           <h3 className="text-center font-medium">CO2 Savings </h3>
-          <img className='justify-self-center m-[10px] h-[200px]' src='./imagesTrophy/save_earth.svg' />
+          <img className='justify-self-center m-[10px] h-[170px]' src='./imagesTrophy/save_earth.svg' />
           <h3 className="text-center text-xl font-medium">Level {co2Trophy.level}</h3>
         </div>
         <div className="w-[140px] mt-[20px] bg-gray-300 rounded justify-self-center">
@@ -73,10 +73,10 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
         </div>
       </div>
 
-      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${caloriesTrophy.level} m-[10px] w-[260px] h-[350px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('calories')}>
+      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105  level-${caloriesTrophy.level} m-[10px] w-[260px] h-[310px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('calories')}>
         <div className="">
           <h3 className="text-center font-medium">Calories Burned </h3>
-          <img className='justify-self-center m-[10px] h-[200px]' src='./imagesTrophy/burned.svg' />
+          <img className='justify-self-center m-[10px] h-[170px]' src='./imagesTrophy/burned.svg' />
           <h3 className="text-center text-xl font-medium">Level {caloriesTrophy.level}</h3>
         </div>
         <div className="w-[136px] mt-[20px] bg-gray-300 rounded justify-self-center">
@@ -84,10 +84,10 @@ const TrophyList = ({ runningDistance, walkingDistance, cyclingDistance, Co2Save
         </div>
       </div>
 
-      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${moneyTrophy.level} m-[10px] w-[260px] h-[350px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('money')}>
+      <div className={`content-center bg-[#F1FCF3] hover:cursor-pointer hover:scale-105 level-${moneyTrophy.level} m-[10px] w-[260px] h-[310px] rounded-[18px] p-[10px] box-border shadow-[0px_4px_4px_rgba(11,14,52,0.20)]`} onClick={() => handleTrophyClick('money')}>
         <div className="">
           <h3 className="text-center font-medium">Money Saved </h3>
-          <img className='justify-self-center m-[10px] h-[200px]' src='./imagesTrophy/savings.svg' />
+          <img className='justify-self-center m-[10px] h-[170px]' src='./imagesTrophy/savings.svg' />
           <h3 className="text-center text-xl font-medium">Level {moneyTrophy.level}</h3>
         </div>
         <div className="w-[136px] mt-[20px] bg-gray-300 rounded justify-self-center">
