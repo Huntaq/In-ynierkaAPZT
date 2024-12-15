@@ -214,8 +214,8 @@ const Profile = () => {
                             className='w-[100px] h-[100px] rounded-[50%]'
                           />
                         ) : (
-                          <div className='w-[100px] h-[100px] rounded-[50%] text-center content-center'>
-                            {user && user.username ? user.username[0] : 'U'}
+                          <div className='w-[100px] h-[100px] rounded-[50%] text-center justify-self-center content-center'>
+                            {user && user.username ? <img className='w-[100px] h-[100px] rounded-[50%]' src='./empty-avatar.jpg'/>: 'U'}
                           </div>
                         )}
                       </a>

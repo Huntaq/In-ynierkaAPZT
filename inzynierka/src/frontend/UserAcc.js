@@ -358,52 +358,8 @@ const UserAcc = () => {
     return () => clearInterval(interval);
   }, [events.length]);
 
-  const trophyDetailsMap = {
-    running: {
-      title: '🏃‍♂️ Running',
-      level: runningTrophy.level,
-      detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
-      fact: 'Running improves cardiovascular and lung health.',
-    },
-    cycling: {
-      title: '🚴‍♂️ Cycling',
-      level: cyclingTrophy.level,
-      detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
-      fact: 'Cycling is great exercise for the lower body.',
-    },
-    walking: {
-      title: '🚴‍♂️ Walking',
-      level: walkingTrophy.level,
-      detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
-      fact: 'Walking is great exercise for the lower body.',
-    },
-    co2: {
-      title: '🌍 CO2 Savings',
-      level: co2Trophy.level,
-      detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
-      fact: 'Reducing CO2 emissions helps slow climate change.',
-    },
-    calories: {
-      title: '🔥 Calories Burned',
-      level: caloriesTrophy.level,
-      detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
-      fact: 'Burning calories through exercise helps maintain a healthy weight.',
-    },
-    money: {
-      title: '💸 Money Saved',
-      level: moneyTrophy.level,
-      detail: `Money saved: ${MoneySaved.toFixed(2)} PLN`,
-      fact: 'Saving money by using eco-friendly transport options.',
-    }
-  };
-
-  const handleTrophyClick = (trophyType) => {
-    const content = trophyDetailsMap[trophyType];
-    if (content) {
-      setPopupContent(content);
-      setPopupVisible(true);
-    }
-  };
+ 
+ 
 
   useEffect(() => {
 
@@ -577,7 +533,7 @@ const UserAcc = () => {
             Co2Saved={Co2Saved}
             CaloriesBurned={CaloriesBurned}
             MoneySaved={MoneySaved}
-            handleTrophyClick={handleTrophyClick}
+
             notifications={notifications}
             notificationPopupVisible={notificationPopupVisible}
             popupRef={popupRef}

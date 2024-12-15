@@ -32,6 +32,7 @@ module.exports = {
         CustomLogin: { max: '700px'},
         CustomTrophiesL: { max: '1020px'},
         CustomTrophiesSM: {max: '720px'},
+        CustomRankingXS: {max: '420px'},
       },
     },
   },

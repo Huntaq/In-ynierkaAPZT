@@ -44,7 +44,7 @@ const Header = ({ user, theme, toggleTheme}) => {
               className='w-[60px] h-[60px] rounded-[50%] hover:scale-105 shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'
             />
           ) : (
-            <div className='bg-white font-bold text-black content-center text-center w-[60px] h-[60px] rounded-[50%] border-[3px] border-[#409A55] hover:scale-105'>{user && user.username ? user.username[0] : 'U'}</div>
+            <div className='bg-white font-bold text-black content-center text-center w-[60px] h-[60px] rounded-[50%] border-[3px] border-[#409A55] hover:scale-105'>{user && user.username ? <img className='w-[60px] h-[60px] rounded-[50%]' src='./empty-avatar.jpg'/> : 'U'}</div>
           )}
         </a>
       </div>

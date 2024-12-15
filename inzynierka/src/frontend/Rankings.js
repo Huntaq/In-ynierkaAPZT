@@ -183,10 +183,10 @@ const Rankings = () => {
             {index === 1 && <img alt='second' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={second} />}
             {index === 2 && <img alt='third' className="absolute CustomXSM:top-[80px] CustomXSM:w-[30px] CustomXSM:h-[40px] top-[125px] w-[40px] h-[60px] left-1/2 transform -translate-x-1/2 -translate-y-1/2" src={third} />}
             {index >= 3 && <span className='font-bold text-[24px] content-center CustomXXSM:text-[16px] '>{index + 1} </span>}
-            <span className=' content-center font-400 text-[20px]'>
+            <span className=' content-center font-400 text-[20px] CustomXXSM:text-[14px]'>
               {userData.username.length > 12 ? userData.username.slice(0, 10) + '...' : userData.username}
             </span>
-            <span className="block content-center ">{formatValue(entry[type], rankingType)}</span>
+            <span className="block content-center CustomXXSM:text-[12px]">{formatValue(entry[type], rankingType)}</span>
           </ul>
         )
       );
@@ -217,10 +217,10 @@ const Rankings = () => {
       <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF] max-h-[760px] rounded-[10px] overflow-y-scroll justify-center'>
         <div className='flex relative justify-start min-h-screeen items-center flex-col w-full max-w-[1600px] justify-self-center'>
           <Header user={user} theme={theme} toggleTheme={toggleTheme} />
-          <div className='absolute top-[15px] font-bold m-[10px] text-[#3B4A3F] text-[16px]'>
+          <div className='absolute top-[20px] font-bold m-[10px] text-[#3B4A3F] text-[16px] CustomRankingXS:top-[60px]'>
             Total {rankingType.split('_').slice(-1)[0]}
           </div>
-          <div className="flex justify-between w-[600px] max-w-[98%] pt-[30px]">
+          <div className="flex justify-between w-[600px] max-w-[98%] pt-[30px] CustomRankingXS:mt-[30px]">
             <div className="flex justify-start w-1/3">
               {getRankingItems(rankingType).slice(1, 2)}
             </div>
@@ -240,9 +240,9 @@ const Rankings = () => {
             <div className="w-[95%] max-w-[450px] overflow-y-scroll scrollbar-hide">
               <div>
                 <div className='justify-between h-[45px] shadow-[0px_4px_4px_rgba(11,14,52,0.2)]  CustomXXSM:h-[40px] mt-[20px] text-black w-full  mb-[10px] p-[5px] rounded-[15px] flex box-border bg-[#84D49D] gap-[10px]'>
-                  <p className='ml-[20px] font-bold text-[28px] content-center CustomXXSM:text-[16px]'>{userIndex === -1 ? '-' : userIndex + 1}</p>
+                  <p className='ml-[20px] font-bold text-[28px] content-center CustomXXSM:text-[12px]'>{userIndex === -1 ? '-' : userIndex + 1}</p>
                   <p className='content-center text-[24px] CustomXXSM:text-[12px] font-400'>{user.username}</p>
-                  <span className="block content-center mr-[20px]">{formatValue(ranking[userIndex]?.[rankingType], rankingType)}</span>
+                  <span className="block content-center CustomXXSM:text-[12px] mr-[20px]">{formatValue(ranking[userIndex]?.[rankingType], rankingType)}</span>
                 </div>
                 <ul className=' CustomXXSM:text-[12px] '>
                   {getRankingItems(rankingType).slice(3, 100)}
