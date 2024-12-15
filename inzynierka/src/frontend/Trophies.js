@@ -307,8 +307,8 @@ const Trophies = () => {
               <p className='font-medium text-xl'>{popupContent.title}</p>
               <img src='./imagesTrophy/trophy-modal.svg' className='mt-4 mb-2 h-auto w-[260px] justify-self-center'/>
               <p className='font-medium text-2xl'>Level: {popupContent.level}</p>
-              <p>{popupContent.detail}</p>
-              <p>{popupContent.fact}</p>
+              <p className='font-normal text-xl'>{popupContent.detail}</p>
+              <p className='font-normal text-xl'>{popupContent.fact}</p>
             </ModalInfo>
           )}
         </div>

@@ -55,10 +55,10 @@ const Login = () => {
           </div>
 
           <div className='flex flex-row items-center max-w-[300px] w-full justify-center mb-5 space-x-2'>
-            <p className='font-medium text-[#3B4A3F]'>
+            <p className='font-medium text-[18px] text-[#3B4A3F]'>
               New to EcoSphere?
             </p>
-            <Link to='/register' className=' text-[#6E9B7B] font-bold hover:underline'>
+            <Link to='/register' className=' text-[#6E9B7B] font-bold text-[18px] underline'>
               Register now!
             </Link>
           </div>
@@ -75,7 +75,7 @@ const Login = () => {
               <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Username</label>
               <input
                 className='p-2 border mb-4 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
-                placeholder='Username'
+                placeholder='Enter your username'
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -84,7 +84,7 @@ const Login = () => {
               <input
                 className='p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D] mt-2'
                 type='password'
-                placeholder='Password'
+                placeholder='Enter your password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -94,7 +94,7 @@ const Login = () => {
           <div className='flex items-center max-w-[300px] w-full justify-center'>
 
             <button
-              className='w-[100px] p-2 bg-[#84D49D] text-xl font-medium text-white rounded-md hover:bg-[#6E9B7B] focus:outline-none focus:ring-2 focus:ring-blue-300'
+              className='w-[100px] p-2 bg-[#84D49D] text-xl font-medium text-white rounded-md hover:bg-[#6E9B7B] focus:outline-none'
               onClick={handleLogin}
             >
               Login

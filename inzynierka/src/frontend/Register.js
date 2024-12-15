@@ -138,10 +138,10 @@ const Register = () => {
 
     return (
         <LoginRegisterBackground>
-            <div className='flex flex-col items-center justify-center w-full h-screen bg-gray-100'>
+            <div className='flex flex-col items-center justify-center w-full h-screen'>
 
                 <div className='mb-4 flex justify-between max-w-[300px] w-full'>
-                    <h2 className='text-2xl font-bold text-gray-700'>Register</h2>
+                    <h2 className='text-2xl font-bold text-gray-700'>Let's start</h2>
                     {errorMessageDuplicate && <p className="text-red-500 self-center">{errorMessageDuplicate}</p>}
                     {successMessage && <p className='text-green-500'>{successMessage}</p>}
                 </div>
@@ -149,34 +149,34 @@ const Register = () => {
                 <div className='w-full max-w-[300px]'>
                     <div className='mb-4'>
                         <div className='flex justify-between max-w-[300px]'>
-                            <p className='text-gray-600'>Nickname</p>
+                        <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Username</label>
                             {nameError && <p className='text-red-500 '>{nameError}</p>}
                         </div>
 
                         <input
-                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder='Enter your nickname'
+                            placeholder='Enter your username'
                         />
                     </div>
 
                     <div className='mb-4'>
                         <div className='flex justify-between max-w-[300px]'>
-                            <p className='text-gray-600'>Password</p>
+                        <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Password</label>
                             {passwordError && <p className='text-red-500'>{passwordError}</p>}
                         </div>
                         <div className='relative flex w-full min-w-[350px]'>
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                                className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder='Enter your password'
                             />
                             <button
                                 type='button'
-                                className='absolute mt-[10px]  left-[250px]  text-blue-500 hover:underline'
+                                className='absolute mt-[10px]  left-[250px]  text-[#6E9B7B] hover:underline'
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? 'Hide' : 'Show'}
@@ -186,12 +186,12 @@ const Register = () => {
 
                     <div className='mb-4'>
                         <div className='flex justify-between max-w-[300px]'>
-                            <p className='text-gray-600'>E-mail</p>
+                        <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Email</label>
                             {emailError && <p className='text-red-500'>{emailError}</p>}
                         </div>
                         <input
                             type='email'
-                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder='Enter your email'
@@ -200,13 +200,13 @@ const Register = () => {
 
                     <div className='mb-4'>
                         <div className='flex justify-between max-w-[300px]'>
-                            <p className='text-gray-600'>Age</p>
+                        <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Age</label>
                             {ageError && <p className='text-red-500'>{ageError}</p>}
                         </div>
 
                         <input
                             type='number'
-                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='max-w-[300px] w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
                             value={age}
                             onChange={(e) => setAge(e.target.value)}
                             placeholder='Enter your age'
@@ -215,11 +215,11 @@ const Register = () => {
 
                     <div className='mb-4'>
                         <div className='flex justify-between max-w-[300px]'>
-                            <p className='text-gray-600'>Gender</p>
+                        <label className="block mb-2 text-m font-medium text-[#3B4A3F]">Gender</label>
                             {genderError && <p className='text-red-500'>{genderError}</p>}
                         </div>
                         <select
-                            className='p-2 text-gray-600 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='p-2 text-gray-600 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#84D49D]'
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
                         >
@@ -230,13 +230,13 @@ const Register = () => {
                     </div>
                     <div className='flex items-center justify-between'>
                         <button
-                            className='w-full max-w-[120px] p-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300'
+                            className='w-full max-w-[120px] p-2 font-medium text-[#6E9B7B] '
                             onClick={() => window.location.href = '../'}
                         >
                             Go back
                         </button>
                         <button
-                            className='w-full max-w-[120px] p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 ml-2'
+                            className='w-full max-w-[120px] p-2 bg-[#84D49D] text-xl font-medium text-white rounded-md hover:bg-[#6E9B7B] focus:outline-none'
                             onClick={handleRegister}
                         >
                             Register
