@@ -18,8 +18,8 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="relative flex items-center justify-between m-[10px]">
           <h3 className="text-[28px] font-medium uppercase">{events[currentIndex].title}</h3>
           <div className="flex flex-col justify-center w-[150px]">
-            <div className="w-full bg-white h-[20px] overflow-hidden rounded-[4px]">
-              <div className="h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress shadow-[5px_5px_10px_rgba(0,0,0,0.2)]"
+            <div className="w-full bg-white h-[20px] overflow-hidden rounded-[4px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
+              <div className="h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress "
                 style={{ width: `${progressData[events[currentIndex].id] || 0}%` }}>
               </div>
             </div>

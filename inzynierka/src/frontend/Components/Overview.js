@@ -49,7 +49,6 @@ const Overview = ({
             case 'co2':
             case 'pln':
             case 'streak':
-            case 'Test':
               return (
                 <div className='flex CustomXSM:block ' key={section.id}>
                   <div className=' content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[150px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
@@ -81,11 +80,7 @@ const Overview = ({
                         <p className='text-[#B5B5B5] text-[12px] font-bold'>Longest Streak : {longestStreak}</p>
                       </div>
                     )}
-                    {section.id === 'Test' && (
-                      <>
-                        <p>Test1</p>
-                      </>
-                    )}
+                    
                   </div>
                 </div>
               );
