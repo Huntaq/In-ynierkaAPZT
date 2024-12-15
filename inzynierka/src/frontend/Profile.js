@@ -203,8 +203,8 @@ const Profile = () => {
             </div>
             <div className='flex justify-center gap-[10px] max-w-[98%] place-self-center CustomSM:block'>
               <div className='w-full max-w-[550px] h-[550px] p-[10px] items-center bg-[#F1FCF3] rounded-[5px] shadow-[2px_2px_15px_rgba(88,88,88,0.2)] CustomSM:mb-[10px]'>
-                <div className='flex items-center CustomXXSM:block'>
-                  <div className='w-full max-w-[100px] justify-self-center'>
+                <div className='flex flex-col items-center CustomXXSM:block'>
+                  <div className='w-full max-w-[100px] mt-[16px] justify-self-center'>
                     <div className='relative'>
                       <a href="/Profile" className='' style={{ textDecoration: 'none' }}>
                         {user && (previewUrl || user.profilePicture) ? (
@@ -224,7 +224,7 @@ const Profile = () => {
                       </svg></div>
                     </div>
                   </div>
-                  <div className='w-full max-w-[400px] items-center'>
+                  <div className='w-full mt-[40px] max-w-[400px] items-center'>
                     <form className='justify-self-center text-center CustomXXSM:mt-[20px]' onSubmit={handleProfilePictureUpload}>
                       <input
                         type="file"
@@ -265,7 +265,7 @@ const Profile = () => {
                   </div>
                 </div>
                 {user && (
-                  <div className='w-full max-w-[600px] text-center h-[480px] content-center CustomXXSM:h-[350px]'>
+                  <div className='w-full max-w-[600px] text-center h-[480px] mt-[40px] CustomXXSM:h-[350px]'>
                     <div className='flex w-full'>
                       <p className='w-[50%] text-center'>Username:</p>
                       <p className='w-[50%] text-center'>Email:</p>
