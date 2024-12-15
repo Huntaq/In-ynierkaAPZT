@@ -18,10 +18,13 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="relative flex items-center justify-between m-[10px]">
           <h3 className="text-[28px] font-medium uppercase CustomXSM:text-[20px] CustomXXSM:text-[16px]">{events[currentIndex].title}</h3>
           <div className="flex flex-col justify-center w-[150px]">
-            <div className="w-full bg-white h-[20px] overflow-hidden rounded-[4px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)]">
+            <div className="w-full bg-white h-[20px] overflow-hidden rounded-[4px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)] relative">
               <div className="h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress "
                 style={{ width: `${progressData[events[currentIndex].id] || 0}%` }}>
               </div>
+              <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-[#3B4A3F] text-[16px] font-semibold">
+                  {`${progressData[events[currentIndex].id] || 0}%`}
+                </span>
             </div>
           </div>
         </div>
@@ -31,23 +34,23 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="relative flex justify-between mt-[40px] text-center CustomXSM:mt-[20px]">
           <p className="flex-1 text-white font-medium OverviewTestCol1:text-[12px]">Start Date: {new Date(events[currentIndex].startDate).toLocaleDateString("en-gb",
             {
-              day:"2-digit",
+              day: "2-digit",
               month: "short",
               year: "numeric"
             }
           )}</p>
           <div className="flex-1 flex justify-center translate-x-[-0%] CustomXSM:items-center">
-          {events.map((_, index) => (
-            <span
-              key={index}
-              className={`m-[2px] w-[15px] h-[15px] bg-gray-300 rounded-[50%] border-[2px] border-gray-300 cursor-pointer unique-dot ${index === currentIndex ? 'active' : ''}`}
-              onClick={() => handleDotClick(index)}
-            />
-          ))}
-        </div>
+            {events.map((_, index) => (
+              <span
+                key={index}
+                className={`m-[2px] w-[15px] h-[15px] bg-gray-300 rounded-[50%] border-[2px] border-gray-300 cursor-pointer unique-dot ${index === currentIndex ? 'active' : ''}`}
+                onClick={() => handleDotClick(index)}
+              />
+            ))}
+          </div>
           <p className="flex-1 text-white font-medium OverviewTestCol1:text-[12px]">End Date: {new Date(events[currentIndex].endDate).toLocaleDateString("en-gb",
             {
-              day:"2-digit",
+              day: "2-digit",
               month: "short",
               year: "numeric"
             })}</p>

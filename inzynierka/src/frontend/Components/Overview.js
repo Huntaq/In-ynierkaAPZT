@@ -51,7 +51,7 @@ const Overview = ({
             case 'streak':
               return (
                 <div className='flex CustomXSM:block ' key={section.id}>
-                  <div className=' content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] CustomXSM:w-[150px] CustomXSM:h-[150px] max-w-[100%] h-[150px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
+                  <div className=' content-center justify-items-center mt-[5px] overflow-y-auto w-[200px] max-w-[100%] h-[150px] bg-[#F1FCF3] rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
                     {section.id === 'co2' && (
                       <div className=' w-full place-items-start pl-[20px]'>
                         <p className='flex text-[#B5B5B5] font-bold mb-[20px] w-full justify-start mt-[5px]'>CO2 Saved</p>
@@ -75,7 +75,7 @@ const Overview = ({
                       <p className='text-[#B5B5B5] font-bold'>Your Streak</p>
                         <div className='flex gap-[20px] ml-[-20px]'>
                           <p className='text-[#3B4A3F] w-auto font-bold text-[50px]'>&nbsp; {currentStreak}</p>
-                          <img src={meter} alt='Earth' className='w-[80px] h-[80px] CustomXSM:w-[60px] CustomXSM:h-[60px]' />
+                          <img src={meter} alt='Earth' className='w-[80px] h-[80px] ' />
                         </div>
                         <p className='text-[#B5B5B5] text-[12px] font-bold'>Longest Streak : {longestStreak}</p>
                       </div>
@@ -107,8 +107,8 @@ const Overview = ({
                   <div className='w-[600px] max-w-[100%]' key={section.id}>
                     <div className='content-center justify-items-center w-[400px] max-w-[100%] h-[150px] bg-[#F1FCF3] m-auto rounded-[10px] shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'>
                     <div className='place-items-start m-[25px] '>
-                      <p className='text-[#3B4A3F] text-[28px] font-bold'> Do you know that... </p>
-                      <p className='text-[16px] text-start'>You have saved as much CO₂ as would be produced by driving approximately {km} kilometers by car!</p>
+                      <p className='text-[#3B4A3F] text-[28px] font-bold CustomXXSM:text-[20px]'> Do you know that... </p>
+                      <p className='text-[16px] text-start CustomXXSM:text-[12px]'>You have saved as much CO₂ as would be produced by driving approximately {km} kilometers by car!</p>
                     </div>
                   </div>
                   </div>
