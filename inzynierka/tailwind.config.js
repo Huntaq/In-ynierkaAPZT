@@ -30,6 +30,8 @@ module.exports = {
         OverviewTest: { max: '1118px' },
         OverviewTestCol1: { max: '897px' },
         CustomLogin: { max: '700px'},
+        CustomTrophiesL: { max: '1020px'},
+        CustomTrophiesSM: {max: '720px'},
       },
     },
   },

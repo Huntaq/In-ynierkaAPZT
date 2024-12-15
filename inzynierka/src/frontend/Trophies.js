@@ -259,7 +259,7 @@ const Trophies = () => {
             toggleTheme={toggleTheme}
             toggleSidebar={toggleSidebar}
           />
-          <button onClick={OpenEvents} className='w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies' : 'Show level trophies'}</button>
+          <button onClick={OpenEvents} className='w-[170px] h-[60px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105'>{EventsOpen ? 'Show event trophies' : 'Show level trophies'}</button>
           {EventsOpen ? (
             <div className="">
               <TrophyList
