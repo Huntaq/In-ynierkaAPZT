@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from './img/earthLogo.png';
 import Home from './img/home.png';
-import Calendar from './img/calendar.svg';
 import Chart from './img/Chart.svg';
 import crown from './img/crown.svg';
 import settings from './img/settings.svg';
@@ -58,7 +57,7 @@ const Sidebar = () => {
             </nav>
             <div className="mt-[120px] rounded w-[90px] p-[10px] hover:cursor-pointer justify-items-center justify-center max-w-[95%] text-[#3B4A3F] font-bold self-center " onClick={() => handleLogout('/')}>
                 <img src={logout} alt='logout' className='w-[40px] h-[40px] justify-self-center' />
-                <a href="."className='CustomXSM:hidden'>Logout</a>
+                <div  className='CustomXSM:hidden'>Logout</div>
             </div>
         </div>
     );

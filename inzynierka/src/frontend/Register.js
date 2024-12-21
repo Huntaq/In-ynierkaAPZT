@@ -15,6 +15,7 @@ const Register = () => {
     const [genderError, setGenderError] = useState('');
     const [errorMessageDuplicate, setErrorMessageDuplicate] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const navigate = useNavigate();
 
     const validateName = (name) => /^[A-Za-z]{2,30}$/.test(name);
     const validatePassword = (password) => {
@@ -44,8 +45,6 @@ const Register = () => {
     const validateEmail = (email) => /^[^\s,@]+@[^\s,@]+\.[^\s,@]+$/.test(email);
     const validateAge = (age) => /^\d{1,3}$/.test(age) && age >= 18 && age <= 99;
     const validateGender = (gender) => /^(M|F)$/.test(gender);
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -135,6 +134,10 @@ const Register = () => {
             .catch(error => {
             });
     };
+
+    function GoToLogin(){
+        navigate('../');
+    }
 
     return (
         <LoginRegisterBackground>
@@ -231,11 +234,11 @@ const Register = () => {
                     <div className='flex items-center justify-between'>
                         <button
                             className='w-full max-w-[160px] p-2 font-medium text-xl text-[#6E9B7B] flex gap-[10px] items-center'
-                            onClick={() => window.location.href = '../'}
+                            onClick={GoToLogin} 
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 22 22" fill="none">
-                                <path d="M12.5 8L9.5 11L12.5 14" stroke="#6E9B7B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M1 11C1 6.286 1 3.929 2.464 2.464C3.93 1 6.286 1 11 1C15.714 1 18.071 1 19.535 2.464C21 3.93 21 6.286 21 11C21 15.714 21 18.071 19.535 19.535C18.072 21 15.714 21 11 21C6.286 21 3.929 21 2.464 19.535C1 18.072 1 15.714 1 11Z" stroke="#6E9B7B" stroke-width="1.5"/>
+                                <path d="M12.5 8L9.5 11L12.5 14" stroke="#6E9B7B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M1 11C1 6.286 1 3.929 2.464 2.464C3.93 1 6.286 1 11 1C15.714 1 18.071 1 19.535 2.464C21 3.93 21 6.286 21 11C21 15.714 21 18.071 19.535 19.535C18.072 21 15.714 21 11 21C6.286 21 3.929 21 2.464 19.535C1 18.072 1 15.714 1 11Z" stroke="#6E9B7B" strokeWidth="1.5"/>
                             </svg>
 
                             Go back

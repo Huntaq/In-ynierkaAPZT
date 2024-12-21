@@ -270,35 +270,6 @@ const UserAcc = () => {
 
   //poziomy trofeów
 
-  const calculateTrophyLevel = (value, thresholds) => {
-    const levels = [
-      { level: 5, color: 'gold' },
-      { level: 4, color: 'silver' },
-      { level: 3, color: 'bronze' },
-      { level: 2, color: 'blue' },
-      { level: 1, color: 'green' },
-      { level: 0, color: 'grey' }
-    ];
-
-    for (let i = 0; i < thresholds.length; i++) {
-      if (value >= thresholds[i]) {
-        return {
-          level: levels[i].level,
-          color: levels[i].color,
-          next: thresholds[i + 1] ? thresholds[i + 1] - value : 0,
-        };
-      }
-    }
-
-    return { level: 0, color: 'grey', next: thresholds[0] - value };
-  };
-  const runningTrophy = calculateTrophyLevel(runningDistance, [10, 25, 50, 100, 200]);
-  const cyclingTrophy = calculateTrophyLevel(cyclingDistance, [10, 25, 50, 100, 200]);
-  const walkingTrophy = calculateTrophyLevel(walkingDistance, [10, 25, 50, 100, 200]);
-  const co2Trophy = calculateTrophyLevel(Co2Saved, [5, 15, 25, 50, 100]);
-  const caloriesTrophy = calculateTrophyLevel(CaloriesBurned, [1000, 2500, 5000, 10000, 15000]);
-  const moneyTrophy = calculateTrophyLevel(MoneySaved, [50, 100, 250, 500, 1000]);
-
   //dashboard
 
   const defaultSections = [

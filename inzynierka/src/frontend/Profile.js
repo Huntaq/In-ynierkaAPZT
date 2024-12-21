@@ -187,9 +187,13 @@ const Profile = () => {
     } catch (error) {
     }
   };
+  function HandleGoToProfile(){
+    navigate('/Profile');
+  }
 
   if (loading) return <p>Ładowanie...</p>;
   if (error) return <p>Błąd: {error}</p>;
+
   return (
     <BackGround>
       <div className='scrollbar-hide flex w-[100%] bg-[#D9EDDF]  rounded-[10px] overflow-y-scroll justify-center'>
@@ -206,7 +210,7 @@ const Profile = () => {
                 <div className='flex flex-col items-center CustomXXSM:block'>
                   <div className='w-full max-w-[100px] mt-[16px] justify-self-center'>
                     <div className='relative'>
-                      <a href="/Profile" className='' style={{ textDecoration: 'none' }}>
+                      <div onClick={HandleGoToProfile} className='' style={{ textDecoration: 'none' }}>
                         {user && (previewUrl || user.profilePicture) ? (
                           <img
                             src={previewUrl || `http://localhost:3000/uploads/${user.profilePicture.split('/').pop()}`}
@@ -215,10 +219,10 @@ const Profile = () => {
                           />
                         ) : (
                           <div className='w-[100px] h-[100px] rounded-[50%] text-center justify-self-center content-center'>
-                            {user && user.username ? <img className='w-[100px] h-[100px] rounded-[50%]' src='./empty-avatar.jpg'/>: 'U'}
+                            {user && user.username ? <img className='w-[100px] h-[100px] rounded-[50%]' src='./empty-avatar.jpg'alt="Profile"/>: 'U'}
                           </div>
                         )}
-                      </a>
+                      </div>
                       <div className='flex absolute bottom-[-10px] right-[-5px] bg-[#84D49D] rounded-[50%] w-[40px] h-[40px] items-center justify-center'><svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
                         <path d="M6.04167 5.4375C5.88144 5.43752 5.72777 5.50117 5.61447 5.61447C5.50117 5.72777 5.43752 5.88144 5.4375 6.04167V20.5417C5.4375 20.7019 5.50115 20.8556 5.61446 20.9689C5.72776 21.0822 5.88143 21.1458 6.04167 21.1458C6.2019 21.1458 6.35557 21.0822 6.46888 20.9689C6.58218 20.8556 6.64583 20.7019 6.64583 20.5417V19.6755L12.7713 15.9998L18.0318 12.8444L22.3542 17.1668V22.3542H6.04167C5.88143 22.3542 5.72776 22.4178 5.61446 22.5311C5.50115 22.6444 5.4375 22.7981 5.4375 22.9583C5.4375 23.1186 5.50115 23.2722 5.61446 23.3855C5.72776 23.4988 5.88143 23.5625 6.04167 23.5625H22.9583C23.1186 23.5625 23.2722 23.4988 23.3855 23.3855C23.4988 23.2722 23.5625 23.1186 23.5625 22.9583V6.04167C23.5625 5.88144 23.4988 5.72777 23.3855 5.61447C23.2722 5.50117 23.1186 5.43752 22.9583 5.4375H6.04167ZM6.64583 6.64583H22.3542V15.4582L18.5522 11.6562C18.4432 11.5471 18.2968 11.4838 18.1427 11.4792C18.0274 11.476 17.9135 11.5059 17.8147 11.5653L12.5553 14.7218L10.0938 12.2603C9.99507 12.1616 9.86516 12.1001 9.72618 12.0863C9.58721 12.0726 9.44776 12.1074 9.33154 12.1848L6.64583 13.9749V6.64583ZM13.2917 7.25C11.9641 7.25 10.875 8.33913 10.875 9.66667C10.875 10.9942 11.9641 12.0833 13.2917 12.0833C14.6192 12.0833 15.7083 10.9942 15.7083 9.66667C15.7083 8.33913 14.6192 7.25 13.2917 7.25ZM13.2917 8.45833C13.9662 8.45833 14.5 8.99217 14.5 9.66667C14.5 10.3412 13.9662 10.875 13.2917 10.875C12.6172 10.875 12.0833 10.3412 12.0833 9.66667C12.0833 8.99217 12.6172 8.45833 13.2917 8.45833ZM9.58997 13.4651L11.4862 15.3614L6.64583 18.2666V15.4275L9.58997 13.4651Z" fill="black" />
                       </svg></div>

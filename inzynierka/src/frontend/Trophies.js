@@ -27,22 +27,22 @@ const Trophies = () => {
   const [EventsOpen, setEventsOpen] = useState(true);
   const navigate = useNavigate();
 
-  const getTrophyLevel = (distance) => {
-    if (distance >= 100) return { level: 5, color: 'gold', next: 0 };
-    if (distance >= 75) return { level: 4, color: 'silver', next: 100 - distance };
-    if (distance >= 50) return { level: 3, color: 'bronze', next: 75 - distance };
-    if (distance >= 20) return { level: 2, color: 'blue', next: 50 - distance };
-    if (distance >= 10) return { level: 1, color: 'green', next: 20 - distance };
-    return { level: 0, color: 'grey', next: 10 - distance };
+  const getTrophyLevel = (distance , thresholds) => {
+    if (distance >= thresholds[4]) return { level: 5,  next: 0 };
+    if (distance >= thresholds[3]) return { level: 4,  next: thresholds[4] - distance };
+    if (distance >= thresholds[2]) return { level: 3,  next: thresholds[3] - distance };
+    if (distance >= thresholds[1]) return { level: 2,  next: thresholds[2] - distance };
+    if (distance >= thresholds[0]) return { level: 1, next: thresholds[1] - distance };
+    return { level: 0, next: thresholds[0] - distance };
   };
 
   const getTrophyLevelForStats = (value, thresholds) => {
-    if (value >= thresholds[4]) return { level: 5, color: 'gold', next: 0 };
-    if (value >= thresholds[3]) return { level: 4, color: 'silver', next: thresholds[4] - value };
-    if (value >= thresholds[2]) return { level: 3, color: 'bronze', next: thresholds[3] - value };
-    if (value >= thresholds[1]) return { level: 2, color: 'blue', next: thresholds[2] - value };
-    if (value >= thresholds[0]) return { level: 1, color: 'green', next: thresholds[1] - value };
-    return { level: 0, color: 'grey', next: thresholds[0] - value };
+    if (value >= thresholds[4]) return { level: 5,  next: 0 };
+    if (value >= thresholds[3]) return { level: 4,  next: thresholds[4] - value };
+    if (value >= thresholds[2]) return { level: 3,  next: thresholds[3] - value };
+    if (value >= thresholds[1]) return { level: 2,  next: thresholds[2] - value };
+    if (value >= thresholds[0]) return { level: 1,  next: thresholds[1] - value };
+    return { level: 0, next: thresholds[0] - value };
   };
 
   useEffect(() => {
@@ -156,9 +156,9 @@ const Trophies = () => {
     localStorage.setItem('theme', theme);
   };
 
-  const runningTrophy = getTrophyLevel(runningDistance);
-  const cyclingTrophy = getTrophyLevel(cyclingDistance);
-  const walkingTrophy = getTrophyLevel(walkingDistance);
+  const runningTrophy = getTrophyLevel(runningDistance, [15, 50, 150, 350, 500]);
+  const cyclingTrophy = getTrophyLevel(cyclingDistance, [15, 50, 150, 350, 500]);
+  const walkingTrophy = getTrophyLevel(walkingDistance, [15, 50, 150, 350, 500]);
 
   const co2Trophy = getTrophyLevelForStats(Co2Saved, [10, 20, 50, 75, 100]);
   const caloriesTrophy = getTrophyLevelForStats(CaloriesBurned, [1000, 2000, 5000, 7500, 10000]);
@@ -171,7 +171,7 @@ const Trophies = () => {
         content = {
           title: 'Running',
           level: runningTrophy.level,
-          detail: `Distance covered: ${runningDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
+          detail: `Distance covered: ${runningDistance.toFixed(2)} km`,
           fact: runningTrophy.level < 5 ? `Next threshold: Level ${runningTrophy.level + 1}- ${runningTrophy.next.toFixed(2)} km left` : 'Amazing! You`ve conquered all levels!',
         };
         break;
@@ -179,7 +179,7 @@ const Trophies = () => {
         content = {
           title: 'Walking',
           level: walkingTrophy.level,
-          detail: `Distance covered: ${walkingDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
+          detail: `Distance covered: ${walkingDistance.toFixed(2)} km`,
           fact: walkingTrophy.level < 5 ? `Next threshold: Level ${walkingTrophy.level + 1}; ${walkingTrophy.next.toFixed(2)} km left` : 'Congrats! You`ve completed all levels!',
         };
         break;
@@ -187,7 +187,7 @@ const Trophies = () => {
         content = {
           title: 'Cycling',
           level: cyclingTrophy.level,
-          detail: `Distance covered: ${cyclingDistance.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km`,
+          detail: `Distance covered: ${cyclingDistance.toFixed(2)} km`,
           fact: cyclingTrophy.level < 5 ? `Next threshold: Level ${cyclingTrophy.level + 1}; ${cyclingTrophy.next.toFixed(2)} km left` : 'All levels finished! Great job!',
         };
         break;
@@ -195,24 +195,24 @@ const Trophies = () => {
         content = {
           title: 'CO2 Savings',
           level: co2Trophy.level,
-          detail: `CO2 saved: ${Co2Saved.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg`,
-          fact: co2Trophy.level < 5 ? `Next threshold: Level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(2)} kg left` : 'Mission complete! All levels done!',
+          detail: `CO2 saved: ${Co2Saved.toFixed(2)} kg`,
+          fact: co2Trophy.level < 5 ? `Next threshold: Level ${co2Trophy.level + 1}; ${co2Trophy.next.toFixed(0)} kg left` : 'Mission complete! All levels done!',
         };
         break;
       case 'calories':
         content = {
           title: 'Calories Burned',
           level: caloriesTrophy.level,
-          detail: `Calories burned: ${CaloriesBurned.toLocaleString('pl-PL')} kcal`,
-          fact: caloriesTrophy.level < 5 ? `Next threshold: Level ${caloriesTrophy.level + 1} - ${caloriesTrophy.next.toFixed()} kcal left` : 'Congrats! All levels achieved!',
+          detail: `Calories burned: ${CaloriesBurned.toFixed(2)} kcal`,
+          fact: caloriesTrophy.level < 5 ? `Next threshold: Level ${caloriesTrophy.level + 1} - ${caloriesTrophy.next.toFixed(0)} kcal left` : 'Congrats! All levels achieved!',
         };
         break;
       case 'money':
         content = {
           title: 'Money Saved',
           level: moneyTrophy.level,
-          detail: `Money saved: ${MoneySaved.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} PLN`,
-          fact: moneyTrophy.level < 5 ? `Next threshold: Level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(2)} money left` : 'You`re a master! All levels completed!',
+          detail: `Money saved: ${MoneySaved.toFixed(2)} PLN`,
+          fact: moneyTrophy.level < 5 ? `Next threshold: Level ${moneyTrophy.level + 1}; ${moneyTrophy.next.toFixed(0)} money left` : 'You`re a master! All levels completed!',
         };
         break;
       default:
@@ -272,6 +272,12 @@ const Trophies = () => {
                 CaloriesBurned={CaloriesBurned}
                 MoneySaved={MoneySaved}
                 handleTrophyClick={handleTrophyClick}
+                cyclingTrophy={cyclingTrophy}
+                runningTrophy={runningTrophy}
+                moneyTrophy={moneyTrophy}
+                caloriesTrophy={caloriesTrophy}
+                co2Trophy={co2Trophy}
+                walkingTrophy={walkingTrophy}
               />
               
             </div>

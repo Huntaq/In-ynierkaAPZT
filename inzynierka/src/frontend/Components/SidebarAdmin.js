@@ -63,7 +63,7 @@ const SidebarAdmin = ({ isOpen, toggleSidebar, toggleModal }) => {
                 </ul>
             </nav>
             <div className="self-center rounded w-[200px] p-[10px] hover:bg-[#409A55] flex justify-center mt-auto text-white font-bold mb-[50px]" onClick={handleLogout}>
-                <a href=".">Logout</a>
+                <div>Logout</div>
             </div>
         </div>
     );

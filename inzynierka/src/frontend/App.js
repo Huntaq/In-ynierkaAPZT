@@ -11,6 +11,9 @@ import Rankings from './Rankings';
 import Statistics from './Statistics';
 import AdminPanel from './AdminPanel';
 import Banned from './Banned';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
 
 function App() {
   return (

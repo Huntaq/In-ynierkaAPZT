@@ -9,8 +9,6 @@ const CalendarComponent = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [dailyActivities, setDailyActivities] = useState([]);
     const [userRoutes, setUserRoutes] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -34,15 +32,11 @@ const CalendarComponent = () => {
                         const routesData = await routesResponse.json();
                         setUserRoutes(routesData);
                     } else {
-                        setError('Błąd podczas pobierania tras użytkownika');
                     }
                 } catch (err) {
-                    setError('Wystąpił błąd podczas pobierania danych');
                 }
             } else {
-                setError('Brak tokena uwierzytelniającego');
             }
-            setLoading(false);
         };
 
         fetchUserData();
