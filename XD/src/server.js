@@ -109,7 +109,7 @@ app.post('/api/login', (req, res) => {
 
     const user = results[0];
 
-    // Check if the user is banned
+   
     if (user.is_banned) {
       return res.status(403).json({
         message: 'Your account is banned. Please contact support for assistance.',
@@ -123,7 +123,7 @@ app.post('/api/login', (req, res) => {
       }
 
       if (result) {
-        req.session.userId = user.id; // Set the user ID in the session
+        req.session.userId = user.id; 
 
         res.json({
           message: 'Login successful',
@@ -137,7 +137,9 @@ app.post('/api/login', (req, res) => {
             profilePicture: user.profilePicture
               ? `${baseURL}:${port1}${user.profilePicture}`
               : null,
-            posts: [], // Placeholder for user's posts
+            email_notifications: user.email_notifications,
+            push_notifications: user.push_notifications,
+            posts: [], 
           },
         });
       } else {
@@ -258,10 +260,22 @@ app.get('/api/events', (req, res) => {
       return res.status(500).json({ message: 'Error fetching events from database' });
     }
 
-   
-    res.json(results);
+    // Dodaj pełny URL do obrazów
+    const eventsWithFullImagePath = results.map((event) => {
+      const fullImagePath = event.image ? `${baseURL}:${port1}/${event.image}` : null;
+      console.log(`Generated image path for event ID ${event.id}: ${fullImagePath}`);
+      return {
+        ...event,
+        image: fullImagePath,
+      };
+    });
+
+    res.json(eventsWithFullImagePath);
   });
 });
+
+
+
 
 app.get('/api/friends', (req, res) => {
   const userId = req.session.userId;
@@ -389,16 +403,16 @@ app.post('/api/friends_accept', (req, res) => {
 
 app.delete('/api/friends/:id', (req, res) => {
   const userId = req.session.userId;
-  const { id } = req.params; // Treat `id` as the `friend_id` to match against the `id` column in the database
+  const { id } = req.params; 
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized: No user ID in session' });
   }
 
-  // Log the delete request details
+  
   console.log('Delete Request:', { userId, id });
 
-  // Query to check if the relationship exists by the `id` column
+  
   const checkQuery = `
     SELECT * FROM friends
     WHERE id = ?
@@ -414,10 +428,9 @@ app.delete('/api/friends/:id', (req, res) => {
       return res.status(404).json({ message: 'No matching friend found' });
     }
 
-    // Log the results from the check
     console.log('Relationship Found:', results);
 
-    // Proceed to delete the row using the `id` column
+    
     const deleteQuery = `
       DELETE FROM friends
       WHERE id = ?
@@ -433,7 +446,7 @@ app.delete('/api/friends/:id', (req, res) => {
         return res.status(404).json({ message: 'No matching friend found' });
       }
 
-      // Log successful deletion
+      
       console.log('Deletion Successful:', result);
 
       res.status(200).json({ message: 'Friend removed successfully' });
@@ -464,30 +477,31 @@ app.post('/api/search_friend', (req, res) => {
 app.post('/api/friend_add', (req, res) => {
   const { user_id, friend_id } = req.body;
 
-  
+  // Check if the friend already exists in the database
   const checkQuery = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
   db.query(checkQuery, [user_id, friend_id], (err, result) => {
     if (err) {
-      console.error('Błąd przy sprawdzaniu istnienia znajomego:', err);
-      return res.status(500).json({ message: 'Błąd serwera' });
+      console.error('Error checking friend existence:', err);
+      return res.status(500).json({ message: 'Server error' });
     }
 
     if (result.length > 0) {
-      
-      return res.status(400).json({ message: 'Ten znajomy jest już dodany' });
+      // If the friend already exists, return an error response
+      return res.status(400).json({ message: 'User already added' });
     }
 
-    
+    // Add a new friend entry to the database with a 'pending' status
     const insertQuery = "INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, 'pending')";
     db.query(insertQuery, [user_id, friend_id], (err, result) => {
       if (err) {
-        console.error('Błąd przy dodawaniu znajomego do bazy danych:', err);
-        return res.status(500).json({ message: 'Błąd serwera' });
+        console.error('Error adding friend to the database:', err);
+        return res.status(500).json({ message: 'Server error' });
       }
-      return res.status(200).json({ message: 'Znajomy dodany pomyślnie' });
+      return res.status(200).json({ message: 'Friend added successfully' });
     });
   });
 });
+
 
 
 
@@ -530,7 +544,7 @@ app.post('/api/routes', (req, res) => {
     !duration ||
     typeof money === 'undefined' ||
     typeof is_private === 'undefined' ||
-    !Array.isArray(routeCoordinates) // Sprawdzanie, czy współrzędne to tablica
+    !Array.isArray(routeCoordinates) 
   ) {
     return res.status(400).json({ message: 'All fields, including route coordinates, are required' });
   }
@@ -546,7 +560,7 @@ app.post('/api/routes', (req, res) => {
       duration,
       money,
       is_private,
-      JSON.stringify(routeCoordinates), // Zapis współrzędnych jako JSON
+      JSON.stringify(routeCoordinates), 
     ],
     (err, result) => {
       if (err) {
@@ -578,10 +592,26 @@ app.get('/api/user_routes', (req, res) => {
   });
 });
 
+app.delete('/api/user_delete', (req, res) => { 
+  const userId = req.session.userId; 
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' }); 
+  }
 
+  
+  db.query('DELETE FROM users WHERE id = ?', [userId], (err, results) => {
+    if (err) {
+      console.error('Error deleting user:', err); 
+      return res.status(500).json({ message: 'Error deleting user' });
+    }
 
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-
+    res.status(200).json({ message: 'User deleted successfully' }); 
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

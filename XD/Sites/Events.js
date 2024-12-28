@@ -9,23 +9,27 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
 
 
-  useEffect(() => {
-    const fetchEventsAndRoutes = async () => {
-      try {
-        const eventResponse = await axios.get('http://192.168.56.1:5000/api/events');
-        setEvents(eventResponse.data);
-        
-        const routeResponse = await axios.get('http://192.168.56.1:5000/api/user_routes');
-        setUserRoutes(routeResponse.data);
-      } catch (error) {
-        console.error('Error fetching events or user routes:', error); 
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchEventsAndRoutes();
-  }, []); 
+  useEffect(() => {
+  const fetchEventsAndRoutes = async () => {
+    try {
+      const eventResponse = await axios.get('http://192.168.56.1:5000/api/events');
+      console.log('Fetched events:', eventResponse.data); // Log danych z API
+      setEvents(eventResponse.data);
+
+      const routeResponse = await axios.get('http://192.168.56.1:5000/api/user_routes');
+      console.log('Fetched user routes:', routeResponse.data); // Log tras użytkownika
+      setUserRoutes(routeResponse.data);
+    } catch (error) {
+      console.error('Error fetching events or user routes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchEventsAndRoutes();
+}, []);
+
 
   const calculateProgress = (event) => {
     const { startDate, endDate, distance } = event;

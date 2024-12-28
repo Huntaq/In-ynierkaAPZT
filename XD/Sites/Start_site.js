@@ -13,12 +13,6 @@ const Startsite = () => {
       />
       <Text style={styles.text}>Choose sustainable travel</Text>
 
-      <TouchableOpacity
-        style={styles.registerButton}
-        onPress={() => navigation.navigate('RegistrationOne')}
-      >
-        <Text style={styles.registerButtonText}>Register</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.loginButton}
@@ -26,6 +20,15 @@ const Startsite = () => {
       >
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.registerButton}
+        onPress={() => navigation.navigate('RegistrationOne')}
+      >
+        <Text style={styles.registerButtonText}>Register</Text>
+      </TouchableOpacity>
+
+      
     </View>
   );
 };

@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { Dimensions } from 'react-native';
+const { height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const NavBar = () => {
   const navigation = useNavigation();
 
@@ -19,18 +21,16 @@ const NavBar = () => {
         onPress={() => navigation.navigate('Feed')}>
         <Text style={styles.buttonText}>Feed</Text>
       </TouchableOpacity>
-      
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => navigation.navigate('Progress')}>
+        <Text style={styles.buttonText}>Progress</Text>
+      </TouchableOpacity>
       <TouchableOpacity 
         style={styles.button} 
         onPress={() => navigation.navigate('Settings')}>
         <Text style={styles.buttonText}>Settings</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => navigation.navigate('Statistic')}>
-        <Text style={styles.buttonText}>Statistic</Text>
-      </TouchableOpacity>
-      
      
     </View>
   );
@@ -42,14 +42,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    height: 40,
+    height: height*0.05,
     width: '100%',
     backgroundColor: '#ccc',
     position: 'absolute',
     bottom: 0,
   },
   header: {
-    height: 60,
+    height: 20,
     width: '100%',
     backgroundColor: '#f8f8f8',
     justifyContent: 'center',

@@ -67,7 +67,7 @@ const Statistics = () => {
       } else if (selectedFilter === 'year') {
         return isSameYear(activityDate, now);
       }
-      return true; // Domyślnie brak filtrowania
+      return true; 
     });
 
     setFilteredActivities(filtered);

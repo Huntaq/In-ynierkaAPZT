@@ -1,8 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert, Image, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { UserContext } from '../src/UserContex';
 import { useNavigation } from '@react-navigation/native';
+
+import acceptIcon from '../assets/images/solar_check-square-bold.png';
+import removeIcon from '../assets/images/solar_close-square-bold.png';
+import addIcon from '../assets/images/solar_check-square-bold.png';
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
@@ -34,15 +38,12 @@ const Friends = () => {
 
   const removeFriend = async (friendId) => {
     try {
-      console.log('Attempting to remove friend with ID:', friendId); // Log the friendId
-  
       const response = await axios.delete(`http://192.168.56.1:5000/api/friends/${friendId}`, {
         withCredentials: true,
       });
-  
+
       Alert.alert('Success', response.data.message);
-  
-      // Update the friends list after removal
+
       setFriends((prevFriends) => prevFriends.filter((friend) => friend.friends_id !== friendId));
     } catch (error) {
       console.error('Error removing friend:', error.response?.data || error.message);
@@ -60,8 +61,7 @@ const Friends = () => {
 
       Alert.alert('Success', response.data.message);
 
-      const updatedPendingFriends = pendingFriends.filter((friend) => friend.friends_id !== friendId);
-      setPendingFriends(updatedPendingFriends);
+      setPendingFriends((prevPending) => prevPending.filter((friend) => friend.friends_id !== friendId));
 
       const responseAccepted = await axios.get('http://192.168.56.1:5000/api/friends', { withCredentials: true });
       setFriends(responseAccepted.data.results || []);
@@ -71,30 +71,43 @@ const Friends = () => {
     }
   };
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
+  const renderProfileItem = (profilePicture, username, icon, onPressAction) => (
+    <View style={styles.profileContainer}>
+      {profilePicture ? (
+        <Image
+          source={{ uri: `http://192.168.56.1${profilePicture}` }}
+          style={styles.profilePicture}
+          onError={(e) => console.log(`Error loading profile picture for ${username}:`, e.nativeEvent.error)}
+        />
+      ) : (
+        <View style={styles.defaultProfilePicture}>
+          <Text style={styles.profileInitial}>{username.charAt(0).toUpperCase()}</Text>
+        </View>
+      )}
+      <Text style={styles.usernameText}>{username}</Text>
+      <TouchableOpacity onPress={onPressAction} style={styles.iconButton}>
+        <Image source={icon} style={styles.icon} />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.sectionHeader}>Pending Friend Requests</Text>
       {pendingFriends.length === 0 ? (
-        <Text style={styles.noPendingText}>Nikt cię nie chce w przyjaciołach aktualnie, idź dotknąć trawy 🌱</Text>
+        <Text style={styles.noPendingText}>🌱</Text>
       ) : (
         <FlatList
           data={pendingFriends}
           keyExtractor={(item) => item.friends_id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.friendItem}>
-              <Text style={styles.text}>Username: {item.username}</Text>
-              {item.profilePicture ? (
-                <Image source={{ uri: `http://192.168.56.1${item.profilePicture}` }} style={styles.profilePicture} />
-              ) : (
-                <Text style={styles.text}>No profile picture available</Text>
-              )}
-              <Button title="Accept Friend" onPress={() => acceptFriendRequest(item.friends_id)} />
-            </View>
-          )}
+          renderItem={({ item }) =>
+            renderProfileItem(
+              item.profilePicture,
+              item.username,
+              acceptIcon,
+              () => acceptFriendRequest(item.friends_id)
+            )
+          }
         />
       )}
 
@@ -104,19 +117,18 @@ const Friends = () => {
       <FlatList
         data={friends}
         keyExtractor={(item) => item.friends_id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.friendItem}>
-            <Text style={styles.text}>Username: {item.username}</Text>
-            {item.profilePicture ? (
-              <Image source={{ uri: `http://192.168.56.1${item.profilePicture}` }} style={styles.profilePicture} />
-            ) : (
-              <Text style={styles.text}>No profile picture available</Text>
-            )}
-            <Button title="Remove Friend" onPress={() => removeFriend(item.friends_id)} />
-          </View>
-        )}
+        renderItem={({ item }) =>
+          renderProfileItem(
+            item.profilePicture,
+            item.username,
+            removeIcon,
+            () => removeFriend(item.friends_id)
+          )
+        }
       />
-      <Button title="Dodaj Przyjaciela" onPress={() => navigation.navigate('ADD Friends')} />
+      <TouchableOpacity onPress={() => navigation.navigate('ADD Friends')} style={styles.addButton}>
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -125,26 +137,50 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#F1FCF3',
   },
   separator: {
     borderBottomWidth: 1,
     borderBottomColor: '#000',
     marginVertical: 20,
   },
-  friendItem: {
-    padding: 10,
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    paddingBottom: 10,
   },
   profilePicture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginTop: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
   },
-  text: {
+  defaultProfilePicture: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  profileInitial: {
+    fontSize: 18,
+    color: '#fff',
+  },
+  usernameText: {
     fontSize: 16,
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   sectionHeader: {
     fontSize: 18,
@@ -158,6 +194,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
+  addButton: {
+    alignSelf: 'center',
+    marginVertical: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#6e9b7b',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+  },
+  buttonText: {
+    fontSize: 24,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+
 });
 
 export default Friends;

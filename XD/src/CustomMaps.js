@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, Alert, Platform, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Modal, Alert, Platform, Image, Dimensions } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import haversine from 'haversine';
@@ -7,7 +7,8 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { useNavigation } from '@react-navigation/native';
 
 import { UserContext } from './UserContex';
-
+const { height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const CustomMap = () => {
   const navigation = useNavigation();
   const [region, setRegion] = useState({
@@ -239,15 +240,16 @@ const CustomMap = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'Top', // Wyśrodkowanie pionowe
-    alignItems: 'top',     // Wyśrodkowanie poziome
+    justifyContent: 'Top', 
+    alignItems: 'top',     
     backgroundColor: '#F1FCF3',
   },
   
 
   map: {
-    width: 400, // Lub inna wartość, np. '100%' dla szerokości
-    height: 420,  // Stała wysokość w pikselach
+    
+    width: width, 
+    height: height*0.50,  
     marginBottom: 20,
     
   },
@@ -336,14 +338,14 @@ const styles = StyleSheet.create({
     color: '#84D49D',
   },
   selectedTransportContainer: {
-    alignItems: 'center', // Center both icon and text
+    alignItems: 'center', 
     justifyContent: 'center',
     marginBottom: 10,
   },
   selectedTransportIcon: {
     width: 50,
     height: 50,
-    marginBottom: 5, // Add space between the icon and text
+    marginBottom: 5, 
   },
   selectedTransportText: {
     fontSize: 18,

@@ -8,8 +8,10 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import NavBar from '../src/Navbar';
+
 
 const FAQ = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -144,15 +146,26 @@ const Notifications = () => {
 };
 
 const Settings = () => {
+
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <FAQ />
       <View style={styles.separator} />
       <Notifications />
+      <View style={styles.separator} />
+      <TouchableOpacity
+        style={styles.accountButton}
+        onPress={() => navigation.navigate('Profile_settings')}
+      >
+        <Text style={styles.AccountTitle}>Account</Text>
+      </TouchableOpacity>
       <NavBar />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -166,6 +179,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ccc',
     marginVertical: 5,
+    alignSelf: 'center',
   },
   faqContainer: {
     width: '90%',
@@ -188,9 +202,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 5,
   },
-  faqQuestion: {
-    fontSize: 18,
+  accountButton: {
+    backgroundColor: '#F1FCF3',
+    
+    borderRadius: 10,
+    marginVertical: 5,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  AccountTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'left',
   },
   modalContainer: {
     flex: 1,
@@ -256,5 +280,6 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 });
+
 
 export default Settings;
