@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserProvider, UserContext } from '../src/UserContex'; 
-
+import ForgotPassword from '../src/ForgotPass';
 
 
 
@@ -55,7 +55,14 @@ const AppContent = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Logowanie">
         <Stack.Screen name="Logowanie" component={Log} />
-        
+        <Stack.Screen 
+  name="ForgotPassword" 
+  component={ForgotPassword} 
+  options={{
+    title: 'Forgot Password',
+  }} 
+/>
+
         <Stack.Screen 
           name="ADD Friends" 
           component={FriendSearchScreen} 

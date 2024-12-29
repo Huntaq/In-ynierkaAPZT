@@ -7,11 +7,12 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const bodyParser = require('body-parser');
-
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = 5000;
-const baseURL = 'http://192.168.56.1';
+const baseURL = 'http://192.168.1.6';
 const port1 = 80
 
 
@@ -27,7 +28,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'inzynierka'
+  database: 'brancz'
 });
 
 app.use(session({
@@ -522,6 +523,108 @@ app.get('/api/user_routes', (req, res) => {
 
     res.json(results);
   });
+});
+app.post('/api/send-otp', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Email not found' });
+    }
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const expiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minut
+
+    db.query(
+      'UPDATE users SET reset_otp = ?, reset_expiry = ? WHERE email = ?',
+      [otp, expiry, email],
+      (err) => {
+        if (err) {
+          console.error('Error saving OTP:', err);
+          return res.status(500).json({ message: 'Error saving OTP' });
+        }
+
+       
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'jhenschelkontakt@gmail.com', 
+            pass: 'nhwxdrknovsuzrtg',  
+          },
+        });
+
+        const mailOptions = {
+          from: 'jhenschelkontakt@gmail.com',
+          to: email,
+          subject: 'Your OTP for password reset',
+          text: `Your OTP is ${otp}. This code is valid for 15 minutes.`,
+        };
+
+        transporter.sendMail(mailOptions, (err) => {
+          if (err) {
+            console.error('Error sending email:', err);
+            return res.status(500).json({ message: 'Error sending email' });
+          }
+
+          res.status(200).json({ message: 'OTP sent successfully' });
+        });
+      }
+    );
+  });
+});
+
+app.post('/api/reset_password', (req, res) => {
+  const { resetEmail, otp, newPassword } = req.body;
+
+  if (!otp || !newPassword) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  
+  db.query(
+    'SELECT * FROM users WHERE email = ? AND reset_otp = ? AND reset_expiry > ?',
+    [resetEmail, otp, new Date()],
+    (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error' });
+      }
+
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
+      }
+
+      
+      bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+        if (err) {
+          console.error('Error hashing password:', err);
+          return res.status(500).json({ message: 'Error hashing password' });
+        }
+
+        db.query(
+          'UPDATE users SET password_hash = ?, reset_otp = NULL, reset_expiry = NULL WHERE email = ?',
+          [hashedPassword, resetEmail],
+          (err) => {
+            if (err) {
+              console.error('Error updating password:', err);
+              return res.status(500).json({ message: 'Error updating password' });
+            }
+
+            res.status(200).json({ message: 'Password reset successfully' });
+          }
+        );
+      });
+    }
+  );
 });
 
 
