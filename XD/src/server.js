@@ -574,7 +574,6 @@ app.post('/api/routes', (req, res) => {
 });
 
 
-
 app.get('/api/user_routes', (req, res) => {
   const userId = req.session.userId;
 
@@ -588,9 +587,19 @@ app.get('/api/user_routes', (req, res) => {
       return res.status(500).json({ message: 'Error fetching routes from database' });
     }
 
-    res.json(results);
+    // Parse route_coordinates field
+    const parsedResults = results.map(route => ({
+      ...route,
+      route_coordinates: route.route_coordinates
+        ? JSON.parse(route.route_coordinates) // Parse JSON string
+        : [],
+    }));
+
+    console.log('Parsed Results:', parsedResults);
+    res.json(parsedResults);
   });
 });
+
 
 app.delete('/api/user_delete', (req, res) => { 
   const userId = req.session.userId; 

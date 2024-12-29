@@ -105,7 +105,7 @@ const Profile = () => {
           {isUploading && <ActivityIndicator size="large" color="#007BFF" style={styles.loadingIndicator} />}
           <Text style={styles.username}>{user.username}</Text>
 
-          <Text style={styles.recentEventsTitle}>Recent Completed Events</Text>
+          <Text style={styles.recentEventsTitle}></Text>
           {loadingEvents ? (
             <ActivityIndicator size="large" color="#007BFF" />
           ) : (
@@ -123,7 +123,7 @@ const Profile = () => {
       ) : (
         <Text style={styles.text}>No user data available</Text>
       )}
-      <NavBarPro />
+      
     </View>
   );
 };

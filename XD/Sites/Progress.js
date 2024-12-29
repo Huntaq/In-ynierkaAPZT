@@ -26,22 +26,23 @@ const Progress = () => {
     const startOfWeek = getStartOfWeek(new Date());
     const endOfWeek = getEndOfWeek(new Date());
     setSelectedDateRange({ start: startOfWeek, end: endOfWeek });
-
+  
     const filteredRoutes = routes.filter((route) => {
-      const routeDate = new Date(route.date);
+      const routeDate = new Date(route.date); // Ensure proper date parsing
+      routeDate.setHours(0, 0, 0, 0); // Normalize route date to 00:00:00
       return routeDate >= startOfWeek && routeDate <= endOfWeek;
     });
-
+  
     const groupedByDay = Array(7).fill(0); // Initialize array for 7 days
     let total = 0;
-
+  
     filteredRoutes.forEach((route) => {
       const routeDate = new Date(route.date);
       const dayIndex = routeDate.getDay();
       groupedByDay[dayIndex] += route.distance_km;
       total += route.distance_km;
     });
-
+  
     setTotalDistance(total);
     setData(groupedByDay);
   };
@@ -49,19 +50,24 @@ const Progress = () => {
   const getStartOfWeek = (date) => {
     const day = date.getDay();
     const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday as start
-    return new Date(date.setDate(diff));
+    const startOfWeek = new Date(date.setDate(diff));
+    startOfWeek.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+    return startOfWeek;
   };
 
   const getEndOfWeek = (date) => {
     const startOfWeek = getStartOfWeek(date);
-    return new Date(startOfWeek.setDate(startOfWeek.getDate() + 6));
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999); // Set time to the end of the day
+    return endOfWeek;
   };
 
   const renderChart = () => {
     return (
       <BarChart
         data={{
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          labels: ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', ],
           datasets: [{ data }],
         }}
         width={Dimensions.get('window').width - 40}
