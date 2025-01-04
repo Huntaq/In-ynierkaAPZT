@@ -60,7 +60,7 @@ const AppContent = () => {
           name="ADD Friends"
           component={FriendSearchScreen}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
           }}
         />
@@ -68,46 +68,51 @@ const AppContent = () => {
           name="Home"
           component={Home}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
+            headerBackVisible: false, 
           }}
         />
         <Stack.Screen
           name="SummaryScreen"
           component={SummaryScreen}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
+            headerBackVisible: false, 
           }}
         />
         <Stack.Screen
           name="Statistic"
           component={Statistics}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
+            headerBackVisible: false, 
           }}
         />
         <Stack.Screen
           name="Log"
           component={Log}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
+            
           }}
         />
         <Stack.Screen
           name="Feed"
           component={Feed}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
+            headerBackVisible: false, 
           }}
         />
         <Stack.Screen
           name="Details"
           component={SaveRoad}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
           }}
         />
@@ -115,7 +120,7 @@ const AppContent = () => {
           name="Profile"
           component={Profile}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileHeaderRight />,
           }}
         />
@@ -123,29 +128,31 @@ const AppContent = () => {
           name="Profile_settings"
           component={Profile_settings}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
           }}
         />
         <Stack.Screen
           name="Events"
           component={Events}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
           }}
         />
         <Stack.Screen
           name="Settings"
           component={Settings}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
+            headerBackVisible: false, 
+            
           }}
         />
         <Stack.Screen
           name="Friends"
           component={Friends}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
           }}
         />
@@ -153,22 +160,23 @@ const AppContent = () => {
           name="RegistrationOne"
           component={RegistrationOne}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
           }}
         />
         <Stack.Screen
           name="RegistrationTwo"
           component={RegistrationTwo}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
           }}
         />
         <Stack.Screen
           name="Progress"
           component={Progress}
           options={{
-            title: 'EcoSphera',
+            title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
+            headerBackVisible: false, 
           }}
         />
       </Stack.Navigator>

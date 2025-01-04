@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Alert,
   TouchableOpacity,
   Modal,
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import NavBar from '../src/Navbar';
-
 
 const FAQ = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -97,75 +94,24 @@ const FAQ = () => {
   );
 };
 
-const Notifications = () => {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const response = await axios.get('http://192.168.56.1:5000/api/notifications');
-      setNotifications(response.data);
-      setLoading(false);
-    } catch (error) {
-      Alert.alert('Error', 'Unable to fetch notifications.');
-      setLoading(false);
-    }
-  };
-
-  const toggleNotifications = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  return (
-    <View style={styles.notificationsContainer}>
-      <TouchableOpacity style={styles.notificationsHeader} onPress={toggleNotifications}>
-        <Text style={styles.notificationsTitle}>Notifications</Text>
-      </TouchableOpacity>
-
-      {isExpanded &&
-        (loading ? (
-          <Text>Loading...</Text>
-        ) : (
-          notifications.map((item, index) => (
-            <View key={index} style={styles.notificationCard}>
-              <Text style={styles.notificationHeader}>{item.header}</Text>
-              <Text style={styles.notificationContent}>{item.content}</Text>
-              <Text style={styles.notificationDate}>
-                {new Date(item.created_at).toLocaleString()}
-              </Text>
-            </View>
-          ))
-        ))}
-    </View>
-  );
-};
-
 const Settings = () => {
-
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <FAQ />
-      <View style={styles.separator} />
-      <Notifications />
-      <View style={styles.separator} />
       <TouchableOpacity
         style={styles.accountButton}
         onPress={() => navigation.navigate('Profile_settings')}
       >
         <Text style={styles.AccountTitle}>Account</Text>
       </TouchableOpacity>
+
+      <View style={styles.separator} />
+      <FAQ />
       <NavBar />
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -204,7 +150,6 @@ const styles = StyleSheet.create({
   },
   accountButton: {
     backgroundColor: '#F1FCF3',
-    
     borderRadius: 10,
     marginVertical: 5,
     width: '90%',
@@ -246,40 +191,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  notificationsContainer: {
-    width: '90%',
-    marginVertical: 10,
-  },
-  notificationsHeader: {
-    backgroundColor: '#F1FCF3',
-    padding: 15,
-    borderRadius: 10,
-  },
-  notificationsTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'left',
-  },
-  notificationCard: {
-    backgroundColor: '#f9f9f9',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  notificationHeader: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  notificationContent: {
-    fontSize: 16,
-    marginVertical: 5,
-  },
-  notificationDate: {
-    fontSize: 14,
-    color: 'gray',
-  },
 });
-
 
 export default Settings;

@@ -5,20 +5,28 @@ import { UserContext } from '../src/UserContex';
 
 const Profile_settings = () => {
     const { user, setUser } = useContext(UserContext);
-    const [emailNotifications, setEmailNotifications] = useState(user.email_notifications);
-    const [pushNotifications, setPushNotifications] = useState(user.push_notifications);
+    const [emailNotifications, setEmailNotifications] = useState(!!user.email_notifications);
+    const [pushNotifications, setPushNotifications] = useState(!!user.push_notifications);
     const [modalVisible, setModalVisible] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleDeleteAccount = () => {
-        if (password === confirmPassword && password !== '') {
+        const trimmedPassword = password.trim();
+        const trimmedConfirmPassword = confirmPassword.trim();
+
+        if (trimmedPassword === trimmedConfirmPassword && trimmedPassword !== '') {
             fetch('http://192.168.56.1:5000/api/user_delete', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id, password }),
+                body: JSON.stringify({ userId: user.id, password: trimmedPassword }),
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete account');
+                    }
+                    return response.json();
+                })
                 .then((data) => {
                     if (data.success) {
                         Alert.alert('Success', 'Your account has been deleted.');
@@ -36,6 +44,48 @@ const Profile_settings = () => {
         }
     };
 
+    const updateEmailNotifications = (newValue) => {
+        fetch('http://192.168.56.1:5000/api/updateEmailNotifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id, emailNotifications: newValue ? 1 : 0 }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to update email notifications');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Email notifications updated successfully:', data);
+            })
+            .catch((error) => {
+                console.error('Error updating email notifications:', error);
+                Alert.alert('Error', 'Unable to update email notifications.');
+            });
+    };
+    
+    const updatePushNotifications = (newValue) => {
+        fetch('http://192.168.56.1:5000/api/updatePushNotifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id, pushNotifications: newValue ? 1 : 0 }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to update push notifications');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Push notifications updated successfully:', data);
+            })
+            .catch((error) => {
+                console.error('Error updating push notifications:', error);
+                Alert.alert('Error', 'Unable to update push notifications.');
+            });
+    };
+    
     return (
         <View style={styles.container}>
             {user ? (
@@ -71,14 +121,10 @@ const Profile_settings = () => {
 
                     <View style={styles.checkboxRow}>
                         <CheckBox
-                            value={!!emailNotifications} 
+                            value={emailNotifications}
                             onValueChange={(newValue) => {
                                 setEmailNotifications(newValue);
-                                fetch('http://192.168.56.1:5000/api/updateNotifications', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ userId: user.id, emailNotifications: newValue }),
-                                }).catch(console.error);
+                                updateEmailNotifications(newValue);
                             }}
                         />
                         <Text style={styles.checkboxLabel}>Email Notifications</Text>
@@ -86,14 +132,10 @@ const Profile_settings = () => {
 
                     <View style={styles.checkboxRow}>
                         <CheckBox
-                            value={!!pushNotifications} 
+                            value={pushNotifications}
                             onValueChange={(newValue) => {
                                 setPushNotifications(newValue);
-                                fetch('http://192.168.56.1:5000/api/updateNotifications', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ userId: user.id, pushNotifications: newValue }),
-                                }).catch(console.error);
+                                updatePushNotifications(newValue);
                             }}
                         />
                         <Text style={styles.checkboxLabel}>Push Notifications</Text>
@@ -106,11 +148,25 @@ const Profile_settings = () => {
                         <Text style={styles.buttonText}>Delete Account</Text>
                     </TouchableOpacity>
 
+                    <TouchableOpacity
+                        style={styles.LogoutButton}
+                        onPress={() => {
+                            
+                            Alert.alert('Logged Out', 'You have been logged out successfully.');
+                           
+                            navigation.navigate('StartSite');
+                        }}
+                    >
+                        <Text style={styles.buttonText}>Logout</Text>
+                    </TouchableOpacity>
+
                     <Modal
                         animationType="slide"
                         transparent={true}
                         visible={modalVisible}
                         onRequestClose={() => setModalVisible(false)}
+                        accessible={true}
+                        accessibilityLabel="Delete Account Modal"
                     >
                         <View style={styles.modalContainer}>
                             <View style={styles.modalContent}>
@@ -138,7 +194,10 @@ const Profile_settings = () => {
                     </Modal>
                 </>
             ) : (
-                <Text style={styles.text}>No user data available</Text>
+                <View style={styles.noUserContainer}>
+                    <Text style={styles.text}>No user data available</Text>
+                    <Button title="Go to Login" onPress={() => {StartSite}} />
+                </View>
             )}
         </View>
     );
@@ -147,8 +206,8 @@ const Profile_settings = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'Top', 
-        alignItems: 'top',     
+        justifyContent: 'flex-start', 
+        alignItems: 'flex-start',     
         backgroundColor: '#F1FCF3',
     },
     text: {
@@ -186,6 +245,15 @@ const styles = StyleSheet.create({
     DeleteButton:{
         marginTop: 20,
         backgroundColor: '#84D49D',
+        paddingVertical: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: 300,
+        alignSelf: 'center',
+    },
+    LogoutButton:{
+        marginTop: 20,
+        backgroundColor: '#D9534F', // Red color
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
@@ -238,6 +306,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         marginTop: 10,
+    },
+    noUserContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

@@ -188,26 +188,26 @@ app.post('/api/posts', (req, res) => {
 });
 
 app.post('/api/register', (req, res) => {
-  const { username, password, email, age, gender } = req.body;
+  const { username, password, email, age, gender, emailNotification, pushNotification } = req.body;
 
-  
+  // Validate gender
   if (!['F', 'M'].includes(gender)) {
     return res.status(400).json({ message: 'Invalid gender value' });
   }
 
-  
+  // Validate age
   const ageInt = parseInt(age, 10);
   if (!username || !password || !email || isNaN(ageInt) || !gender) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  
+  // Validate password
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   if (!passwordRegex.test(password)) {
     return res.status(400).json({ message: 'Password must be at least 8 characters long and contain a lowercase letter, an uppercase letter, a number, and a special character' });
   }
 
-
+  // Check for existing username or email
   db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email], (err, results) => {
     if (err) {
       console.error('Database query error:', err);
@@ -215,7 +215,6 @@ app.post('/api/register', (req, res) => {
     }
 
     if (results.length > 0) {
-      
       const existingUser = results[0];
       let conflictMessage = '';
       if (existingUser.username === username && existingUser.email === email) {
@@ -229,26 +228,29 @@ app.post('/api/register', (req, res) => {
       return res.status(409).json({ message: conflictMessage });
     }
 
-
+    
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) {
         console.error('Password hashing error:', err);
         return res.status(500).json({ message: 'Error hashing password' });
       }
 
-      
-      db.query('INSERT INTO users (username, password_hash, email, age, gender) VALUES (?, ?, ?, ?, ?)', 
-        [username, hash, email, ageInt, gender], (err, result) => {
+      db.query(
+        'INSERT INTO users (username, password_hash, email, age, gender, email_notifications, push_notifications) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [username, hash, email, ageInt, gender, emailNotification ? 1 : 0, pushNotification ? 1 : 0],
+        (err, result) => {
           if (err) {
             console.error('Error adding user to database:', err);
             return res.status(500).json({ message: 'Error adding user to database' });
           }
 
           res.json({ message: 'User registered successfully' });
-      });
+        }
+      );
     });
   });
 });
+
 
 
 app.get('/api/events', (req, res) => {
@@ -508,16 +510,28 @@ app.post('/api/friend_add', (req, res) => {
 app.get('/api/notifications', (req, res) => {
   const userId = req.session.userId;
 
- 
+  if (!userId) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
 
-  
-  db.query('SELECT * FROM notifications_popup', (err, results) => {
+  db.query('SELECT push_notifications FROM users WHERE id = ?', [userId], (err, results) => {
     if (err) {
-      console.error('Error fetching notifications:', err);
-      return res.status(500).json({ message: 'Error fetching notifications from the database' });
+      console.error('Error checking user preferences:', err);
+      return res.status(500).json({ message: 'Error fetching user preferences' });
     }
 
-    res.json(results);
+    if (results.length === 0 || results[0].push_notifications === 0) {
+      return res.status(403).json({ message: 'Push notifications are disabled' });
+    }
+
+    db.query('SELECT * FROM notifications_popup', (err, notifications) => {
+      if (err) {
+        console.error('Error fetching notifications:', err);
+        return res.status(500).json({ message: 'Error fetching notifications from the database' });
+      }
+
+      res.json(notifications);
+    });
   });
 });
 
@@ -532,25 +546,33 @@ app.post('/api/routes', (req, res) => {
     duration,
     money,
     is_private,
-    routeCoordinates, // Dodanie współrzędnych
+    routeCoordinates,
+    content,
   } = req.body;
 
   if (
     !user_id ||
     !transport_mode_id ||
-    typeof distance_km === 'undefined' ||
-    typeof CO2 === 'undefined' ||
-    typeof kcal === 'undefined' ||
+    typeof distance_km !== 'number' ||
+    typeof CO2 !== 'number' ||
+    typeof kcal !== 'number' ||
     !duration ||
-    typeof money === 'undefined' ||
+    typeof money !== 'number' ||
     typeof is_private === 'undefined' ||
-    !Array.isArray(routeCoordinates) 
+    !Array.isArray(routeCoordinates) ||
+    !routeCoordinates.every(
+      (coord) =>
+        typeof coord === 'object' &&
+        typeof coord.latitude === 'number' &&
+        typeof coord.longitude === 'number'
+    )
   ) {
-    return res.status(400).json({ message: 'All fields, including route coordinates, are required' });
+    console.error('Validation failed. Received data:', req.body);
+    return res.status(400).json({ message: 'All fields are required and must be of the correct type' });
   }
 
   db.query(
-    'INSERT INTO user_routes (user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, route_coordinates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO user_routes (user_id, transport_mode_id, distance_km, CO2, kcal, duration, money, is_private, route_coordinates, content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       user_id,
       transport_mode_id,
@@ -559,12 +581,13 @@ app.post('/api/routes', (req, res) => {
       kcal,
       duration,
       money,
-      is_private,
-      JSON.stringify(routeCoordinates), 
+      is_private ? 1 : 0,
+      JSON.stringify(routeCoordinates),
+      content || null,
     ],
     (err, result) => {
       if (err) {
-        console.error('Error adding route:', err);
+        console.error('Error adding route to the database:', err);
         return res.status(500).json({ message: 'Error adding route to the database' });
       }
 
@@ -574,6 +597,7 @@ app.post('/api/routes', (req, res) => {
 });
 
 
+
 app.get('/api/user_routes', (req, res) => {
   const userId = req.session.userId;
 
@@ -581,24 +605,88 @@ app.get('/api/user_routes', (req, res) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  db.query('SELECT * FROM user_routes WHERE user_id = ?', [userId], (err, results) => {
+  // Updated query to include the content column
+  db.query(
+    'SELECT * FROM user_routes WHERE user_id = ? AND route_coordinates IS NOT NULL ORDER BY date DESC',
+    [userId],
+    (err, results) => {
+      if (err) {
+        console.error('Error fetching user routes:', err);
+        return res.status(500).json({ message: 'Error fetching routes from database' });
+      }
+
+      const parsedResults = results.map(route => ({
+        ...route,
+        route_coordinates: route.route_coordinates
+          ? JSON.parse(route.route_coordinates)
+          : [],
+      }));
+
+      res.json(parsedResults);
+    }
+  );
+});
+
+
+
+
+
+app.get('/api/comments/:postId', (req, res) => {
+  const { postId } = req.params;
+
+  const query = `
+    SELECT 
+      id AS comment_id, 
+      post_id, 
+      comment_date, 
+      comment_text
+    FROM 
+      comments
+    WHERE 
+      post_id = ?
+  `;
+
+  db.query(query, [postId], (err, results) => {
     if (err) {
-      console.error('Error fetching user routes:', err);
-      return res.status(500).json({ message: 'Error fetching routes from database' });
+      console.error('Error fetching comments:', err);
+      return res.status(500).json({ message: 'Error fetching comments from database' });
     }
 
-    // Parse route_coordinates field
-    const parsedResults = results.map(route => ({
-      ...route,
-      route_coordinates: route.route_coordinates
-        ? JSON.parse(route.route_coordinates) // Parse JSON string
-        : [],
-    }));
-
-    console.log('Parsed Results:', parsedResults);
-    res.json(parsedResults);
+    res.json(results);
   });
 });
+
+
+app.post('/api/comments_add/:postId', (req, res) => {
+  const { postId } = req.params; // Get the post_id (route_id) from the URL
+  const { user_id, comment_text } = req.body; // Get user_id and comment_text from the request body
+
+  // Validate required fields
+  if (!user_id || !comment_text) {
+    return res.status(400).json({ message: 'Missing required fields: user_id or comment_text' });
+  }
+
+  const query = `
+    INSERT INTO comments (post_id, user_id, comment_date, comment_text)
+    VALUES (?, ?, NOW(), ?)
+  `;
+
+  db.query(query, [postId, user_id, comment_text], (err, result) => {
+    if (err) {
+      console.error('Error inserting comment:', err);
+      return res.status(500).json({ message: 'Error adding comment to database' });
+    }
+
+    res.status(201).json({
+      message: 'Comment added successfully',
+      comment_id: result.insertId, // Return the ID of the newly created comment
+    });
+  });
+});
+
+
+
+
 
 
 app.delete('/api/user_delete', (req, res) => { 
@@ -621,6 +709,169 @@ app.delete('/api/user_delete', (req, res) => {
     res.status(200).json({ message: 'User deleted successfully' }); 
   });
 });
+
+
+app.post('/api/updateEmailNotifications', (req, res) => {
+  const { userId, emailNotifications } = req.body;
+
+  if (!userId || emailNotifications === undefined) {
+      return res.status(400).json({ success: false, message: 'Invalid input' });
+  }
+
+  const query = `
+      UPDATE users 
+      SET email_notifications = ?
+      WHERE id = ?
+  `;
+
+  db.query(
+      query, 
+      [emailNotifications ? 1 : 0, userId],
+      (err, result) => {
+          if (err) {
+              console.error('Database error:', err);
+              return res.status(500).json({ success: false, message: 'Database error' });
+          }
+
+          res.json({ success: true, message: 'Email notifications updated successfully' });
+      }
+  );
+});
+
+app.post('/api/updatePushNotifications', (req, res) => {
+  const { userId, pushNotifications } = req.body;
+
+  if (!userId || pushNotifications === undefined) {
+      return res.status(400).json({ success: false, message: 'Invalid input' });
+  }
+
+  const query = `
+      UPDATE users 
+      SET push_notifications = ?
+      WHERE id = ?
+  `;
+
+  db.query(
+      query, 
+      [pushNotifications ? 1 : 0, userId],
+      (err, result) => {
+          if (err) {
+              console.error('Database error:', err);
+              return res.status(500).json({ success: false, message: 'Database error' });
+          }
+
+          res.json({ success: true, message: 'Push notifications updated successfully' });
+      }
+  );
+});
+
+
+
+
+app.post('/api/send-otp', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Email not found' });
+    }
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const expiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minut
+
+    db.query(
+      'UPDATE users SET reset_otp = ?, reset_expiry = ? WHERE email = ?',
+      [otp, expiry, email],
+      (err) => {
+        if (err) {
+          console.error('Error saving OTP:', err);
+          return res.status(500).json({ message: 'Error saving OTP' });
+        }
+
+       
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'jhenschelkontakt@gmail.com', 
+            pass: 'nhwxdrknovsuzrtg',  
+          },
+        });
+
+        const mailOptions = {
+          from: 'jhenschelkontakt@gmail.com',
+          to: email,
+          subject: 'Your OTP for password reset',
+          text: `Your OTP is ${otp}. This code is valid for 15 minutes.`,
+        };
+
+        transporter.sendMail(mailOptions, (err) => {
+          if (err) {
+            console.error('Error sending email:', err);
+            return res.status(500).json({ message: 'Error sending email' });
+          }
+
+          res.status(200).json({ message: 'OTP sent successfully' });
+        });
+      }
+    );
+  });
+});
+
+app.post('/api/reset_password', (req, res) => {
+  const { resetEmail, otp, newPassword } = req.body;
+
+  if (!otp || !newPassword) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  
+  db.query(
+    'SELECT * FROM users WHERE email = ? AND reset_otp = ? AND reset_expiry > ?',
+    [resetEmail, otp, new Date()],
+    (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error' });
+      }
+
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
+      }
+
+      
+      bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+        if (err) {
+          console.error('Error hashing password:', err);
+          return res.status(500).json({ message: 'Error hashing password' });
+        }
+
+        db.query(
+          'UPDATE users SET password_hash = ?, reset_otp = NULL, reset_expiry = NULL WHERE email = ?',
+          [hashedPassword, resetEmail],
+          (err) => {
+            if (err) {
+              console.error('Error updating password:', err);
+              return res.status(500).json({ message: 'Error updating password' });
+            }
+
+            res.status(200).json({ message: 'Password reset successfully' });
+          }
+        );
+      });
+    }
+  );
+});
+
+
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

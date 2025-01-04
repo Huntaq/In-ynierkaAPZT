@@ -1,10 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, Modal } from 'react-native';
 import MapView, { Polyline } from 'react-native-maps';
 import axios from 'axios';
 import { UserContext } from '../src/UserContex';
-
-const { width } = Dimensions.get('window');
 
 const SummaryScreen = ({ route, navigation }) => {
   const { user } = useContext(UserContext);
@@ -17,15 +15,11 @@ const SummaryScreen = ({ route, navigation }) => {
     routeCoordinates = [],
   } = route.params || {};
 
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [content, setContent] = useState(''); // Zmieniono z description na content
 
   const calculateCO2 = (transportMode, distance) => {
-    const co2PerKm = {
-      Walking: 0.5,
-      Cycling: 1,
-      Running: 1.5,
-    };
-
+    const co2PerKm = { Walking: 0.5, Cycling: 1, Running: 1.5 };
     return (co2PerKm[transportMode] || 0) * distance;
   };
 
@@ -34,7 +28,7 @@ const SummaryScreen = ({ route, navigation }) => {
     return (distance * avgCostPerKm).toFixed(2);
   };
 
-  const handleSendToDatabase = async () => {
+  const handleSendToDatabase = async (isPrivate) => {
     const user_id = user?.id;
 
     if (!user_id) {
@@ -55,40 +49,24 @@ const SummaryScreen = ({ route, navigation }) => {
       duration: time,
       money: parseFloat(money),
       is_private: isPrivate ? 1 : 0,
-      routeCoordinates, // Ensure this is an array of valid coordinates
+      routeCoordinates,
+      content, // Użycie content zamiast description
     };
-
-    console.log('Data being sent to the database:', data);
 
     try {
       const response = await axios.post('http://192.168.56.1:5000/api/routes', data);
       if (response.status === 201) {
         Alert.alert('Success', 'Route saved successfully!');
-        navigation.navigate('Home'); // Redirect to Home or another appropriate screen
+        setModalVisible(false);
+        navigation.navigate('Home');
       } else {
         throw new Error('Failed to save the route');
       }
     } catch (error) {
-      console.error('Error saving route:', error);
-      Alert.alert('Error', 'Failed to save the route. Please try again.');
+      console.error('Error saving route:', error.response?.data || error.message);
+      Alert.alert('Error', error.response?.data?.message || 'Failed to save the route. Please try again.');
     }
   };
-
-  const statistics = [
-    { key: 'Transport Mode', value: transportMode },
-    { key: 'Distance', value: `${distance} km` },
-    { key: 'Time', value: time },
-    { key: 'Calories Burned', value: `${calories} kcal` },
-    { key: 'CO2 Saved', value: `${calculateCO2(transportMode, distance).toFixed(2)} kg` },
-    { key: 'Money Saved', value: `${calculateMoneySaved(distance)} currency units` },
-  ];
-
-  const renderStatistic = ({ item }) => (
-    <View style={styles.statisticCard}>
-      <Text style={styles.statisticKey}>{item.key}</Text>
-      <Text style={styles.statisticValue}>{item.value}</Text>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -104,100 +82,79 @@ const SummaryScreen = ({ route, navigation }) => {
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
       </MapView>
-      <FlatList
-        data={statistics}
-        renderItem={renderStatistic}
-        keyExtractor={(item) => item.key}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        style={styles.statisticList}
-      />
-      <TouchableOpacity
-        style={[styles.button, isPrivate ? styles.privateButton : styles.publicButton]}
-        onPress={() => setIsPrivate((prev) => !prev)}
+      <TouchableOpacity style={styles.shareButton} onPress={() => setModalVisible(true)}>
+        <Text style={styles.buttonText}>Share</Text>
+      </TouchableOpacity>
+
+      {/* Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setModalVisible(false)}
       >
-        <Text style={styles.buttonText}>{isPrivate ? 'Make Public' : 'Make Private'}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSendToDatabase}>
-        <Text style={styles.buttonText}>Save</Text>
-      </TouchableOpacity>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Add Content</Text>
+            <MapView
+              style={styles.modalMap}
+              initialRegion={{
+                latitude: routeCoordinates[0]?.latitude || 0,
+                longitude: routeCoordinates[0]?.longitude || 0,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+            >
+              <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
+            </MapView>
+            <TextInput
+              placeholder="Add content to your post"
+              style={styles.input}
+              value={content} // Użycie content zamiast description
+              onChangeText={setContent}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.button, styles.keepPrivateButton]}
+                onPress={() => handleSendToDatabase(false)}
+              >
+                <Text style={styles.buttonText}>Keep Private</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.shareButton]}
+                onPress={() => handleSendToDatabase(true)}
+              >
+                <Text style={styles.buttonText}>Share</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={[styles.button, styles.closeButton]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#F1FCF3',
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  map: {
-    height: 300,
-    marginBottom: 20,
-  },
-  statisticList: {
-    marginBottom: 20,
-  },
-  statisticCard: {
-    width: width * 0.8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    marginHorizontal: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 10,
-    elevation: 2,
-  },
-  statisticKey: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  statisticValue: {
-    fontSize: 16,
-    color: '#555',
-  },
-  button: {
-    height: 50,
-    width: 232,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 16,
-    marginTop: 20,
-  },
-  publicButton: {
-    borderColor: '#84D49D',
-    backgroundColor: '#84D49D',
-    alignItems: 'center',
-    width: 300,
-    alignSelf: 'center',
-  },
-  privateButton: {
-    borderColor: '#84D49D',
-    backgroundColor: '#84D49D',
-    alignItems: 'center',
-    width: 300,
-    alignSelf: 'center',
-  },
-  saveButton: {
-    borderColor: '#84D49D',
-    backgroundColor: '#84D49D',
-    alignItems: 'center',
-    width: 300,
-    alignSelf: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#F1FCF3' },
+  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  map: { height: 300, marginBottom: 20 },
+  shareButton: { backgroundColor: '#84D49D', padding: 15, borderRadius: 10, alignItems: 'center' },
+  buttonText: { color: '#fff', fontSize: 16 },
+  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modalContent: { width: 300, backgroundColor: '#fff', padding: 20, borderRadius: 10, alignItems: 'center' },
+  modalText: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+  modalMap: { height: 200, width: '100%', marginBottom: 20 },
+  input: { width: '100%', borderBottomWidth: 1, borderBottomColor: '#ccc', marginBottom: 10, padding: 5 },
+  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 10 },
+  button: { flex: 1, marginHorizontal: 5, paddingVertical: 10, borderRadius: 5, alignItems: 'center' },
+  keepPrivateButton: { backgroundColor: '#FF6B6B' },
+  closeButton: { backgroundColor: '#ccc', marginTop: 10 },
 });
 
 export default SummaryScreen;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import CheckBox from '@react-native-community/checkbox'; // Install using: npm install @react-native-community/checkbox
+import CheckBox from '@react-native-community/checkbox';
 import axios from 'axios';
 
 const RegistrationTwo = () => {
@@ -28,8 +28,8 @@ const RegistrationTwo = () => {
       password,
       age,
       gender,
-      emailNotification,
-      pushNotification,
+      emailNotification: emailNotification ? 1 : 0,
+      pushNotification: pushNotification ? 1 : 0,
     };
 
     try {
@@ -39,7 +39,7 @@ const RegistrationTwo = () => {
 
       if (response.status === 200) {
         Alert.alert('Success', 'User registered successfully');
-        navigation.navigate('Log'); // Navigate to login screen
+        navigation.navigate('Log');
       }
     } catch (error) {
       if (error.response) {
@@ -63,14 +63,12 @@ const RegistrationTwo = () => {
           keyboardType="numeric"
         />
 
-        <View style={[styles.pickerContainer, styles.genderPicker]}>
-          <TextInput
-            style={styles.input}
-            placeholder="Gender (M/F)"
-            value={gender}
-            onChangeText={setGender}
-          />
-        </View>
+        <TextInput
+          style={[styles.input, styles.genderPicker]}
+          placeholder="Gender (M/F)"
+          value={gender}
+          onChangeText={setGender}
+        />
       </View>
 
       <View style={styles.checkboxContainer}>
@@ -95,7 +93,7 @@ const RegistrationTwo = () => {
             value={agreeToParticipate}
             onValueChange={setAgreeToParticipate}
           />
-          <Text style={styles.checkboxLabel}>I agree to participate</Text>
+          <Text style={styles.checkboxLabel}>I agree to participate in rankings and statistics based on the provided data.</Text>
         </View>
       </View>
 
