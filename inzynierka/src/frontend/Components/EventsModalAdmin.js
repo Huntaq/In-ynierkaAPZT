@@ -150,8 +150,9 @@ const EventsModalAdmin = ({
 													onChange={(e) => setEventType(e.target.value)}
 													className="input"
 												>
-													<option value="bike">Bike</option>
+													<option value="bike">Cycling</option>
 													<option value="run">Running</option>
+													<option value="walking">Walking</option>
 												</select>
 											</div>
 											<div className="input-box">

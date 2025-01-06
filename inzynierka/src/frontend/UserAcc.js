@@ -237,6 +237,11 @@ const UserAcc = () => {
                   .filter(route => route.transport_mode_id === 2)
                   .reduce((acc, route) => acc + route.distance_km, 0);
               }
+              else if (event.type === 'walking') {
+                progress = relevantRoutes
+                  .filter(route => route.transport_mode_id === 3)
+                  .reduce((acc, route) => acc + route.distance_km, 0);
+              }
 
               const progressPercentage = Math.min((progress / neededDistance) * 100, 100);
               progressMap[event.id] = progressPercentage;
