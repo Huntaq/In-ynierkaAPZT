@@ -4,6 +4,68 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 //pobieranie danych zalogowanego usera / weryfikacja dostępu
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     summary: Get user details
+ *     description: Fetch user details and verifies access
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: user id to fetch
+ *         schema:
+ *           type: string
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: sessionkey
+ *         in: header
+ *         required: true
+ *         description: Session key 
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: User ID.
+ *                   username:
+ *                     type: string
+ *                     description: UserName
+ *                   is_banned:
+ *                     type: boolean
+ *                     description: Checks if the user is banned
+ *                   profilePicture:
+ *                     type: string
+ *                     description: user's profile picture
+ *                   session_key:
+ *                     type: string
+ *                     description: session key
+ *       400:
+ *         description: Id is required
+ *       401:
+ *         description: Token is required
+ *       403:
+ *         description: Invalid token or no access
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: DB error
+ */
+
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   const token = req.headers['authorization']?.split(' ')[1];

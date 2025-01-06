@@ -2,6 +2,33 @@ const express = require('express');
 const db = require('../config/db');
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/ban/ban/{id}:
+ *   post:
+ *     summary: Ban user
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: User Id to ban
+ *         schema:
+ *           type: integer
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         description: AuthToken
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: UserBanned
+ *       401:
+ *         description: Token is required
+ *       500:
+ *         description: DB error
+ */
+
 //banowanie usera
 router.post('/ban/:id', (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
@@ -19,6 +46,35 @@ router.post('/ban/:id', (req, res) => {
         res.json({ message: 'user banned' });
     });
 });
+
+
+
+/**
+ * @swagger
+ * /api/ban/unban/{id}:
+ *   post:
+ *     summary: Unban user
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: User Id to unban
+ *         schema:
+ *           type: integer
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         description: AuthToken
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: UserUnbanned
+ *       401:
+ *         description: Token is required
+ *       500:
+ *         description: DB error
+ */
 
 //unban usera
 router.post('/unban/:id', (req, res) => {

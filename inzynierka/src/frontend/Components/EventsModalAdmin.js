@@ -318,7 +318,7 @@ const EventsModalAdmin = ({
 									<td>{new Date(event.endDate).toLocaleDateString()}</td>
 									<td>{event.type}</td>
 									<td>{event.distance}</td>
-									<td ><button className="w-[100px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105"  onClick={() => handleOpenModal(event)}>Details</button></td>
+									<td ><button className="w-[100px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105" onClick={() => handleOpenModal(event)}>Details</button></td>
 								</tr>
 							))}
 						</tbody>
@@ -337,38 +337,56 @@ const EventsModalAdmin = ({
 
 			{isModalOpen && selectedEvent && (
 				<ModalInfo height={"auto"}>
-						<h2 className="text-xl font-semibold mb-4">{selectedEvent.title}</h2>
-						<div className="flex">
-							<p><strong>Image:</strong></p>
-							{selectedEvent.image && (
-								<img
-									src={`http://localhost:3000/uploads/${selectedEvent.image.split('/').pop()}`}
-									alt={selectedEvent.title}
-									className="event-image mb-4"
-								/>
-							)}
-						</div>
-						<div className="flex">
-							<p><strong>Trophy:</strong></p>
-							{selectedEvent.TrophyImage && (
-								<img
-									src={`http://localhost:3000/uploads/${selectedEvent.TrophyImage.split('/').pop()}`}
-									alt={selectedEvent.TrophyImage}
-									className="h-[160px] w-[160px] rounded-[4px] mb-4"
-								/>
-							)}
-						</div>
-						<p><strong>Status:</strong> {selectedEvent.status}</p>
-						<p><strong>User IDs:</strong> {selectedEvent.user_ids.join(", ")}</p>
-						<div className="flex justify-end mt-4">
-							<button
-								onClick={handleCloseModal}
-								className="bg-[#84D49D] text-white font-medium px-4 py-2 rounded hover:bg-[#6E9B7B]"
-							>
-								Close
-							</button>
-						</div>
-						</ModalInfo>
+					<h2 className="text-xl font-semibold mb-4">{selectedEvent.title}</h2>
+					<div className="flex">
+						<p><strong>Image:</strong></p>
+						{selectedEvent.image && (
+							<img
+								src={`http://localhost:3000/uploads/${selectedEvent.image.split('/').pop()}`}
+								alt={selectedEvent.title}
+								className="event-image mb-4"
+							/>
+						)}
+					</div>
+					<div className="flex">
+						<p><strong>Trophy:</strong></p>
+						{selectedEvent.TrophyImage && (
+							<img
+								src={`http://localhost:3000/uploads/${selectedEvent.TrophyImage.split('/').pop()}`}
+								alt={selectedEvent.TrophyImage}
+								className="h-[160px] w-[160px] rounded-[4px] mb-4"
+							/>
+						)}
+					</div>
+					<p><strong>Status:</strong> {selectedEvent.status}</p>
+					<p><strong>Event Id:</strong> {selectedEvent.id}</p>
+					<p><strong>User IDs:</strong> {selectedEvent.user_ids.join(", ")}</p>
+					<div className="flex justify-end mt-4">
+						<button
+							onClick={handleCloseModal}
+							className="bg-[#84D49D] text-white font-medium px-4 py-2 rounded hover:bg-[#6E9B7B]"
+						>
+							Close
+						</button>
+					</div>
+					<div>
+					<button
+						onClick={(e) => {
+							e.preventDefault()
+							handleDeleteEvent(selectedEvent.id)
+							handleCloseModal()
+						}}
+					>Delete</button>	
+					</div>	
+					<div>
+					<button
+						onClick={(e) => {
+							e.preventDefault()
+							handleToggleEventStatus(selectedEvent.id , selectedEvent.status)
+						}}
+					>Activate</button>		
+					</div>
+					</ModalInfo>
 			)}
 		</>
 	);
