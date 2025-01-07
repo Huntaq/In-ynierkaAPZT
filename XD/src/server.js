@@ -14,7 +14,8 @@ const app = express();
 const port = 5000;
 const baseURL = 'http://192.168.56.1';
 const port1 = 80
-
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());

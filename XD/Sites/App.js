@@ -25,6 +25,7 @@ import Statistics from './statistic';
 import Startsite from './Start_site';
 import Profile_settings from './Profile_settings';
 import Progress from './Progress';
+import ForgotPassword from '../src/ForgotPass';
 
 const Stack = createNativeStackNavigator();
 
@@ -162,6 +163,13 @@ const AppContent = () => {
             headerRight: () => <ProfileImageButton />,
           }}
         />
+              <Stack.Screen 
+                name="ForgotPassword" 
+                component={ForgotPassword} 
+                options={{
+                  title: 'Forgot Password',
+               }} 
+              />
         <Stack.Screen
           name="RegistrationOne"
           component={RegistrationOne}

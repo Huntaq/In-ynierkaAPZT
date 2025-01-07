@@ -76,6 +76,9 @@ const LoginScreen = () => {
       >
         Don’t have an account? Sign up!
       </Text>
+      <Text style={styles.link} onPress={() => navigation.navigate('ForgotPassword')}>
+          Forgot Password?
+        </Text>
     </View>
   );
 };
