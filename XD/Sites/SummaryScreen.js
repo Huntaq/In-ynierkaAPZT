@@ -1,106 +1,191 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  Alert,
+  Modal,
+  TextInput,
+} from 'react-native';
 import MapView, { Polyline } from 'react-native-maps';
-import axios from 'axios';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+  useAnimatedReaction,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { UserContext } from '../src/UserContex';
+import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import NavBar from '../src/Navbar';
+const { width, height } = Dimensions.get('window');
+const RADIUS = width * 0.3; // Adjust this value to change the size of the circle and the colored gradient border
 
-const SummaryScreen = ({ route, navigation }) => {
+const transportImages = {
+  Walking: require('../assets/images/solar_walking-bold.png'),
+  Cycling: require('../assets/images/solar_bicycling-bold.png'),
+  Running: require('../assets/images/solar_running-2-bold.png'),
+};
+
+const SummaryScreen = ({ route }) => {
   const { user } = useContext(UserContext);
+  const rotate = useSharedValue(0);
+  const navigation = useNavigation();
+  const [statIndex, setStatIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [content, setContent] = useState("");
 
   const {
-    distance = 0,
-    time = '00:00:00',
-    calories = 0,
-    transportMode = 'Unknown',
-    routeCoordinates = [],
-  } = route.params || {};
+    distance, // Distance in km
+    time, // Formatted duration
+    calories, // Calories burned
+    transportMode, // Selected transport mode
+    routeCoordinates, // Array of route coordinates
+  } = route.params;
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [content, setContent] = useState(''); // Zmieniono z description na content
+  const statistics = [
+    { label: 'Time', value: time },
+    { label: 'Distance', value: `${distance} km` },
+    { label: 'Calories', value: `${calories} kcal` },
+  ];
 
-  const calculateCO2 = (transportMode, distance) => {
-    const co2PerKm = { Walking: 0.5, Cycling: 1, Running: 1.5 };
-    return (co2PerKm[transportMode] || 0) * distance;
-  };
+  const currentStatIndex = useDerivedValue(() => {
+    const totalStats = statistics.length;
+    const normalizedAngle = ((rotate.value % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const index = Math.floor((normalizedAngle / (2 * Math.PI)) * totalStats) % totalStats;
+    return index;
+  });
 
-  const calculateMoneySaved = (distance) => {
-    const avgCostPerKm = 1.5;
-    return (distance * avgCostPerKm).toFixed(2);
-  };
-
-  const handleSendToDatabase = async (isPrivate) => {
-    const user_id = user?.id;
-
-    if (!user_id) {
-      Alert.alert('Error', 'User not logged in or user ID is missing.');
-      return;
-    }
-
-    const transport_mode_id = transportMode === 'Walking' ? 1 : transportMode === 'Cycling' ? 2 : 3;
-    const CO2 = calculateCO2(transportMode, distance);
-    const money = calculateMoneySaved(distance);
-
-    const data = {
-      user_id,
-      transport_mode_id,
-      distance_km: parseFloat(distance),
-      CO2,
-      kcal: parseFloat(calories),
-      duration: time,
-      money: parseFloat(money),
-      is_private: isPrivate ? 1 : 0,
-      routeCoordinates,
-      content, // Użycie content zamiast description
-    };
-
-    try {
-      const response = await axios.post('http://192.168.56.1:5000/api/routes', data);
-      if (response.status === 201) {
-        Alert.alert('Success', 'Route saved successfully!');
-        setModalVisible(false);
-        navigation.navigate('Home');
-      } else {
-        throw new Error('Failed to save the route');
+  useAnimatedReaction(
+    () => currentStatIndex.value,
+    (index) => {
+      if (index !== statIndex) {
+        runOnJS(setStatIndex)(index);
       }
+    },
+    [statIndex]
+  );
+
+  const gesture = Gesture.Pan().onUpdate((e) => {
+    rotate.value += e.translationX * 0.005; // Reduced angular velocity for slower animation speed
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: `${rotate.value}rad` }],
+    };
+  });
+
+  const handleShareOrPrivate = async (isPrivate) => {
+    try {
+      const routeData = {
+        user_id: user.id,
+        transport_mode_id: transportMode === 'Walking' ? 1 : transportMode === 'Cycling' ? 2 : 3,
+        distance_km: parseFloat(distance), // Ensure it's a number
+        CO2: parseFloat((distance * 0.21).toFixed(2)), // Ensure it's a number
+        kcal: parseFloat(calories), // Ensure it's a number
+        duration: time,
+        money: parseFloat((distance * 0.5).toFixed(2)), // Ensure it's a number
+        is_private: isPrivate ? 0 : 1, // Adjusted logic: 0 for private, 1 for shared
+        routeCoordinates: routeCoordinates,
+        content: content.trim(), // Remove unnecessary whitespace
+      };
+
+      const response = await fetch('http://192.168.56.1:5000/api/routes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(routeData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send route');
+      }
+
+      const result = await response.json();
+      Alert.alert('Success', isPrivate ? 'Route kept private!' : 'Route shared successfully!');
+      setModalVisible(false);
+      navigation.navigate('Home');
     } catch (error) {
-      console.error('Error saving route:', error.response?.data || error.message);
-      Alert.alert('Error', error.response?.data?.message || 'Failed to save the route. Please try again.');
+      console.error('Error sending route:', error);
+      Alert.alert('Error', 'Failed to send route.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Route Summary</Text>
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: routeCoordinates[0]?.latitude || 0,
-          longitude: routeCoordinates[0]?.longitude || 0,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-        <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
-      </MapView>
-      <TouchableOpacity style={styles.shareButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Share</Text>
-      </TouchableOpacity>
+      {/* MapView */}
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: routeCoordinates[0]?.latitude || 37.78825,
+            longitude: routeCoordinates[0]?.longitude || -122.4324,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+        >
+          <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
+        </MapView>
+        </View>
+
+      {/* Transport Image */}
+      <Image source={transportImages[transportMode]} style={styles.transportImage} />
+
+      {/* Statistics */}
+      <View style={styles.statisticsContainer}>
+        <Text style={styles.statisticLabel}>
+          {statistics[statIndex]?.label || ''}
+        </Text>
+        <Text style={styles.statisticValue}>
+          {statistics[statIndex]?.value || ''}
+        </Text>
+      </View>
+
+      {/* Rotating Circle */}
+      <GestureDetector gesture={gesture}>
+        <View style={styles.circleContainer}>
+          <Animated.View style={[styles.circle, animatedStyle]}>
+            <LinearGradient
+              colors={['red', 'blue', 'green', 'yellow']}
+              style={styles.gradientCircle}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+            />
+            {/* Inner circle to hide the center */}
+            <View style={styles.innerCircle} />
+          </Animated.View>
+
+          {/* Share button is independent of the rotating circle */}
+          <TouchableOpacity style={styles.shareButton} onPress={() => setModalVisible(true)}>
+            <Text style={styles.shareButtonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+      </GestureDetector>
 
       {/* Modal */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={isModalVisible}
+        visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Add Content</Text>
+            <Text style={styles.modalText}>Add your route details:</Text>
+            {/* Mini Map */}
             <MapView
-              style={styles.modalMap}
+              style={styles.miniMap}
               initialRegion={{
-                latitude: routeCoordinates[0]?.latitude || 0,
-                longitude: routeCoordinates[0]?.longitude || 0,
+                latitude: routeCoordinates[0]?.latitude || 37.78825,
+                longitude: routeCoordinates[0]?.longitude || -122.4324,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
               }}
@@ -108,53 +193,153 @@ const SummaryScreen = ({ route, navigation }) => {
               <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="blue" />
             </MapView>
             <TextInput
-              placeholder="Add content to your post"
-              style={styles.input}
-              value={content} // Użycie content zamiast description
+              style={styles.textInput}
+              placeholder="Add a description..."
+              value={content}
               onChangeText={setContent}
             />
-            <View style={styles.modalButtons}>
+            <View style={styles.modalButtonContainer}>
               <TouchableOpacity
-                style={[styles.button, styles.keepPrivateButton]}
-                onPress={() => handleSendToDatabase(false)}
+                style={[styles.modalButton, { backgroundColor: '#84D49D' }]}
+                onPress={() => handleShareOrPrivate(false)}
               >
-                <Text style={styles.buttonText}>Keep Private</Text>
+                <Text style={styles.modalButtonText}>Share</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.shareButton]}
-                onPress={() => handleSendToDatabase(true)}
+                style={[styles.modalButton, { backgroundColor: '#FF6F61' }]}
+                onPress={() => handleShareOrPrivate(true)}
               >
-                <Text style={styles.buttonText}>Share</Text>
+                <Text style={styles.modalButtonText}>Keep Private</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={[styles.button, styles.closeButton]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
+      <NavBar/>
     </View>
   );
 };
 
+
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#F1FCF3' },
-  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  map: { height: 300, marginBottom: 20 },
-  shareButton: { backgroundColor: '#84D49D', padding: 15, borderRadius: 10, alignItems: 'center' },
-  buttonText: { color: '#fff', fontSize: 16 },
-  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-  modalContent: { width: 300, backgroundColor: '#fff', padding: 20, borderRadius: 10, alignItems: 'center' },
-  modalText: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  modalMap: { height: 200, width: '100%', marginBottom: 20 },
-  input: { width: '100%', borderBottomWidth: 1, borderBottomColor: '#ccc', marginBottom: 10, padding: 5 },
-  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 10 },
-  button: { flex: 1, marginHorizontal: 5, paddingVertical: 10, borderRadius: 5, alignItems: 'center' },
-  keepPrivateButton: { backgroundColor: '#FF6B6B' },
-  closeButton: { backgroundColor: '#ccc', marginTop: 10 },
+  container: { flex: 1, backgroundColor: '#F1FCF3' },
+  mapContainer: {
+    borderRadius: 15, // Rounded corners for the map
+    overflow: 'hidden', // Ensures the rounded corners are applied
+    marginHorizontal: 20, // Margin from the sides
+    marginTop: 20,
+  },
+  map: {
+    height: height * 0.4,
+    width: '100%',
+  },
+  miniMap: {
+    height: 150,
+    width: '100%',
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  transportImage: {
+    width: 80,
+    height: 80,
+    alignSelf: 'center',
+    marginVertical: 10,
+  },
+  statisticsContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  statisticLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#555',
+  },
+
+  statisticValue: { fontSize: 22, fontWeight: 'bold', color: '#000' },
+  circleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: -RADIUS + height * 0.05, // Position the circle at the bottom of the screen
+    width: width,
+  },
+  circle: {
+    width: RADIUS * 2,
+    height: RADIUS * 2,
+    borderRadius: RADIUS,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gradientCircle: {
+    position: 'absolute',
+    width: RADIUS * 2,
+    height: RADIUS * 2,
+    borderRadius: RADIUS,
+    borderWidth: 15,
+    borderColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  innerCircle: {
+    position: 'absolute',
+    width: RADIUS * 1.3, // Slightly smaller than the outer circle
+    height: RADIUS * 1.3,
+    borderRadius: RADIUS * 0.8,
+    backgroundColor: '#F1FCF3', // Match the background color
+  },
+  shareButton: {
+    position: 'absolute',
+    bottom: height * 0.16, // Position the share button inside the circle
+    width: 120,
+    height: 45, // More elongated button
+    backgroundColor: '#84D49D',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  shareButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  textInput: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    marginHorizontal: 5,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
 
 export default SummaryScreen;

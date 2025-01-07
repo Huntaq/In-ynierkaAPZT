@@ -4,7 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserProvider, UserContext } from '../src/UserContex';
-
+import 'react-native-reanimated';
+import 'react-native-gesture-handler';
+import 'react-native-linear-gradient';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Feed from './Feed';
 import SaveRoad from './SaveRoad';
 import Home from './Home';
@@ -27,9 +30,11 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <UserProvider>
       <AppContent />
     </UserProvider>
+   </GestureHandlerRootView>
   );
 };
 
@@ -55,7 +60,8 @@ const AppContent = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="startsite">
-        <Stack.Screen name="ecosphere" component={Startsite} />
+        <Stack.Screen name="Ecosphere" component={Startsite} />
+        
         <Stack.Screen
           name="ADD Friends"
           component={FriendSearchScreen}

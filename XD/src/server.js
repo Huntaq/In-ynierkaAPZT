@@ -7,7 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const bodyParser = require('body-parser');
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./swaggerConfig');
 
 const app = express();
 const port = 5000;
@@ -15,11 +16,11 @@ const baseURL = 'http://192.168.56.1';
 const port1 = 80
 
 
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 
 
@@ -67,7 +68,6 @@ app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res
 
   const profilePicturePath = `/uploads/profilePictures/${req.file.filename}`;
 
-  
   db.query(
     'UPDATE users SET profilePicture = ? WHERE id = ?',
     [profilePicturePath, userId],
@@ -85,13 +85,51 @@ app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res
   );
 });
 
-
-
-
-
-
-
-
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticates a user and returns session details.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username of the user.
+ *               password:
+ *                 type: string
+ *                 description: The password of the user.
+ *             required:
+ *               - username
+ *               - password
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *       401:
+ *         description: Invalid username or password
+ *       500:
+ *         description: Database error
+ */
 
 
 app.post('/api/login', (req, res) => {
@@ -149,6 +187,35 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/posts:
+ *   get:
+ *     summary: Get user posts
+ *     description: Retrieves all posts for the logged-in user.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved posts.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   user_id:
+ *                     type: integer
+ *                   route_id:
+ *                     type: integer
+ *                   content:
+ *                     type: string
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *       500:
+ *         description: Error fetching posts.
+ */
 
 app.get('/api/posts', (req, res) => {
   const userId = req.session.userId;
@@ -167,7 +234,34 @@ app.get('/api/posts', (req, res) => {
   });
 });
 
-
+/**
+ * @swagger
+ * /api/posts:
+ *   post:
+ *     summary: Add a new post
+ *     description: Adds a new post for the logged-in user.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               route_id:
+ *                 type: integer
+ *               content:
+ *                 type: string
+ *             required:
+ *               - route_id
+ *               - content
+ *     responses:
+ *       200:
+ *         description: Successfully added post.
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *       500:
+ *         description: Error adding post.
+ */
 app.post('/api/posts', (req, res) => {
   const { route_id, content } = req.body;
   const userId = req.session.userId;
@@ -186,6 +280,50 @@ app.post('/api/posts', (req, res) => {
       res.json({ message: 'Post added successfully' });
   });
 });
+/**
+ * @swagger
+ * /api/register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Registers a new user in the system.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               gender:
+ *                 type: string
+ *                 enum: [F, M]
+ *               emailNotification:
+ *                 type: boolean
+ *               pushNotification:
+ *                 type: boolean
+ *             required:
+ *               - username
+ *               - password
+ *               - email
+ *               - age
+ *               - gender
+ *     responses:
+ *       200:
+ *         description: User registered successfully.
+ *       400:
+ *         description: Validation error or missing fields.
+ *       409:
+ *         description: Conflict. Username or email already exists.
+ *       500:
+ *         description: Database error.
+ */
 
 app.post('/api/register', (req, res) => {
   const { username, password, email, age, gender, emailNotification, pushNotification } = req.body;
@@ -251,7 +389,39 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-
+/**
+ * @swagger
+ * /api/events:
+ *   get:
+ *     summary: Fetch all events
+ *     description: Retrieves all events from the database and adds full image URLs to the results.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved events.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: The ID of the event.
+ *                   name:
+ *                     type: string
+ *                     description: The name of the event.
+ *                   date:
+ *                     type: string
+ *                     format: date
+ *                     description: The date of the event.
+ *                   image:
+ *                     type: string
+ *                     nullable: true
+ *                     description: The full URL of the event image.
+ *       500:
+ *         description: Error fetching events from database.
+ */
 
 app.get('/api/events', (req, res) => {
   const query = 'SELECT * FROM events';
@@ -277,7 +447,53 @@ app.get('/api/events', (req, res) => {
 });
 
 
-
+/**
+ * @swagger
+ * /api/friends:
+ *   get:
+ *     summary: Get friends
+ *     description: Retrieves a list of accepted friends for the logged-in user.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved friends.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Friends retrieved successfully
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       friends_id:
+ *                         type: integer
+ *                       friends_user_id:
+ *                         type: integer
+ *                       friends_friend_id:
+ *                         type: integer
+ *                       friends_status:
+ *                         type: string
+ *                       friends_created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       user_id:
+ *                         type: integer
+ *                       username:
+ *                         type: string
+ *                       profilePicture:
+ *                         type: string
+ *                         nullable: true
+ *                       is_Admin:
+ *                         type: boolean
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *       500:
+ *         description: Database error.
+ */
 
 app.get('/api/friends', (req, res) => {
   const userId = req.session.userId;
@@ -341,6 +557,55 @@ app.get('/api/friends', (req, res) => {
     });
   });
 });
+
+
+/**
+ * @swagger
+ * /api/friends_pending:
+ *   get:
+ *     summary: Get pending friend requests
+ *     description: Retrieves a list of pending friend requests for the logged-in user.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved pending friend requests.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Friends Pending retrieved successfully
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       friends_id:
+ *                         type: integer
+ *                       friends_user_id:
+ *                         type: integer
+ *                       friends_friend_id:
+ *                         type: integer
+ *                       friends_status:
+ *                         type: string
+ *                       friends_created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       user_id:
+ *                         type: integer
+ *                       username:
+ *                         type: string
+ *                       profilePicture:
+ *                         type: string
+ *                         nullable: true
+ *                       is_Admin:
+ *                         type: boolean
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *       500:
+ *         description: Database error.
+ */
 
 app.get('/api/friends_pending', (req, res) => {
   const userId = req.session.userId;
@@ -597,7 +862,6 @@ app.post('/api/routes', (req, res) => {
 });
 
 
-
 app.get('/api/user_routes', (req, res) => {
   const userId = req.session.userId;
 
@@ -605,27 +869,66 @@ app.get('/api/user_routes', (req, res) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  // Updated query to include the content column
-  db.query(
-    'SELECT * FROM user_routes WHERE user_id = ? AND route_coordinates IS NOT NULL ORDER BY date DESC',
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error fetching user routes:', err);
-        return res.status(500).json({ message: 'Error fetching routes from database' });
-      }
+  const baseURL = process.env.BASE_URL || 'http://192.168.56.1';
+  const port1 = process.env.PORT || 80;
 
-      const parsedResults = results.map(route => ({
-        ...route,
-        route_coordinates: route.route_coordinates
-          ? JSON.parse(route.route_coordinates)
-          : [],
-      }));
+  // SQL query to fetch user routes and friends' routes
+  const query = `
+    SELECT 
+      ur.id,
+      ur.user_id,
+      ur.transport_mode_id,
+      ur.distance_km,
+      ur.date,
+      ur.CO2,
+      ur.kcal,
+      ur.duration,
+      ur.money,
+      ur.is_private,
+      ur.route_coordinates,
+      ur.content,
+      u.username,
+      CONCAT('${baseURL}:${port1}', u.profilePicture) AS profilePicture
+    FROM user_routes ur
+    LEFT JOIN users u ON ur.user_id = u.id
+    WHERE 
+      (ur.user_id = ? OR 
+       (ur.user_id IN (
+          SELECT 
+            CASE 
+              WHEN f.user_id = ? THEN f.friend_id 
+              ELSE f.user_id 
+            END 
+          FROM friends f
+          WHERE 
+            (f.user_id = ? OR f.friend_id = ?) 
+            AND f.status = 'accepted'
+        ) AND ur.is_private = 1)
+      )
+      AND ur.route_coordinates IS NOT NULL
+    ORDER BY ur.date DESC
+  `;
 
-      res.json(parsedResults);
+  // Execute query
+  db.query(query, [userId, userId, userId, userId], (err, results) => {
+    if (err) {
+      console.error('Error fetching user and friend routes:', err);
+      return res.status(500).json({ message: 'Error fetching routes from database' });
     }
-  );
+
+    // Parse route_coordinates (convert JSON string to object)
+    const parsedResults = results.map(route => ({
+      ...route,
+      route_coordinates: route.route_coordinates
+        ? JSON.parse(route.route_coordinates)
+        : [],
+      profilePicture: route.profilePicture || `${baseURL}:${port1}/uploads/default_profile.png`, // Default profile picture
+    }));
+
+    res.json(parsedResults);
+  });
 });
+
 
 
 
@@ -633,17 +936,26 @@ app.get('/api/user_routes', (req, res) => {
 
 app.get('/api/comments/:postId', (req, res) => {
   const { postId } = req.params;
+  const baseURL = process.env.BASE_URL || 'http://192.168.56.1';
+  const port1 = process.env.PORT || 80;
 
   const query = `
     SELECT 
-      id AS comment_id, 
-      post_id, 
-      comment_date, 
-      comment_text
+      comments.id AS comment_id, 
+      comments.post_id, 
+      comments.user_id, 
+      comments.comment_date, 
+      comments.comment_text,
+      COALESCE(users.username, 'Unknown User') AS username,
+      CONCAT('${baseURL}:${port1}', COALESCE(users.profilePicture, '/uploads/default_profile.png')) AS profilePicture
     FROM 
       comments
+    LEFT JOIN 
+      users
+    ON 
+      comments.user_id = users.id
     WHERE 
-      post_id = ?
+      comments.post_id = ?
   `;
 
   db.query(query, [postId], (err, results) => {
@@ -655,6 +967,8 @@ app.get('/api/comments/:postId', (req, res) => {
     res.json(results);
   });
 });
+
+
 
 
 app.post('/api/comments_add/:postId', (req, res) => {
@@ -679,7 +993,7 @@ app.post('/api/comments_add/:postId', (req, res) => {
 
     res.status(201).json({
       message: 'Comment added successfully',
-      comment_id: result.insertId, // Return the ID of the newly created comment
+      comment_id: result.insertId, 
     });
   });
 });

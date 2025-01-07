@@ -72,7 +72,7 @@ const Profile = () => {
     const fetchRecentEventImages = async () => {
       try {
         const response = await axios.get('http://192.168.56.1:5000/api/recent_event_images');
-        setRecentEventImages(response.data.slice(0, 5)); // Fetch only the latest 5 images
+        setRecentEventImages(response.data.slice(0, 5));
       } catch (error) {
         console.error('Error fetching recent event images:', error);
       } finally {

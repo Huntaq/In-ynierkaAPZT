@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, Image, Button, Alert, TouchableOpacity, TextInput, Modal } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { UserContext } from '../src/UserContex'; 
+import { useNavigation } from '@react-navigation/native'
+import Startsite from './Start_site';
 
 const Profile_settings = () => {
     const { user, setUser } = useContext(UserContext);
@@ -10,6 +12,7 @@ const Profile_settings = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const navigation = useNavigation();
 
     const handleDeleteAccount = () => {
         const trimmedPassword = password.trim();
@@ -154,7 +157,8 @@ const Profile_settings = () => {
                             
                             Alert.alert('Logged Out', 'You have been logged out successfully.');
                            
-                            navigation.navigate('StartSite');
+                            navigation.navigate('Ecosphere');
+
                         }}
                     >
                         <Text style={styles.buttonText}>Logout</Text>
@@ -196,7 +200,7 @@ const Profile_settings = () => {
             ) : (
                 <View style={styles.noUserContainer}>
                     <Text style={styles.text}>No user data available</Text>
-                    <Button title="Go to Login" onPress={() => {StartSite}} />
+                    <Button title="Go to Login" onPress={() => {Startsite}} />
                 </View>
             )}
         </View>
