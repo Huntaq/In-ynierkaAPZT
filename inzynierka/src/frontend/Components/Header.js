@@ -50,7 +50,9 @@ const Header = ({ user }) => {
               className='w-[60px] h-[60px] rounded-[50%] hover:scale-105 shadow-[2px_2px_5px_rgba(0,0,0,0.2)]'
             />
           ) : (
-            <div className='bg-white font-bold text-black content-center text-center w-[60px] h-[60px] rounded-[50%]  border-[#409A55] hover:scale-105'>{user && user.username ? <img className='w-[60px] h-[60px] rounded-[50%]' src='./empty-avatar.jpg'/> : 'U'}</div>
+            <div className='bg-[#C6C6C6] font-bold text-black content-center text-center w-[60px] h-[60px] rounded-[50%]  border-[#409A55] hover:scale-105'>
+              {user && user.username ? <span className=" text-[#3C4A3B]  text-[28px]  w-full h-full rounded-full content-center font-bold">{user.username.charAt(0).toUpperCase()}</span> : 'U'}
+              </div>
           )}
         </div>
       </div>

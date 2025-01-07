@@ -18,13 +18,13 @@ const UniqueEvents = ({ events, currentIndex, progressData, handleDotClick }) =>
         <div className="relative flex items-center justify-between m-[10px]">
           <h3 className="text-[28px] font-medium uppercase CustomXSM:text-[20px] CustomXXSM:text-[16px]">{events[currentIndex].title}</h3>
           <div className="flex flex-col justify-center w-[150px]">
-          <span className="absolute  top-1/2 left-[81%] transform -translate-x-1/2 -translate-y-1/2 text-xs text-[#3B4A3F] text-[16px] font-semibold">
-                  {`${progressData[events[currentIndex].id] || 0}%`}
-                </span>
             <div className="w-full bg-white h-[20px] overflow-hidden rounded-[4px] shadow-[5px_5px_10px_rgba(0,0,0,0.2)] relative">
             
-              <div className="h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress "
+            <div className="relative h-full bg-progress-gradient bg-[length:200%_100%] animate-scrolling-progress bg-white"
                 style={{ width: `${progressData[events[currentIndex].id] || 0}%` }}>
+                  <span className="absolute  top-1/2 left-[75px]  transform -translate-x-1/2 -translate-y-1/2 text-xs text-[#3B4A3F] text-[16px] font-semibold">
+                  {`${progressData[events[currentIndex].id] || 0}%`}
+                </span>
               </div>
               
             </div>

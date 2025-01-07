@@ -276,7 +276,10 @@ const EventsModalAdmin = ({
 											Previous
 										</button>
 										<button
-											onClick={handleEventSubmit}
+											onClick={(e) => {
+												e.preventDefault()
+												handleEventSubmit()
+											}}
 											className="button-next"
 										>
 											Create
@@ -362,16 +365,10 @@ const EventsModalAdmin = ({
 					<p><strong>Status:</strong> {selectedEvent.status}</p>
 					<p><strong>Event Id:</strong> {selectedEvent.id}</p>
 					<p><strong>User IDs:</strong> {selectedEvent.user_ids.join(", ")}</p>
-					<div className="flex justify-end mt-4">
-						<button
-							onClick={handleCloseModal}
-							className="bg-[#84D49D] text-white font-medium px-4 py-2 rounded hover:bg-[#6E9B7B]"
-						>
-							Close
-						</button>
-					</div>
+					
 					<div>
 					<button
+						className="w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105 mb-[20px]"
 						onClick={(e) => {
 							e.preventDefault()
 							handleDeleteEvent(selectedEvent.id)
@@ -380,12 +377,21 @@ const EventsModalAdmin = ({
 					>Delete</button>	
 					</div>	
 					<div>
-					<button
+					<button 
+						className="w-[170px] h-[40px] bg-[#84D49D] text-white rounded-[20px] hover:scale-105"
 						onClick={(e) => {
 							e.preventDefault()
 							handleToggleEventStatus(selectedEvent.id , selectedEvent.status)
 						}}
 					>Activate</button>		
+					</div>
+					<div className="flex justify-end mt-4">
+						<button
+							onClick={handleCloseModal}
+							className="bg-[#84D49D] text-white font-medium px-4 py-2 rounded hover:bg-[#6E9B7B]"
+						>
+							Close
+						</button>
 					</div>
 					</ModalInfo>
 			)}

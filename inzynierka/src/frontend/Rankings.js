@@ -168,8 +168,8 @@ const Rankings = () => {
         entry[type] !== undefined && (
           <ul key={entry.user_id} className={`${userClass} justify-between `}>
             {showImage && !userData.profilePicture && (
-              <div className={`mb-[35px]  CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full flex items-center justify-center ${borderClass}`}>
-                <span className=" text-black  text-xl bg-white w-full h-full rounded-full content-center ">{userData.username.charAt(0).toUpperCase()}</span>
+              <div className={` mb-[35px]  CustomXSM:w-[90px] CustomXSM:h-[90px] w-[130px] h-[130px] rounded-full flex items-center justify-center ${borderClass}`}>
+                <span className=" text-[#3C4A3B]  text-[32px] bg-[#C6C6C6] w-full h-full rounded-full content-center font-bold">{userData.username.charAt(0).toUpperCase()}</span>
               </div>
             )}
             {showImage && userData.profilePicture && (

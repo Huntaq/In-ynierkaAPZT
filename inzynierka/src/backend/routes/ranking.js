@@ -3,6 +3,49 @@ const db = require('../config/db');
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/ranking/ranking:
+ *   get:
+ *     summary: Get CO2, kcal, and money savings ranking
+ *     parameters:
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         description: AuthToken
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Ranking data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   user_id:
+ *                     type: integer
+ *                     description: ID of the user
+ *                   total_CO2:
+ *                     type: number
+ *                     format: float
+ *                     description: Total CO2 saved by the user
+ *                   total_kcal:
+ *                     type: number
+ *                     format: float
+ *                     description: Total calories burned by the user
+ *                   total_money:
+ *                     type: number
+ *                     format: float
+ *                     description: Total money saved by the user
+ *       401:
+ *         description: Token is required
+ *       500:
+ *         description: Database error
+ */
+
 //pobieranie danych rankingu Co2 Kcal i zaoszczędzonych pieniędzy
 router.get('/ranking', (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];

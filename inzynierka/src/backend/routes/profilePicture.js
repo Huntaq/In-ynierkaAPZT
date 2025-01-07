@@ -21,6 +21,54 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+/**
+ * @swagger
+ * /api/profilePicture:
+ *   post:
+ *     summary: Update user profile picture delete previous from storage
+ *     parameters:
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         description: AuthToken
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The new profile picture file to upload
+ *               userId:
+ *                 type: integer
+ *                 description: ID of the user 
+ *             required:
+ *               - file
+ *               - userId
+ *     responses:
+ *       200:
+ *         description: Profile picture updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   description: URL of the new profile picture
+ *       400:
+ *         description: File missing or bad request
+ *       401:
+ *         description: Token is required
+ *       500:
+ *         description: Server error or file deletion error
+ */
+
 //wstawianie nowego / usuwanie starego zdjęcia profilowego
 router.post('/', upload.single('file'), async (req, res) => {
   const token = req.headers['authorization']?.split(' ')[1];

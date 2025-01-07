@@ -8,6 +8,70 @@ const router = express.Router();
 const SECRET_KEY = process.env.SECRET_KEY;
 const crypto = require('crypto');
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: User registration
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The username of the new user
+ *               password:
+ *                 type: string
+ *                 description: The password for the user account
+ *               email:
+ *                 type: string
+ *                 description: The email of the new user
+ *               age:
+ *                 type: integer
+ *                 description: The age of the user
+ *               gender:
+ *                 type: string
+ *                 description: The gender of the user
+ *     responses:
+ *       200:
+ *         description: User registration successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: success
+ *       400:
+ *         description: Missing field or username/email already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 
+ *                     - 'missing field'
+ *                     - 'username exists'
+ *                     - 'email exists'
+ *       500:
+ *         description: Database error or server issue
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 
+ *                     - 'DB error'
+ *                     - 'error'
+ */
 
 //obsługa rejestracji
 router.post('/register', async (req, res) => {
@@ -77,6 +141,57 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: 'error' });
   }
 });
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: User login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username of the user
+ *               password:
+ *                 type: string
+ *                 description: The password for the user account
+ *     responses:
+ *       200:
+ *         description: User login successful, returns a JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: The JWT token for authenticated requests
+ *       400:
+ *         description: Invalid username/password or user not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 'error'
+ *       500:
+ *         description: Server or database error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 'error'
+ */
 
 //obsługa loginu
 router.post('/login', async (req, res) => {
