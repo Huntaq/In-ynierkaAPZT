@@ -1,26 +1,43 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, ActivityIndicator, Alert, StyleSheet, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
-const ForgotPasswordScreen = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [step, setStep] = useState(1);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigation = useNavigation();
 
-  const handleForgotPassword = async () => {
-    setLoading(true);
+  const sendOtpEmail = async () => {
     try {
-      const response = await axios.post('http://192.168.56.1:5000/api/forgot-password', { email });
-
+      const response = await axios.post('http://192.168.56.1:5000/api/send-otp', { email });
       if (response.status === 200) {
-        Alert.alert('Success', 'Password reset link has been sent to your email.');
+        setMessage('OTP sent to your email. Check your inbox.');
+        setStep(2);
+      }
+    } catch (err) {
+      setError(err.response ? err.response.data.message : 'Failed to send OTP. Please try again.');
+    }
+  };
+
+  const resetPassword = async () => {
+    try {
+      const response = await axios.post('http://192.168.56.1:5000/api/reset_password', {
+        resetEmail: email,
+        otp,
+        newPassword,
+      });
+      if (response.status === 200) {
+        setMessage('Password reset successfully. You can now log in.');
+        setStep(1); // Reset step to 1 to show initial form again
         navigation.navigate('Login');
       }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to send password reset email. Please try again.');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      setError(err.response ? err.response.data.message : 'Failed to reset password.');
     }
   };
 
@@ -30,28 +47,49 @@ const ForgotPasswordScreen = () => {
         source={require('../assets/images/mountain_biking.png')}
         style={styles.image}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+      {message ? <Text style={styles.message}>{message}</Text> : null}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#84D49D" style={styles.loader} />
-      ) : (
-        <TouchableOpacity style={styles.loginButton} onPress={handleForgotPassword}>
-          <Text style={styles.buttonText}>Reset Password</Text>
-        </TouchableOpacity>
+      {step === 1 && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TouchableOpacity style={styles.loginButton} onPress={sendOtpEmail}>
+            <Text style={styles.buttonText}>Send OTP</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      {step === 2 && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter OTP"
+            value={otp}
+            onChangeText={setOtp}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter new password"
+            secureTextEntry
+            value={newPassword}
+            onChangeText={setNewPassword}
+          />
+          <TouchableOpacity style={styles.loginButton} onPress={resetPassword}>
+            <Text style={styles.buttonText}>Reset Password</Text>
+          </TouchableOpacity>
+        </>
       )}
 
       <Text
-        style={styles.registerText}
+        style={styles.link}
         onPress={() => navigation.navigate('Login')}
       >
-        Remember your password? Login here!
+        Back to Login
       </Text>
     </View>
   );
@@ -96,10 +134,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  loader: {
-    marginVertical: 10,
+  message: {
+    color: 'green',
+    textAlign: 'center',
+    marginBottom: 12,
   },
-  registerText: {
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  link: {
     marginTop: 20,
     fontSize: 14,
     color: '#84D49D',
@@ -107,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen;
+export default ForgotPassword;

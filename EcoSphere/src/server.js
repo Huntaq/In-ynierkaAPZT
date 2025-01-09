@@ -426,6 +426,8 @@ app.post('/api/register', (req, res) => {
 
 app.get('/api/events', (req, res) => {
   const query = 'SELECT * FROM events';
+  const baseURL = req.protocol + '://' + req.get('host'); // Pobieramy pełny URL (z protokołem i hostem)
+  const port1 = process.env.PORT || 3000; // Użyj portu aplikacji
 
   db.query(query, (err, results) => {
     if (err) {
@@ -435,7 +437,7 @@ app.get('/api/events', (req, res) => {
 
     // Dodaj pełny URL do obrazów
     const eventsWithFullImagePath = results.map((event) => {
-      const fullImagePath = event.image ? `${baseURL}:${port1}/${event.image}` : null;
+      const fullImagePath = event.image ? `${baseURL}:${port1}/uploads/${event.image}` : null; // Ścieżka do obrazu w folderze 'uploads'
       console.log(`Generated image path for event ID ${event.id}: ${fullImagePath}`);
       return {
         ...event,
@@ -446,6 +448,8 @@ app.get('/api/events', (req, res) => {
     res.json(eventsWithFullImagePath);
   });
 });
+
+
 
 
 /**
@@ -1140,7 +1144,6 @@ app.post('/api/send-otp', (req, res) => {
     );
   });
 });
-
 app.post('/api/reset_password', (req, res) => {
   const { resetEmail, otp, newPassword } = req.body;
 
@@ -1148,27 +1151,39 @@ app.post('/api/reset_password', (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  
+  // Deklaracja zmiennej currentTime
+  const currentTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Formatowanie bieżącego czasu
+
+  console.log('Current Time:', currentTime); // Logowanie bieżącego czasu
+
+  // Zapytanie do bazy danych
   db.query(
     'SELECT * FROM users WHERE email = ? AND reset_otp = ? AND reset_expiry > ?',
-    [resetEmail, otp, new Date()],
+    [resetEmail, otp, currentTime],
     (err, results) => {
       if (err) {
         console.error('Database error:', err);
         return res.status(500).json({ message: 'Database error' });
       }
 
-      if (results.length === 0) {
+      // Sprawdzenie, czy zapytanie zwróciło jakiekolwiek wyniki
+      if (!results || results.length === 0) {
+        console.log('No matching records found or OTP expired');
+        console.log('Query parameters: ', { resetEmail, otp, currentTime }); // Logowanie parametrów zapytania
         return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
       }
 
-      
+      // Logowanie wyników
+      console.log('Results from database:', results);
+
+      // Haszowanie nowego hasła
       bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
         if (err) {
           console.error('Error hashing password:', err);
           return res.status(500).json({ message: 'Error hashing password' });
         }
 
+        // Aktualizacja hasła w bazie danych
         db.query(
           'UPDATE users SET password_hash = ?, reset_otp = NULL, reset_expiry = NULL WHERE email = ?',
           [hashedPassword, resetEmail],
@@ -1178,6 +1193,7 @@ app.post('/api/reset_password', (req, res) => {
               return res.status(500).json({ message: 'Error updating password' });
             }
 
+            console.log('Password reset successfully for:', resetEmail);
             res.status(200).json({ message: 'Password reset successfully' });
           }
         );

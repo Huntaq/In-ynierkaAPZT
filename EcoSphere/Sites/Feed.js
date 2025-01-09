@@ -11,7 +11,216 @@ const transportModeDetails = {
   2: { label: 'Cycling', image: require('../assets/images/solar_bicycling-bold.png') },
   3: { label: 'Running', image: require('../assets/images/solar_running-2-bold.png') },
 };
-
+const customMapStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.business",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#263c3f"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6b9a76"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#38414e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#212a37"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9ca5b3"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#1f2835"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#f3d19c"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#2f3948"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#515c6d"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  }
+]
 const RoutesList = () => {
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +326,6 @@ const RoutesList = () => {
       longitudeDelta: Math.max(0.01, maxLongitude - minLongitude + 0.02),
     };
   };
-  
   return (
     <View style={styles.container}>
       <FlatList
@@ -142,29 +350,28 @@ const RoutesList = () => {
                 </Text>
               </View>
   
-              
-             {/* Post Header */}
-                <View style={styles.header}>
-                  <View style={styles.profileContainer}>
-                    {item.profilePicture ? (
-                      <Image source={{ uri: item.profilePicture }} style={styles.profileImage} />
-                    ) : (
-                      <View style={styles.placeholderImage}>
-                        <Text style={styles.placeholderText}>
-                          {item.username?.charAt(0).toUpperCase() || '?'}
-                        </Text>
-                      </View>
-                    )}
-                    <Text style={styles.username}>{item.username || 'Unknown User'}</Text>
-                  </View>
-                  <Text style={styles.date}>{new Date(item.date).toLocaleDateString()}</Text>
+              {/* Post Header */}
+              <View style={styles.header}>
+                <View style={styles.profileContainer}>
+                  {item.profilePicture ? (
+                    <Image source={{ uri: item.profilePicture }} style={styles.profileImage} />
+                  ) : (
+                    <View style={styles.placeholderImage}>
+                      <Text style={styles.placeholderText}>
+                        {item.username?.charAt(0).toUpperCase() || '?'}
+                      </Text>
+                    </View>
+                  )}
+                  <Text style={styles.username}>{item.username || 'Unknown User'}</Text>
                 </View>
-
+                <Text style={styles.date}>{new Date(item.date).toLocaleDateString()}</Text>
+              </View>
   
               {/* Map Section */}
               <MapView
                 style={styles.map}
                 provider={PROVIDER_GOOGLE}
+                customMapStyle={customMapStyle}
                 initialRegion={calculateRegion(coordinates)}
               >
                 {coordinates.length > 0 && (
@@ -195,7 +402,10 @@ const RoutesList = () => {
   
               {/* Comments Section */}
               <View style={styles.commentsSection}>
-                <Text style={styles.commentsTitle}>Comments:</Text>
+                
+  
+                {/* Separator Line */}
+                <View style={styles.separator} />
   
                 {/* Add Comment Section */}
                 <View style={styles.commentInputContainer}>
@@ -210,34 +420,43 @@ const RoutesList = () => {
                   <Button title="➤" onPress={() => handleAddComment(item.id)} />
                 </View>
   
-               
-               {/* Comments List */}
-                  {comments[item.id]?.map((comment) => (
-                    <View key={comment.comment_id} style={styles.commentItem}>
-                      {/* User's profile picture and username */}
-                      <View style={styles.commentHeader}>
-                        {comment.profilePicture ? (
-                          <Image
-                            source={{ uri: comment.profilePicture }}
-                            style={styles.commentProfileImage}
-                          />
-                        ) : (
-                          <View style={styles.placeholderImage}>
-                            <Text style={styles.placeholderText}>
-                              {comment.username?.charAt(0).toUpperCase() || '?'}
-                            </Text>
-                          </View>
-                        )}
-                        {/* Move the username to the top of the comment */}
-                        <View style={styles.commentDetails}>
-                          <Text style={styles.commentAuthor}>{comment.username || 'Unknown User'}</Text>
+                {/* Comments List */}
+                {comments[item.id]?.map((comment) => (
+                  <View key={comment.comment_id} style={styles.commentItem}>
+                    
+                    {/* User's profile picture */}
+                    <View style={styles.commentHeader}>
+                      {comment.profilePicture ? (
+                        <Image
+                          source={{ uri: comment.profilePicture }}
+                          style={styles.commentProfileImage}
+                        />
+                      ) : (
+                        <View style={styles.placeholderImage}>
+                          <Text style={styles.placeholderText}>
+                            {comment.username?.charAt(0).toUpperCase() || '?'}
+                            
+                          </Text>
                         </View>
+                      )}
+  
+                      {/* Username above the comment */}
+                      <View style={styles.commentDetails}>
+                        <Text style={styles.commentAuthor}>
+                          {comment.username || 'Unknown User'}
+                        </Text>
+                        
                       </View>
-                      {/* Comment text displayed below the username */}
-                      <Text style={styles.commentText}>{comment.comment_text}</Text>
+                      
                     </View>
-                  ))}
-
+  
+                    {/* Comment text displayed below the username */}
+                    <Text style={styles.commentText}>{comment.comment_text}</Text>
+                   
+                  
+                  </View>
+                  
+                ))}
               </View>
             </View>
           );
@@ -253,12 +472,17 @@ const RoutesList = () => {
       <NavBar />
     </View>
   );
+  
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F1FCF3', // Light background for the app
+  },
+  separator: {
+    borderBottomColor: '#000',
+    borderBottomWidth: 1,
+    
   },
   map: {
     width: '100%',
@@ -361,7 +585,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   commentItem: {
-    flexDirection: 'row',
+    flexDirection: 'column', // Changed to column to place username above comment text
     alignItems: 'flex-start',
     marginBottom: 15,
   },
@@ -378,6 +602,10 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     marginRight: 10, // Space between profile image and username
   },
+  commentDetails: {
+    flexDirection: 'column', // Ensuring the username is above the comment
+    justifyContent: 'center',
+  },
   commentAuthor: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -386,13 +614,14 @@ const styles = StyleSheet.create({
   commentText: {
     fontSize: 14,
     color: '#555',
-    marginLeft: 40, // Aligns with the profile image size
+    marginLeft: 40, // Aligns the text with the profile image size
     lineHeight: 20,
   },
   commentInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,

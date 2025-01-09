@@ -146,8 +146,12 @@ const Profile_settings = () => {
 
                     <TouchableOpacity
                         style={styles.DeleteButton}
-                        onPress={() => setModalVisible(true)}
-                    >
+                        onPress={() => {
+                            setModalVisible(true); // This keeps the modal functionality
+                            navigation.navigate('startsite'); // This navigates to the LOG screen
+                          }}
+                        
+                    >   
                         <Text style={styles.buttonText}>Delete Account</Text>
                     </TouchableOpacity>
 
