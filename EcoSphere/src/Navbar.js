@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
+  divider: {
+    height: 2,
+    width: '100%',
+    backgroundColor: '08092F', // Jasnoszara kreska
+  },
   navbar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -71,11 +76,11 @@ const styles = StyleSheet.create({
     height: height * 0.05,
     width: '100%',
     backgroundColor: '#F1FCF3',
-  },
-  divider: {
-    height: 2,
-    width: '100%',
-    backgroundColor: '#ccc', // Jasnoszara kreska
+    shadowColor: '#08092F', // Kolor cienia
+    shadowOffset: { width: 0, height: 10 }, // Przesunięcie cienia w dół (cień będzie widoczny powyżej)
+    shadowOpacity: 6.4, // Przezroczystość cienia
+    shadowRadius: 8, // Promień rozmycia
+    elevation: 10,
   },
   button: {
     flex: 1,
