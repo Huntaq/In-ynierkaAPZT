@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Dimensions, ActivityIndicator, FlatList } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { UserContext } from '../src/UserContex';
-import NavBarPro from '../src/NavbarProfil';
+import NavBar from '../src/Navbar';
 import axios from 'axios';
 
 const { height } = Dimensions.get('window');
@@ -123,7 +123,7 @@ const Profile = () => {
       ) : (
         <Text style={styles.text}>No user data available</Text>
       )}
-      
+      <NavBar/>
     </View>
   );
 };

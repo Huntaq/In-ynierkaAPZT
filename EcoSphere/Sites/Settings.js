@@ -105,6 +105,13 @@ const Settings = () => {
       >
         <Text style={styles.AccountTitle}>Account</Text>
       </TouchableOpacity>
+      <View style={styles.separator} />
+      <TouchableOpacity
+        style={styles.statisticButton}
+        onPress={() => navigation.navigate('Statistic')}
+      >
+        <Text style={styles.statisticTitle}>Statistic</Text>
+      </TouchableOpacity>
 
       <View style={styles.separator} />
       <FAQ />
@@ -113,12 +120,41 @@ const Settings = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     backgroundColor: '#F1FCF3',
+  },
+  accountButton: {
+    backgroundColor: '#F1FCF3',
+    borderRadius: 10,
+    marginVertical: 5,
+    width: '90%',
+    alignSelf: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
+  statisticButton: {
+    backgroundColor: '#F1FCF3',
+    borderRadius: 10,
+    marginVertical: 5,
+    width: '90%',
+    alignSelf: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
+  AccountTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  statisticTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
   },
   separator: {
     width: '90%',
@@ -128,8 +164,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   faqContainer: {
-    width: '90%',
+    width: '80%',
     marginVertical: 10,
+    marginLeft: 30,
   },
   faqHeader: {
     backgroundColor: '#F1FCF3',
@@ -147,19 +184,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginVertical: 5,
-  },
-  accountButton: {
-    backgroundColor: '#F1FCF3',
-    borderRadius: 10,
-    marginVertical: 5,
-    width: '90%',
-    alignSelf: 'center',
-  },
-  AccountTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'left',
   },
   modalContainer: {
     flex: 1,
@@ -192,5 +216,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+
 
 export default Settings;

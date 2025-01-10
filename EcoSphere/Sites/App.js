@@ -95,7 +95,7 @@ const AppContent = () => {
           options={{
             title: 'EcoSphere',
             headerRight: () => <ProfileImageButton />,
-            headerBackVisible: false, 
+            
           }}
         />
         <Stack.Screen

@@ -257,12 +257,14 @@ const SummaryScreen = ({ route }) => {
     calories, // Calories burned
     transportMode, // Selected transport mode
     routeCoordinates, // Array of route coordinates
+    co2Saved,
   } = route.params;
 
   const statistics = [
     { label: 'Time', value: time },
     { label: 'Distance', value: `${distance} km` },
     { label: 'Calories', value: `${calories} kcal` },
+    { label: 'CO2', value: `${co2Saved} kg` },
   ];
 
   const currentStatIndex = useDerivedValue(() => {
@@ -298,7 +300,7 @@ const SummaryScreen = ({ route }) => {
         user_id: user.id,
         transport_mode_id: transportMode === 'Walking' ? 1 : transportMode === 'Cycling' ? 2 : 3,
         distance_km: parseFloat(distance), // Ensure it's a number
-        CO2: parseFloat((distance * 0.21).toFixed(2)), // Ensure it's a number
+        CO2: parseFloat((co2Saved)), // Ensure it's a number
         kcal: parseFloat(calories), // Ensure it's a number
         duration: time,
         money: parseFloat((distance * 0.5).toFixed(2)), // Ensure it's a number
@@ -364,8 +366,8 @@ const SummaryScreen = ({ route }) => {
       <GestureDetector gesture={gesture}>
         <View style={styles.circleContainer}>
           <Animated.View style={[styles.circle, animatedStyle]}>
-            <LinearGradient
-              colors={['red', 'blue', 'green', 'yellow']}
+          <LinearGradient
+              colors={['#D87A8F', '#6BB5C9', '#6A9F7B', '#D1B358']}    // Pastel colors
               style={styles.gradientCircle}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}

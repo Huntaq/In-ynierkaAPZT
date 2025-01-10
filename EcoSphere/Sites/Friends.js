@@ -18,7 +18,7 @@ const Friends = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const responseAccepted = await axios.get('http://1:5000/api/friends', { withCredentials: true });
+        const responseAccepted = await axios.get('http://192.168.56.1:5000/api/friends', { withCredentials: true });
         setFriends(responseAccepted.data.results || []);
 
         const responsePending = await axios.get('http://192.168.56.1:5000/api/friends_pending', { withCredentials: true });

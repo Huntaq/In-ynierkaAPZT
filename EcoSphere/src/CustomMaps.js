@@ -322,9 +322,9 @@ const CustomMap = () => {
   const calculateCalories = (distance) => {
     const weight = 70; // Example weight in kg
     const metValues = {
-      Walking: 3.8,
-      Running: 9.8,
-      Cycling: 7.5,
+      Walking: 3.9,
+      Running: 9.0,
+      Cycling: 6.8,
     };
     const met = metValues[transportMode] || 3.8; // Default to walking
     const caloriesPerMeter = (met * weight) / (60 * 1000); // Calories per meter based on MET
@@ -357,15 +357,24 @@ const CustomMap = () => {
     setIsTracking(false);
     setIsStarted(false);
     setModalVisible(true);
+  
+    // Oblicz emisję CO2 przez samochód
+    const carCO2Emission = 106.6 * (distanceTravelled / 1000); // Emisja CO2 w gramach
+  
+    // Oblicz oszczędność CO2 (ilość CO2, którego nie produkujemy)
+    const co2Saved = carCO2Emission;
+  
     console.log('Route Coordinates:', routeCoordinates); // Add this to debug
+  
     navigation.navigate('SummaryScreen', {
-        distance: (distanceTravelled / 1000).toFixed(2), // Pass distance in km
-        time: formatTime(timeElapsed), // Pass formatted time
-        calories: calculateCalories(distanceTravelled), // Pass calories
-        transportMode, // Pass the selected transport mode
-        routeCoordinates, // Pass the route coordinates
+      distance: (distanceTravelled / 1000).toFixed(2), // Pass distance in km
+      time: formatTime(timeElapsed), // Pass formatted time
+      calories: calculateCalories(distanceTravelled), // Pass calories
+      transportMode, // Pass the selected transport mode
+      routeCoordinates, // Pass the route coordinates
+      co2Saved: (co2Saved / 1000).toFixed(2), // CO2 saved in kilograms (convert from grams to kilograms)
     });
-};
+  };
 
   return (
     <View style={styles.container}>

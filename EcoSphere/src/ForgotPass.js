@@ -34,7 +34,7 @@ const ForgotPassword = () => {
       if (response.status === 200) {
         setMessage('Password reset successfully. You can now log in.');
         setStep(1); // Reset step to 1 to show initial form again
-        navigation.navigate('Login');
+        navigation.navigate('Log');
       }
     } catch (err) {
       setError(err.response ? err.response.data.message : 'Failed to reset password.');
