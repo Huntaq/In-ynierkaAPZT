@@ -296,18 +296,24 @@ const SummaryScreen = ({ route }) => {
 
   const handleShareOrPrivate = async (isPrivate) => {
     try {
-      const routeData = {
+      const transportModeMap = {
+        Walking: 2, // Chodzenie
+        Cycling: 1, // Rower
+        Running: 3  // Bieganie
+    };
+
+    const routeData = {
         user_id: user.id,
-        transport_mode_id: transportMode === 'Walking' ? 1 : transportMode === 'Cycling' ? 2 : 3,
-        distance_km: parseFloat(distance), // Ensure it's a number
-        CO2: parseFloat((co2Saved)), // Ensure it's a number
-        kcal: parseFloat(calories), // Ensure it's a number
-        duration: time,
-        money: parseFloat((distance * 0.5).toFixed(2)), // Ensure it's a number
-        is_private: isPrivate ? 0 : 1, // Adjusted logic: 0 for private, 1 for shared
-        routeCoordinates: routeCoordinates,
-        content: content.trim(), // Remove unnecessary whitespace
-      };
+        transport_mode_id: transportModeMap[transportMode] || 0, // Domyślna wartość 0, jeśli nieznany
+        distance_km: parseFloat(distance), // Konwersja na liczbę
+        CO2: parseFloat(co2Saved), // Konwersja na liczbę
+        kcal: parseFloat(calories), // Konwersja na liczbę
+        duration: time, // Czas trwania
+        money: parseFloat((distance * 0.5).toFixed(2)), // Obliczenie pieniędzy, zaokrąglenie do 2 miejsc
+        is_private: isPrivate ? 0 : 1, // 0 dla prywatnych, 1 dla publicznych
+        routeCoordinates: routeCoordinates, // Współrzędne trasy
+        content: content.trim(), // Usunięcie zbędnych białych znaków
+    };
 
       const response = await fetch('http://192.168.56.1:5000/api/routes', {
         method: 'POST',

@@ -416,7 +416,7 @@ const CustomMap = () => {
         transportMode === 'Walking'
           ? require('../assets/images/solar_walking-bold.png')
           : transportMode === 'Cycling'
-          ? require('../assets/images/solar_bicycling-bold.png')
+          ? require('../assets/images/solar_bicycling-bold (1).png')
           : require('../assets/images/solar_running-2-bold.png')
       }
       style={styles.selectedTransportIcon}
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTransportButton: {
-    backgroundColor: '#FE756A',
+    backgroundColor: '#4BD0FF',
     borderRadius: 10,
     padding: 5,
   },

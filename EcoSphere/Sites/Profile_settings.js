@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   DeleteButton: {
     marginTop: 20,
-    backgroundColor: '#84D49D',
+    backgroundColor: '#D9534F',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
   },
   LogoutButton: {
     marginTop: 20,
-    backgroundColor: '#D9534F', // Red color
+    backgroundColor: '#84D49D', // Red color
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
