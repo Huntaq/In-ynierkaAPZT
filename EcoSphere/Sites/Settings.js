@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../src/Navbar';
+import tw from 'twrnc';
+
 
 const FAQ = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -54,38 +56,24 @@ const FAQ = () => {
   };
 
   return (
-    <View style={styles.faqContainer}>
-      <TouchableOpacity style={styles.faqHeader} onPress={toggleFAQ}>
-        <Text style={styles.faqTitle}>FAQ</Text>
+    <View style={tw`w-4/5 my-2 ml-8`}>
+      <TouchableOpacity style={tw`bg-green-100 p-4 rounded-lg`} onPress={toggleFAQ}>
+        <Text style={tw`text-xl font-bold text-black`}>FAQ</Text>
       </TouchableOpacity>
-
       {isExpanded &&
         questions.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.faqItem}
-            onPress={() => handleQuestionPress(item.answer)}
-          >
-            <Text style={styles.faqQuestion}>{item.question}</Text>
+          <TouchableOpacity key={index} style={tw`bg-green-100 p-4 rounded-lg my-2`} onPress={() => handleQuestionPress(item.answer)}>
+            <Text style={tw`text-lg text-black`}>{item.question}</Text>
           </TouchableOpacity>
         ))}
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+      <Modal animationType="slide" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+        <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+          <View style={tw`bg-white p-5 rounded-lg w-4/5 max-h-4/5`}>
             <ScrollView>
-              <Text style={styles.modalText}>{selectedQuestion}</Text>
+              <Text style={tw`text-lg mb-2`}>{selectedQuestion}</Text>
             </ScrollView>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Zamknij</Text>
+            <TouchableOpacity style={tw`bg-red-500 p-3 rounded-lg mt-3`} onPress={() => setModalVisible(false)}>
+              <Text style={tw`text-white text-lg font-bold text-center`}>Zamknij</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -98,125 +86,19 @@ const Settings = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.accountButton}
-        onPress={() => navigation.navigate('Profile_settings')}
-      >
-        <Text style={styles.AccountTitle}>Account</Text>
+    <View style={tw`flex-1 bg-green-100 p-4`}>
+      <TouchableOpacity style={tw`bg-green-100 rounded-lg p-4 my-2 w-11/12 self-center`} onPress={() => navigation.navigate('Profile_settings')}>
+        <Text style={tw`text-xl font-bold text-black`}>Account</Text>
       </TouchableOpacity>
-      <View style={styles.separator} />
-      <TouchableOpacity
-        style={styles.statisticButton}
-        onPress={() => navigation.navigate('Statistic')}
-      >
-        <Text style={styles.statisticTitle}>Statistic</Text>
+      <View style={tw`w-11/12 h-px bg-gray-400 self-center my-2`} />
+      <TouchableOpacity style={tw`bg-green-100 rounded-lg p-4 my-2 w-11/12 self-center`} onPress={() => navigation.navigate('Statistic')}>
+        <Text style={tw`text-xl font-bold text-black`}>Statistic</Text>
       </TouchableOpacity>
-
-      <View style={styles.separator} />
+      <View style={tw`w-11/12 h-px bg-gray-400 self-center my-2`} />
       <FAQ />
       <NavBar />
     </View>
   );
 };
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    backgroundColor: '#F1FCF3',
-  },
-  accountButton: {
-    backgroundColor: '#F1FCF3',
-    borderRadius: 10,
-    marginVertical: 5,
-    width: '90%',
-    alignSelf: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-  },
-  statisticButton: {
-    backgroundColor: '#F1FCF3',
-    borderRadius: 10,
-    marginVertical: 5,
-    width: '90%',
-    alignSelf: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-  },
-  AccountTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  statisticTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  separator: {
-    width: '90%',
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 5,
-    alignSelf: 'center',
-  },
-  faqContainer: {
-    width: '80%',
-    marginVertical: 10,
-    marginLeft: 30,
-  },
-  faqHeader: {
-    backgroundColor: '#F1FCF3',
-    padding: 15,
-    borderRadius: 10,
-  },
-  faqTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'left',
-  },
-  faqItem: {
-    backgroundColor: '#F1FCF3',
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 5,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    maxHeight: '80%',
-  },
-  modalText: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 10,
-  },
-  closeButton: {
-    backgroundColor: '#FF6347',
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
-
-
 
 export default Settings;

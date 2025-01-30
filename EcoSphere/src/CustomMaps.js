@@ -5,8 +5,8 @@ import Geolocation from '@react-native-community/geolocation';
 import haversine from 'haversine';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { useNavigation } from '@react-navigation/native';
-
 import { UserContext } from './UserContex';
+
 const { height } = Dimensions.get('window');
 const { width } = Dimensions.get('window');
 const CustomMap = () => {
@@ -242,6 +242,7 @@ const CustomMap = () => {
     }
   
   ]
+  //Prośba o doste do lokalizacji
   useEffect(() => {
     let watchId;
     const requestLocationPermission = async () => {
@@ -257,7 +258,7 @@ const CustomMap = () => {
         Alert.alert('Permission Denied', 'Please enable location permissions for this app.');
       }
     };
-
+    //Pobieranie lokalizacji
     const getLocation = () => {
       watchId = Geolocation.watchPosition(
         (position) => {
@@ -318,16 +319,16 @@ const CustomMap = () => {
 
     return () => clearInterval(interval);
   }, [isTracking, isPaused]);
-
+//liczenie kalorii
   const calculateCalories = (distance) => {
-    const weight = 70; // Example weight in kg
+    const weight = 65; 
     const metValues = {
       Walking: 3.9,
       Running: 9.0,
       Cycling: 6.8,
     };
-    const met = metValues[transportMode] || 3.8; // Default to walking
-    const caloriesPerMeter = (met * weight) / (60 * 1000); // Calories per meter based on MET
+    const met = metValues[transportMode] || 3.8; 
+    const caloriesPerMeter = (met * weight) / (60 * 1000); 
     return (distance * caloriesPerMeter).toFixed(2);
   };
 
@@ -358,21 +359,21 @@ const CustomMap = () => {
     setIsStarted(false);
     setModalVisible(true);
   
-    // Oblicz emisję CO2 przez samochód
-    const carCO2Emission = 106.6 * (distanceTravelled / 1000); // Emisja CO2 w gramach
+    
+    const carCO2Emission = 106.6 * (distanceTravelled / 1000); 
   
-    // Oblicz oszczędność CO2 (ilość CO2, którego nie produkujemy)
+   
     const co2Saved = carCO2Emission;
   
-    console.log('Route Coordinates:', routeCoordinates); // Add this to debug
-  
+    console.log('Route Coordinates:', routeCoordinates); 
+    //przerzucanie dalej informacji
     navigation.navigate('SummaryScreen', {
-      distance: (distanceTravelled / 1000).toFixed(2), // Pass distance in km
-      time: formatTime(timeElapsed), // Pass formatted time
-      calories: calculateCalories(distanceTravelled), // Pass calories
-      transportMode, // Pass the selected transport mode
-      routeCoordinates, // Pass the route coordinates
-      co2Saved: (co2Saved / 1000).toFixed(2), // CO2 saved in kilograms (convert from grams to kilograms)
+      distance: (distanceTravelled / 1000).toFixed(2), 
+      time: formatTime(timeElapsed), 
+      calories: calculateCalories(distanceTravelled), 
+      transportMode, 
+      routeCoordinates, 
+      co2Saved: (co2Saved / 1000).toFixed(2), 
     });
   };
 

@@ -4,6 +4,7 @@ import { Calendar } from 'react-native-calendars';
 import { Picker } from '@react-native-picker/picker';
 import { format, differenceInDays, isSameWeek, isSameMonth, isSameYear } from 'date-fns';
 import NavBar from '../src/Navbar';
+import tw from 'twrnc';
 
 const Statistics = () => {
   const [selectedFilter, setSelectedFilter] = useState('month');
@@ -11,7 +12,7 @@ const Statistics = () => {
   const [streak, setStreak] = useState({ current: 0, longest: 0 });
   const [summary, setSummary] = useState({ distance: 0, money: 0, co2: 0 });
   const [loading, setLoading] = useState(true);
-  const [activities, setActivities] = useState([]); // Default to an empty array
+  const [activities, setActivities] = useState([]); 
   const [selectedDate, setSelectedDate] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [dailyActivities, setDailyActivities] = useState([]);
@@ -21,7 +22,7 @@ const Statistics = () => {
   }, []);
 
   useEffect(() => {
-    filterSummary(); // Apply filter only for summary
+    filterSummary(); 
   }, [selectedFilter, activities]);
 
   const fetchStatistics = async () => {
@@ -35,7 +36,7 @@ const Statistics = () => {
         resetStatistics();
         return;
       }
-      setActivities(Array.isArray(data) ? data : []); // Ensure activities is an array
+      setActivities(Array.isArray(data) ? data : []); 
     } catch (error) {
       console.error('Error fetching statistics:', error);
       Alert.alert('Error', 'Failed to fetch data from the server. Please try again later.');
@@ -49,13 +50,13 @@ const Statistics = () => {
     setMarkedDates({});
     setStreak({ current: 0, longest: 0 });
     setSummary({ distance: 0, money: 0, co2: 0 });
-    setActivities([]); // Reset activities to an empty array
+    setActivities([]); 
   };
 
   const filterSummary = () => {
     const now = new Date();
 
-    // Filter the activities only for the summary calculation
+    
     const filtered = (activities || []).filter((activity) => {
       const activityDate = new Date(activity.date);
       if (selectedFilter === 'week') return isSameWeek(activityDate, now);
@@ -64,7 +65,7 @@ const Statistics = () => {
       return true;
     });
 
-    updateStatistics(filtered); // Update the statistics with filtered data
+    updateStatistics(filtered); 
   };
 
   const updateStatistics = (filtered) => {
@@ -72,9 +73,9 @@ const Statistics = () => {
     const calculatedSummary = calculateSummary(filtered);
     const calculatedStreak = calculateStreak(Object.keys(processedDates));
 
-    setMarkedDates(processedDates); // Update the marked dates for calendar
-    setSummary(calculatedSummary); // Update summary with filtered data
-    setStreak(calculatedStreak); // Update streak calculation with filtered data
+    setMarkedDates(processedDates); 
+    setSummary(calculatedSummary); 
+    setStreak(calculatedStreak); 
   };
 
   const processCalendarDates = (data) => {
@@ -130,137 +131,57 @@ const Statistics = () => {
 
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
+      <View style={tw`flex-1 justify-center items-center`}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
 
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Statistics</Text>
 
-      {/* Filter for summary */}
-      <View style={styles.filterContainer}>
+  return (
+    <ScrollView style={tw`flex-1 p-4 bg-green-100`}>
+      <Text style={tw`text-2xl font-bold text-center mb-5`}>Statistics</Text>
+      <View style={tw`mb-4`}>
         <Text>Filter:</Text>
-        <Picker
-          selectedValue={selectedFilter}
-          style={styles.picker}
-          onValueChange={(itemValue) => setSelectedFilter(itemValue)}
-        >
+        <Picker selectedValue={selectedFilter} onValueChange={(itemValue) => setSelectedFilter(itemValue)}>
           <Picker.Item label="Week" value="week" />
           <Picker.Item label="Month" value="month" />
           <Picker.Item label="Year" value="year" />
         </Picker>
       </View>
-
-      {/* Calendar */}
-      <View>
-        <Text style={styles.sectionTitle}>Your Routes</Text>
-        <Calendar markedDates={markedDates} onDayPress={handleDayPress} />
-      </View>
-
-      {/* Modal Details */}
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Activities for {selectedDate}</Text>
-          <ScrollView>
-            {dailyActivities.map((activity, index) => (
-              <View key={index} style={styles.activityContainer}>
-                <Text>Distance: {activity.distance_km} km</Text>
-                <Text>Money Saved: {activity.money} PLN</Text>
-                <Text>CO2 Saved: {activity.CO2} kg</Text>
-                <Text>Duration: {activity.duration}</Text>
-              </View>
-            ))}
-          </ScrollView>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+      <Text style={tw`text-xl font-bold mb-3`}>Your Routes</Text>
+      <Calendar markedDates={markedDates} onDayPress={handleDayPress} />
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+          <View style={tw`bg-white p-5 rounded-lg w-4/5 max-h-4/5`}>
+            <Text style={tw`text-lg font-bold mb-4`}>Activities for {selectedDate}</Text>
+            <ScrollView>
+              {dailyActivities.map((activity, index) => (
+                <View key={index} style={tw`mb-2 p-3 bg-gray-100 rounded-lg`}>
+                  <Text>Distance: {activity.distance_km} km</Text>
+                  <Text>Money Saved: {activity.money} PLN</Text>
+                  <Text>CO2 Saved: {activity.CO2} kg</Text>
+                  <Text>Duration: {activity.duration}</Text>
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={tw`bg-red-500 p-3 rounded-lg mt-3`} onPress={() => setModalVisible(false)}>
+              <Text style={tw`text-white text-lg font-bold text-center`}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
-
-      {/* Summary */}
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryTitle}>Summary</Text>
+      <View style={tw`mt-6 p-4 bg-white rounded-lg shadow-lg`}>
+        <Text style={tw`text-xl font-bold mb-2`}>Summary</Text>
         <Text>Longest Streak: {streak.longest} days</Text>
         <Text>Current Streak: {streak.current} days</Text>
         <Text>Total Distance: {summary.distance.toFixed(2)} km</Text>
         <Text>Total Money Saved: {summary.money.toFixed(2)} PLN</Text>
         <Text>Total CO2 Saved: {summary.co2.toFixed(2)} g</Text>
       </View>
-      
     </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#F1FCF3',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  picker: {
-    flex: 1,
-    height: 50,
-    marginLeft: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  activityContainer: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  closeButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  summaryContainer: {
-    marginVertical: 20,
-    padding: 10,
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    elevation: 2,
-  },
-  summaryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-});
-
 export default Statistics;
+

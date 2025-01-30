@@ -252,11 +252,11 @@ const SummaryScreen = ({ route }) => {
   
   ]
   const {
-    distance, // Distance in km
-    time, // Formatted duration
-    calories, // Calories burned
-    transportMode, // Selected transport mode
-    routeCoordinates, // Array of route coordinates
+    distance, 
+    time, 
+    calories, 
+    transportMode, 
+    routeCoordinates, 
     co2Saved,
   } = route.params;
 
@@ -285,7 +285,7 @@ const SummaryScreen = ({ route }) => {
   );
 
   const gesture = Gesture.Pan().onUpdate((e) => {
-    rotate.value += e.translationX * 0.005; // Reduced angular velocity for slower animation speed
+    rotate.value += e.translationX * 0.005; 
   });
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -297,21 +297,21 @@ const SummaryScreen = ({ route }) => {
   const handleShareOrPrivate = async (isPrivate) => {
     try {
       const transportModeMap = {
-        Walking: 2, // Chodzenie
-        Cycling: 1, // Rower
-        Running: 3  // Bieganie
+        Walking: 2, 
+        Cycling: 1, 
+        Running: 3  
     };
 
     const routeData = {
         user_id: user.id,
-        transport_mode_id: transportModeMap[transportMode] || 0, // Domyślna wartość 0, jeśli nieznany
-        distance_km: parseFloat(distance), // Konwersja na liczbę
-        CO2: parseFloat(co2Saved), // Konwersja na liczbę
-        kcal: parseFloat(calories), // Konwersja na liczbę
-        duration: time, // Czas trwania
-        money: parseFloat((distance * 0.5).toFixed(2)), // Obliczenie pieniędzy, zaokrąglenie do 2 miejsc
+        transport_mode_id: transportModeMap[transportMode] || 0, 
+        distance_km: parseFloat(distance), 
+        CO2: parseFloat(co2Saved), 
+        kcal: parseFloat(calories), 
+        duration: time, 
+        money: parseFloat((distance * 0.5).toFixed(2)), 
         is_private: isPrivate ? 0 : 1, // 0 dla prywatnych, 1 dla publicznych
-        routeCoordinates: routeCoordinates, // Współrzędne trasy
+        routeCoordinates: routeCoordinates, 
         content: content.trim(), // Usunięcie zbędnych białych znaków
     };
 

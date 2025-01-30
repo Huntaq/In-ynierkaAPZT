@@ -3,10 +3,10 @@ import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert, Image, Touc
 import axios from 'axios';
 import { UserContext } from '../src/UserContex';
 import { useNavigation } from '@react-navigation/native';
-
+import tw from 'twrnc';
 import acceptIcon from '../assets/images/solar_check-square-bold.png';
 import removeIcon from '../assets/images/solar_close-square-bold.png';
-import addIcon from '../assets/images/solar_check-square-bold.png';
+
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
@@ -70,147 +70,55 @@ const Friends = () => {
       Alert.alert('Error', error.response?.data?.message || 'Failed to accept friend request');
     }
   };
-
+  
   const renderProfileItem = (profilePicture, username, icon, onPressAction) => (
-    <View style={styles.profileContainer}>
+    <View style={tw`flex-row items-center mb-4 border-b border-gray-300 pb-2`}>      
       {profilePicture ? (
-        <Image
-          source={{ uri: `http://192.168.56.1${profilePicture}` }}
-          style={styles.profilePicture}
-          onError={(e) => console.log(`Error loading profile picture for ${username}:`, e.nativeEvent.error)}
-        />
+        <Image source={{ uri: `http://192.168.56.1${profilePicture}` }} style={tw`w-12 h-12 rounded-full mr-3`} />
       ) : (
-        <View style={styles.defaultProfilePicture}>
-          <Text style={styles.profileInitial}>{username.charAt(0).toUpperCase()}</Text>
+        <View style={tw`w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mr-3`}>
+          <Text style={tw`text-white text-lg`}>{username.charAt(0).toUpperCase()}</Text>
         </View>
       )}
-      <Text style={styles.usernameText}>{username}</Text>
-      <TouchableOpacity onPress={onPressAction} style={styles.iconButton}>
-        <Image source={icon} style={styles.icon} />
+      <Text style={tw`flex-1 text-lg`}>{username}</Text>
+      <TouchableOpacity onPress={onPressAction} style={tw`p-2`}>
+        <Image source={icon} style={tw`w-6 h-6`} />
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionHeader}>Pending Friend Requests</Text>
+    <View style={tw`flex-1 p-4 bg-green-100`}>      
+      <Text style={tw`text-xl font-bold my-2`}>Pending Friend Requests</Text>
       {pendingFriends.length === 0 ? (
-        <Text style={styles.noPendingText}>🌱</Text>
+        <Text style={tw`text-gray-600 text-center text-lg`}>🌱</Text>
       ) : (
         <FlatList
           data={pendingFriends}
           keyExtractor={(item) => item.friends_id.toString()}
           renderItem={({ item }) =>
-            renderProfileItem(
-              item.profilePicture,
-              item.username,
-              acceptIcon,
-              () => acceptFriendRequest(item.friends_id)
-            )
+            renderProfileItem(item.profilePicture, item.username, acceptIcon, () => acceptFriendRequest(item.friends_id))
           }
         />
       )}
 
-      <View style={styles.separator} />
-
-      <Text style={styles.sectionHeader}>Accepted Friends</Text>
+      <View style={tw`border-b border-gray-400 my-4`} />
+      
+      <Text style={tw`text-xl font-bold my-2`}>Accepted Friends</Text>
       <FlatList
         data={friends}
         keyExtractor={(item) => item.friends_id.toString()}
         renderItem={({ item }) =>
-          renderProfileItem(
-            item.profilePicture,
-            item.username,
-            removeIcon,
-            () => removeFriend(item.friends_id)
-          )
+          renderProfileItem(item.profilePicture, item.username, removeIcon, () => removeFriend(item.friends_id))
         }
       />
-      <TouchableOpacity onPress={() => navigation.navigate('ADD Friends')} style={styles.addButton}>
-        <Text style={styles.buttonText}>+</Text>
+      
+      <TouchableOpacity onPress={() => navigation.navigate('ADD Friends')} style={tw`self-center mt-6 w-12 h-12 rounded-full bg-green-600 flex items-center justify-center shadow-lg`}>
+        <Text style={tw`text-white text-2xl font-bold`}>+</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#F1FCF3',
-  },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#000',
-    marginVertical: 20,
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 10,
-  },
-  profilePicture: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  defaultProfilePicture: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#ccc',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  profileInitial: {
-    fontSize: 18,
-    color: '#fff',
-  },
-  usernameText: {
-    fontSize: 16,
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-  },
-  sectionHeader: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-  },
-  noPendingText: {
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: '#888',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  addButton: {
-    alignSelf: 'center',
-    marginVertical: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#6e9b7b',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
-  buttonText: {
-    fontSize: 24,
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-
-});
-
 export default Friends;
+

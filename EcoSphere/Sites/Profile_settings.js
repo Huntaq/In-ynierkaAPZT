@@ -4,6 +4,7 @@ import CheckBox from '@react-native-community/checkbox';
 import { UserContext } from '../src/UserContex'; 
 import { useNavigation } from '@react-navigation/native'
 import NavBar from '../src/Navbar';
+import tw from 'twrnc';
 
 const Profile_settings = () => {
   const { user, setUser } = useContext(UserContext);
@@ -90,116 +91,50 @@ const Profile_settings = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={tw`flex-1 bg-green-100 p-4`}> 
       {user ? (
         <>
           {user.profilePicture ? (
-            <Image
-              source={{ uri: user.profilePicture }}
-              style={styles.image}
-              resizeMode="cover"
-            />
+            <Image source={{ uri: user.profilePicture }} style={tw`w-40 h-40 self-center rounded-full mt-6`} resizeMode="cover" />
           ) : (
-            <Text style={styles.text}>No profile picture available</Text>
+            <Text style={tw`text-lg text-center mt-4`}>No profile picture available</Text>
           )}
 
-          <Text style={styles.all}>
-            <Text style={styles.label}>Username: </Text>
-            <Text style={styles.value}>{user.username}</Text>
-          </Text>
-          <Text style={styles.all}>
-            <Text style={styles.label}>Age: </Text>
-            <Text style={styles.value}>{user.age}</Text>
-          </Text>
-          <Text style={styles.all}>
-            <Text style={styles.label}>Gender: </Text>
-            <Text style={styles.value}>
-              {user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : 'Other'}
-            </Text>
-          </Text>
-          <Text style={styles.all}>
-            <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{user.email}</Text>
-          </Text>
-
-          <View style={styles.checkboxRow}>
-            <CheckBox
-              value={emailNotifications}
-              onValueChange={(newValue) => {
-                setEmailNotifications(newValue);
-                updateEmailNotifications(newValue);
-              }}
-            />
-            <Text style={styles.checkboxLabel}>Email Notifications</Text>
+          <Text style={tw`text-lg font-bold mt-4`}>Username: <Text style={tw`italic font-normal`}>{user.username}</Text></Text>
+          <Text style={tw`text-lg font-bold mt-2`}>Age: <Text style={tw`italic font-normal`}>{user.age}</Text></Text>
+          <Text style={tw`text-lg font-bold mt-2`}>Gender: <Text style={tw`italic font-normal`}>{user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : 'Other'}</Text></Text>
+          <Text style={tw`text-lg font-bold mt-2`}>Email: <Text style={tw`italic font-normal`}>{user.email}</Text></Text>
+          
+          <View style={tw`flex-row items-center mt-4`}>
+            <CheckBox value={emailNotifications} onValueChange={(newValue) => setEmailNotifications(newValue)} />
+            <Text style={tw`ml-2 text-base`}>Email Notifications</Text>
           </View>
-
-          <View style={styles.checkboxRow}>
-            <CheckBox
-              value={pushNotifications}
-              onValueChange={(newValue) => {
-                setPushNotifications(newValue);
-                updatePushNotifications(newValue);
-              }}
-            />
-            <Text style={styles.checkboxLabel}>Push Notifications</Text>
+          
+          <View style={tw`flex-row items-center mt-2`}>
+            <CheckBox value={pushNotifications} onValueChange={(newValue) => setPushNotifications(newValue)} />
+            <Text style={tw`ml-2 text-base`}>Push Notifications</Text>
           </View>
-
-          <TouchableOpacity
-            style={styles.DeleteButton}
-            onPress={() => {
-              setModalVisible(true); // This keeps the modal functionality
-            }}
-          >
-            <Text style={styles.buttonText}>Delete Account</Text>
+          
+          <TouchableOpacity style={tw`bg-red-500 py-3 mt-6 rounded-lg w-3/4 self-center`} onPress={() => setModalVisible(true)}>
+            <Text style={tw`text-white text-lg font-bold text-center`}>Delete Account</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={tw`bg-green-500 py-3 mt-4 rounded-lg w-3/4 self-center`} onPress={() => { Alert.alert('Logged Out', 'You have been logged out successfully.'); navigation.navigate('Ecosphere'); }}>
+            <Text style={tw`text-white text-lg font-bold text-center`}>Logout</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.LogoutButton}
-            onPress={() => {
-              Alert.alert('Logged Out', 'You have been logged out successfully.');
-              navigation.navigate('Ecosphere');
-            }}
-          >
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableOpacity>
-
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalText}>Are you sure </Text>
-                {/* Password Input */}
-                <TextInput
-                  placeholder="Password"
-                  secureTextEntry
-                  style={styles.input}
-                  value={password}
-                  onChangeText={setPassword}
-                />
-                {/* Confirm Password Input */}
-                <TextInput
-                  placeholder="Confirm Password"
-                  secureTextEntry
-                  style={styles.input}
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                />
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity
-                    style={[styles.modalButton, { backgroundColor: '#84D49D' }]}
-                    onPress={handleDeleteAccount}
-                  >
-                    <Text style={styles.modalButtonText}>Delete</Text>
+          <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+            <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+              <View style={tw`bg-white p-6 rounded-lg w-3/4 items-center`}>
+                <Text style={tw`text-xl font-bold mb-4`}>Are you sure?</Text>
+                <TextInput placeholder="Password" secureTextEntry style={tw`border-b border-gray-300 w-full my-2 p-2`} value={password} onChangeText={setPassword} />
+                <TextInput placeholder="Confirm Password" secureTextEntry style={tw`border-b border-gray-300 w-full my-2 p-2`} value={confirmPassword} onChangeText={setConfirmPassword} />
+                <View style={tw`flex-row mt-4 w-full justify-between`}>
+                  <TouchableOpacity style={tw`bg-green-500 py-2 px-6 rounded-lg`} onPress={handleDeleteAccount}>
+                    <Text style={tw`text-white font-bold`}>Delete</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.modalButton, { backgroundColor: '#FF6F61' }]}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Text style={styles.modalButtonText}>Cancel</Text>
+                  <TouchableOpacity style={tw`bg-red-500 py-2 px-6 rounded-lg`} onPress={() => setModalVisible(false)}>
+                    <Text style={tw`text-white font-bold`}>Cancel</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -207,136 +142,13 @@ const Profile_settings = () => {
           </Modal>
         </>
       ) : (
-        <View style={styles.noUserContainer}>
-          <Text style={styles.text}>No user data available</Text>
-          <Button title="Go to Login" onPress={() => { navigation.navigate('Startsite') }} />
+        <View style={tw`flex-1 justify-center items-center`}>
+          <Text style={tw`text-lg`}>No user data available</Text>
+          <Button title="Go to Login" onPress={() => navigation.navigate('Startsite')} />
         </View>
       )}
       <NavBar/>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    backgroundColor: '#F1FCF3',
-  },
-  text: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  image: {
-    width: 150,
-    height: 150,
-    alignSelf: 'center',
-    borderRadius: 75,
-    marginBottom: 20,
-    backgroundColor: '#ccc',
-    marginTop: 30,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#555',
-    width: 100,
-  },
-  all: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-    paddingLeft: 30,
-  },
-  value: {
-    fontSize: 16,
-    color: '#333',
-    fontStyle: 'italic',
-    textAlign: 'right',
-    marginLeft: 30,
-  },
-  DeleteButton: {
-    marginTop: 20,
-    backgroundColor: '#D9534F',
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: 300,
-    alignSelf: 'center',
-  },
-  LogoutButton: {
-    marginTop: 20,
-    backgroundColor: '#84D49D', // Red color
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: 300,
-    alignSelf: 'center',
-  },
-  buttonText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-    marginLeft: 30,
-  },
-  checkboxLabel: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#555',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: 300,
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  input: {
-    width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    marginVertical: 10,
-    padding: 5,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 10,
-  },
-  modalButton: {
-    flex: 1,
-    marginHorizontal: 5,
-    paddingVertical: 10,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  noUserContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
 export default Profile_settings;

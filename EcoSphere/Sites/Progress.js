@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Dimensions, ActivityIndicator } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
 import NavBar from '../src/Navbar';
+import tw from 'twrnc';
 
 const Progress = () => {
   const [data, setData] = useState([]);
@@ -26,32 +26,32 @@ const Progress = () => {
     const startOfWeek = getStartOfWeek(new Date());
     const endOfWeek = getEndOfWeek(new Date());
     setSelectedDateRange({ start: startOfWeek, end: endOfWeek });
-  
-    const filteredRoutes = routes.filter((route) => {
-      const routeDate = new Date(route.date); // Ensure proper date parsing
-      routeDate.setHours(0, 0, 0, 0); // Normalize route date to 00:00:00
+    
+    const filteredRoutes = routes.filter(route => {
+      const routeDate = new Date(route.date);
+      routeDate.setHours(0, 0, 0, 0);
       return routeDate >= startOfWeek && routeDate <= endOfWeek;
     });
-  
-    const groupedByDay = Array(7).fill(0); // Initialize array for 7 days
+    
+    const groupedByDay = Array(7).fill(0);
     let total = 0;
-  
-    filteredRoutes.forEach((route) => {
+    
+    filteredRoutes.forEach(route => {
       const routeDate = new Date(route.date);
       const dayIndex = routeDate.getDay();
       groupedByDay[dayIndex] += route.distance_km;
       total += route.distance_km;
     });
-  
+    
     setTotalDistance(total);
     setData(groupedByDay);
   };
 
   const getStartOfWeek = (date) => {
     const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday as start
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
     const startOfWeek = new Date(date.setDate(diff));
-    startOfWeek.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+    startOfWeek.setHours(0, 0, 0, 0);
     return startOfWeek;
   };
 
@@ -59,15 +59,16 @@ const Progress = () => {
     const startOfWeek = getStartOfWeek(date);
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999); // Set time to the end of the day
+    endOfWeek.setHours(23, 59, 59, 999);
     return endOfWeek;
   };
 
-  const renderChart = () => {
-    return (
+  return (
+    <View style={tw`flex-1 bg-green-100 items-center justify-center w-full p-4`}>
+      <Text style={tw`text-lg font-bold mb-5`}>Total Distance: {totalDistance.toFixed(2)} km</Text>
       <BarChart
         data={{
-          labels: ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', ],
+          labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
           datasets: [{ data }],
         }}
         width={Dimensions.get('window').width - 40}
@@ -81,57 +82,20 @@ const Progress = () => {
           barPercentage: 0.5,
           fillShadowGradient: '#6e9b7b',
           fillShadowGradientOpacity: 1,
-          style: {
-            borderRadius: 16,
-          },
+          style: { borderRadius: 16 },
         }}
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
-        fromZero={true}
+        style={tw`my-4 rounded-lg`}
+        fromZero
         showBarTops={false}
         withHorizontalLabels={false}
         withHorizontalLines={false}
       />
-    );
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.totalText}>Total Distance: {totalDistance.toFixed(2)} km</Text>
-      <View style={styles.chartContainer}>{renderChart()}</View>
-      <Text style={styles.dateRangeText}>
-        {`${selectedDateRange.start.toDateString()} - ${selectedDateRange.end.toDateString()}`}
-      </Text>
-      <NavBar/>
+      <Text style={tw`text-base mt-4`}>{`${selectedDateRange.start.toDateString()} - ${selectedDateRange.end.toDateString()}`}</Text>
+     
+        <NavBar />
+      
     </View>
   );
-  
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F1FCF3',
-    justifyContent: 'center', // Centers content vertically
-    alignItems: 'center', // Centers content horizontally
-  },
-  totalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20, // Increased margin to separate from the chart
-    textAlign: 'center',
-  },
-  chartContainer: {
-    marginBottom: 60, // Push the chart upwards by creating space below it
-  },
-  dateRangeText: {
-    fontSize: 16,
-    marginTop: 20, // Space above date text
-    textAlign: 'center',
-  },
-});
-
 
 export default Progress;

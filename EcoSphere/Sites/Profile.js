@@ -4,6 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { UserContext } from '../src/UserContex';
 import NavBar from '../src/Navbar';
 import axios from 'axios';
+import tw from 'twrnc';
 
 const { height } = Dimensions.get('window');
 
@@ -84,28 +85,22 @@ const Profile = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={tw`flex-1 bg-green-100 items-center p-4 w-full`}>
       {user ? (
         <>
-          <View style={styles.imageContainer}>
+          <View style={tw`relative items-center mt-10`}>
             {user.profilePicture ? (
-              <Image 
-                source={{ uri: user.profilePicture }} 
-                style={styles.image} 
-                resizeMode="cover"
-                onError={(e) => console.log("Error loading image:", e.nativeEvent.error)}
-              />
+              <Image source={{ uri: user.profilePicture }} style={tw`w-40 h-40 rounded-full bg-gray-300`} />
             ) : (
-              <View style={styles.imagePlaceholder} />
+              <View style={tw`w-40 h-40 rounded-full bg-gray-200`} />
             )}
-            <TouchableOpacity style={styles.changeButton} onPress={handleSelectImage} disabled={isUploading}>
-              <Text style={styles.buttonText}>+</Text>
+            <TouchableOpacity style={tw`absolute bottom-2 right-2 w-10 h-10 bg-blue-500 rounded-full justify-center items-center`} onPress={handleSelectImage} disabled={isUploading}>
+              <Text style={tw`text-white text-xl font-bold`}>+</Text>
             </TouchableOpacity>
           </View>
-          {isUploading && <ActivityIndicator size="large" color="#007BFF" style={styles.loadingIndicator} />}
-          <Text style={styles.username}>{user.username}</Text>
+          {isUploading && <ActivityIndicator size="large" color="#007BFF" style={tw`mt-4`} />}
+          <Text style={tw`text-lg mt-4`}>{user.username}</Text>
 
-          <Text style={styles.recentEventsTitle}></Text>
           {loadingEvents ? (
             <ActivityIndicator size="large" color="#007BFF" />
           ) : (
@@ -114,86 +109,18 @@ const Profile = () => {
               keyExtractor={(item, index) => index.toString()}
               horizontal
               showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
-              )}
+              renderItem={({ item }) => <Image source={{ uri: item.imageUrl }} style={tw`w-24 h-24 mr-2 rounded-lg bg-gray-300`} />}
             />
           )}
         </>
       ) : (
-        <Text style={styles.text}>No user data available</Text>
+        <Text style={tw`text-lg mt-4`}>No user data available</Text>
       )}
       <NavBar/>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start', 
-    alignItems: 'center',
-   
-    backgroundColor: '#F1FCF3'
-  },
-  text: {
-    fontSize: 18,
-    marginTop: 20,
-  },
-  imageContainer: {
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 50, 
-  },
-  image: {
-    width: height * 0.2,
-    height: height * 0.2,
-    borderRadius: (height * 0.2) / 2,
-    backgroundColor: '#ccc',
-  },
-  imagePlaceholder: {
-    width: height * 0.2,
-    height: height * 0.2,
-    borderRadius: (height * 0.2) / 2,
-    backgroundColor: '#e0e0e0',
-  },
-  changeButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#007BFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  username: {
-    fontSize: 18,
-    marginTop: 10, 
-  },
-  loadingIndicator: {
-    marginTop: 10,
-  },
-  recentEventsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 30,
-  },
-  eventImage: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
-    borderRadius: 10,
-    backgroundColor: '#ccc',
-  },
-});
-
 export default Profile;
+
+

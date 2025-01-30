@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import tw from 'twrnc';
 
-const { height, width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const NavBar = () => {
   const navigation = useNavigation();
@@ -14,85 +15,28 @@ const NavBar = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={tw`absolute bottom-0 w-full`}>
       {/* Divider Line */}
-      <View style={styles.divider} />
-      <View style={styles.navbar}>
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => handlePress('Home')}>
-          <Image 
-            source={require('../assets/images/solar_home-2-bold.png')} 
-            style={styles.icon} 
-          />
+      <View style={tw`h-0.5 w-full bg-gray-400`} />
+      <View style={tw`flex-row justify-around items-center h-[${height * 0.05}px] bg-green-100 shadow-lg`}>
+        <TouchableOpacity style={tw`flex-1 p-2 items-center`} onPress={() => handlePress('Home')}>
+          <Image source={require('../assets/images/solar_home-2-bold.png')} style={tw`w-8 h-8`} />
         </TouchableOpacity>
         
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => handlePress('Feed')}>
-          <Image 
-            source={require('../assets/images/solar_chat-dots-bold.png')} 
-            style={styles.icon} 
-          />
+        <TouchableOpacity style={tw`flex-1 p-2 items-center`} onPress={() => handlePress('Feed')}>
+          <Image source={require('../assets/images/solar_chat-dots-bold.png')} style={tw`w-8 h-8`} />
         </TouchableOpacity>
         
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => handlePress('Progress')}>
-          <Image 
-            source={require('../assets/images/Vector.png')} 
-            style={styles.icon} 
-          />
+        <TouchableOpacity style={tw`flex-1 p-2 items-center`} onPress={() => handlePress('Progress')}>
+          <Image source={require('../assets/images/Vector.png')} style={tw`w-8 h-8`} />
         </TouchableOpacity>
         
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => handlePress('Settings')}>
-          <Image 
-            source={require('../assets/images/solar_settings-bold.png')} 
-            style={styles.icon} 
-          />
+        <TouchableOpacity style={tw`flex-1 p-2 items-center`} onPress={() => handlePress('Settings')}>
+          <Image source={require('../assets/images/solar_settings-bold.png')} style={tw`w-8 h-8`} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-  },
-  divider: {
-    height: 2,
-    width: '100%',
-    backgroundColor: '08092F', // Jasnoszara kreska
-  },
-  navbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: height * 0.05,
-    width: '100%',
-    backgroundColor: '#F1FCF3',
-    shadowColor: '#08092F', // Kolor cienia
-    shadowOffset: { width: 0, height: 10 }, // Przesunięcie cienia w dół (cień będzie widoczny powyżej)
-    shadowOpacity: 6.4, // Przezroczystość cienia
-    shadowRadius: 8, // Promień rozmycia
-    elevation: 10,
-  },
-  button: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-  },
-  icon: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
-  },
-});
 
 export default NavBar;

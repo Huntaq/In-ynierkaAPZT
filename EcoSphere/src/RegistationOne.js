@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import tw from 'twrnc';
 
 const RegistrationOne = () => {
   const [username, setUsername] = useState('');
@@ -19,7 +20,6 @@ const RegistrationOne = () => {
     }
 
     setPasswordError(false);
-
     
     navigation.navigate('RegistrationTwo', {
       username,
@@ -29,88 +29,42 @@ const RegistrationOne = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-
+    <View style={tw`flex-1 bg-green-100 p-5 justify-center`}>      
+      <Text style={tw`text-2xl font-bold text-center mb-5`}>Register</Text>
       <TextInput
-        style={styles.input}
+        style={tw`h-12 border border-gray-400 rounded-lg p-3 bg-white mb-4`}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
-
       <TextInput
-        style={styles.input}
+        style={tw`h-12 border border-gray-400 rounded-lg p-3 bg-white mb-4`}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-
       <TextInput
-        style={styles.input}
+        style={tw`h-12 border border-gray-400 rounded-lg p-3 bg-white mb-4`}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-
       <TextInput
-        style={[
-          styles.input,
-          passwordError ? styles.errorInput : null, 
-        ]}
+        style={tw`h-12 border ${passwordError ? 'border-red-500' : 'border-gray-400'} rounded-lg p-3 bg-white mb-4`}
         placeholder="Confirm Password"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-
-      <TouchableOpacity style={styles.registerButton} onPress={handleNext}>
-        <Text style={styles.registerButtonText}>Register</Text>
+      <TouchableOpacity style={tw`bg-green-500 p-4 rounded-lg items-center`} onPress={handleNext}>
+        <Text style={tw`text-white text-lg font-bold`}>Register</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F1FCF3',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-  },
-  errorInput: {
-    borderColor: 'red',
-  },
-  registerButton: {
-    backgroundColor: '#84D49D',
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  registerButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
 
 export default RegistrationOne;

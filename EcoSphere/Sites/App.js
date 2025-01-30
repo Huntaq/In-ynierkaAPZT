@@ -9,7 +9,6 @@ import 'react-native-gesture-handler';
 import 'react-native-linear-gradient';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Feed from './Feed';
-import SaveRoad from './SaveRoad';
 import Home from './Home';
 import Settings from './Settings';
 import Profile from './Profile';
@@ -17,7 +16,7 @@ import Log from './Log';
 import RegistrationOne from '../src/RegistationOne';
 import Events from './Events';
 import Friends from './Friends';
-import StartStopButton from './test';
+
 import RegistrationTwo from '../src/RegistrationTwo';
 import SummaryScreen from './SummaryScreen';
 import FriendSearchScreen from './Friends_add';
@@ -115,14 +114,7 @@ const AppContent = () => {
             headerBackVisible: false, 
           }}
         />
-        <Stack.Screen
-          name="Details"
-          component={SaveRoad}
-          options={{
-            title: 'EcoSphere',
-            headerRight: () => <ProfileImageButton />,
-          }}
-        />
+       
         <Stack.Screen
           name="Profile"
           component={Profile}
@@ -200,7 +192,7 @@ const AppContent = () => {
 
 const ProfileHeaderRight = () => {
   const navigation = useNavigation();
-
+  // zdjecie do przejscia do przyjaciół
   return (
     <View style={styles.headerButtonsContainer}>
       
@@ -213,7 +205,7 @@ const ProfileHeaderRight = () => {
     </View>
   );
 };
-
+//Funkcja do defultowego zdjecia 
 const ProfileImageButton = () => {
   const navigation = useNavigation();
 

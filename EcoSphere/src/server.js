@@ -59,7 +59,62 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
+/**
+ * @swagger
+* /api/uploadProfilePicture:
+*   post:
+*     summary: Upload Profile Picture
+*     description: Allows an authenticated user to upload a profile picture.
+*     security:
+*       - sessionAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         multipart/form-data:
+*           schema:
+*             type: object
+*             properties:
+*               profilePicture:
+*                 type: string
+*                 format: binary
+*                 description: The image file to upload as a profile picture.
+*             required:
+*               - profilePicture
+*     responses:
+*       200:
+*         description: Profile picture updated successfully
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 message:
+*                   type: string
+*                   example: Profile picture updated successfully
+*                 profilePicture:
+*                   type: string
+*                   example: /uploads/profilePictures/example.jpg
+*       401:
+*         description: Unauthorized - User not logged in
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 message:
+*                   type: string
+*                   example: Unauthorized
+*       500:
+*         description: Error updating profile picture
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 message:
+*                   type: string
+*                   example: Error updating profile picture
+*/
 app.post('/api/uploadProfilePicture', upload.single('profilePicture'), (req, res) => {
   const userId = req.session.userId;
 
@@ -673,6 +728,41 @@ app.post('/api/friends_accept', (req, res) => {
   });
 });
 
+
+/**
+ * @swagger
+ * /api/friends/{id}:
+ *   delete:
+ *     summary: Remove a friend
+ *     description: Deletes a friend relationship by ID.
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the friend relationship to delete.
+ *     responses:
+ *       200:
+ *         description: Friend removed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Friend removed successfully
+ *       401:
+ *         description: Unauthorized - User not logged in
+ *       404:
+ *         description: No matching friend found
+ *       500:
+ *         description: Database error
+ */
+
 app.delete('/api/friends/:id', (req, res) => {
   const userId = req.session.userId;
   const { id } = req.params; 
@@ -727,6 +817,49 @@ app.delete('/api/friends/:id', (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /api/search_friend:
+ *   post:
+ *     summary: Search for a friend
+ *     description: Searches for a user by username.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username to search for.
+ *             required:
+ *               - username
+ *     responses:
+ *       200:
+ *         description: Matching friends found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 friends:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       username:
+ *                         type: string
+ *                       profilePicture:
+ *                         type: string
+ *       404:
+ *         description: No matching friend found
+ *       500:
+ *         description: Database error
+ */
+
 app.post('/api/search_friend', (req, res) => {
   const searchUsername = req.body.username; 
   const query = "SELECT id, username, profilePicture FROM users ";
@@ -745,6 +878,45 @@ app.post('/api/search_friend', (req, res) => {
   });
 });
 
+
+/**
+ * @swagger
+ * /api/friend_add:
+ *   post:
+ *     summary: Add a friend
+ *     description: Adds a friend relationship with a pending status.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 description: The ID of the user adding a friend.
+ *               friend_id:
+ *                 type: integer
+ *                 description: The ID of the user being added as a friend.
+ *             required:
+ *               - user_id
+ *               - friend_id
+ *     responses:
+ *       200:
+ *         description: Friend added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Friend added successfully
+ *       400:
+ *         description: User already added
+ *       500:
+ *         description: Server error
+ */
 
 app.post('/api/friend_add', (req, res) => {
   const { user_id, friend_id } = req.body;
@@ -776,6 +948,30 @@ app.post('/api/friend_add', (req, res) => {
 
 
 
+/**
+ * @swagger
+ * /api/notifications:
+ *   get:
+ *     summary: Get user notifications
+ *     description: Fetches notifications for an authenticated user if push notifications are enabled.
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Notifications retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       401:
+ *         description: User not authenticated
+ *       403:
+ *         description: Push notifications are disabled
+ *       500:
+ *         description: Error fetching notifications
+ */
 
 app.get('/api/notifications', (req, res) => {
   const userId = req.session.userId;
@@ -806,6 +1002,83 @@ app.get('/api/notifications', (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /api/routes:
+ *   post:
+ *     summary: Add a new route
+ *     description: Saves a user route with details such as transport mode, distance, CO2 emissions, and more.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 description: The ID of the user adding the route.
+ *               transport_mode_id:
+ *                 type: integer
+ *                 description: The transport mode used.
+ *               distance_km:
+ *                 type: number
+ *                 description: The total distance in kilometers.
+ *               CO2:
+ *                 type: number
+ *                 description: The CO2 emissions for the route.
+ *               kcal:
+ *                 type: number
+ *                 description: The calories burned.
+ *               duration:
+ *                 type: string
+ *                 description: The duration of the route.
+ *               money:
+ *                 type: number
+ *                 description: The estimated cost of the route.
+ *               is_private:
+ *                 type: boolean
+ *                 description: Whether the route is private.
+ *               routeCoordinates:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     latitude:
+ *                       type: number
+ *                     longitude:
+ *                       type: number
+ *               content:
+ *                 type: string
+ *                 description: Additional content or notes.
+ *             required:
+ *               - user_id
+ *               - transport_mode_id
+ *               - distance_km
+ *               - CO2
+ *               - kcal
+ *               - duration
+ *               - money
+ *               - is_private
+ *               - routeCoordinates
+ *     responses:
+ *       201:
+ *         description: Route added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Route added successfully
+ *                 routeId:
+ *                   type: integer
+ *       400:
+ *         description: Bad request - Invalid input
+ *       500:
+ *         description: Database error
+ */
 app.post('/api/routes', (req, res) => {
   const {
     user_id,
@@ -865,6 +1138,66 @@ app.post('/api/routes', (req, res) => {
     }
   );
 });
+
+
+/**
+ * @swagger
+ * /api/user_routes:
+ *   get:
+ *     summary: Get user and friends' routes
+ *     description: Fetches user routes along with routes from accepted friends.
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Routes retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   user_id:
+ *                     type: integer
+ *                   transport_mode_id:
+ *                     type: integer
+ *                   distance_km:
+ *                     type: number
+ *                   date:
+ *                     type: string
+ *                   CO2:
+ *                     type: number
+ *                   kcal:
+ *                     type: number
+ *                   duration:
+ *                     type: string
+ *                   money:
+ *                     type: number
+ *                   is_private:
+ *                     type: boolean
+ *                   route_coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         latitude:
+ *                           type: number
+ *                         longitude:
+ *                           type: number
+ *                   content:
+ *                     type: string
+ *                   username:
+ *                     type: string
+ *                   profilePicture:
+ *                     type: string
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Error fetching routes
+ */
 
 
 app.get('/api/user_routes', (req, res) => {
@@ -938,6 +1271,47 @@ app.get('/api/user_routes', (req, res) => {
 
 
 
+/**
+ * @swagger
+ * /api/comments/{postId}:
+ *   get:
+ *     summary: Get comments for a post
+ *     description: Fetches comments for a given post ID.
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the post to fetch comments for.
+ *     responses:
+ *       200:
+ *         description: Comments retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   comment_id:
+ *                     type: integer
+ *                   post_id:
+ *                     type: integer
+ *                   user_id:
+ *                     type: integer
+ *                   comment_date:
+ *                     type: string
+ *                   comment_text:
+ *                     type: string
+ *                   username:
+ *                     type: string
+ *                   profilePicture:
+ *                     type: string
+ *       500:
+ *         description: Error fetching comments
+ */
+
 
 app.get('/api/comments/:postId', (req, res) => {
   const { postId } = req.params;
@@ -974,7 +1348,147 @@ app.get('/api/comments/:postId', (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /api/register:
+ *   post:
+ *     summary: User registration
+ *     description: Registers a new user and stores their details in the database.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username for the new user.
+ *               password:
+ *                 type: string
+ *                 description: The password for the new user.
+ *               email:
+ *                 type: string
+ *                 description: The email address of the new user.
+ *               age:
+ *                 type: integer
+ *                 description: The age of the new user.
+ *               gender:
+ *                 type: string
+ *                 description: The gender of the new user.
+ *             required:
+ *               - username
+ *               - password
+ *               - email
+ *               - age
+ *               - gender
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User registered successfully
+ *                 userId:
+ *                   type: integer
+ *       400:
+ *         description: Bad request - Invalid input
+ *       500:
+ *         description: Database error
+ */
 
+/**
+ * @swagger
+ * /api/comments/{postId}:
+ *   get:
+ *     summary: Get comments for a post
+ *     description: Fetches comments for a given post ID.
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the post to fetch comments for.
+ *     responses:
+ *       200:
+ *         description: Comments retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   comment_id:
+ *                     type: integer
+ *                   post_id:
+ *                     type: integer
+ *                   user_id:
+ *                     type: integer
+ *                   comment_date:
+ *                     type: string
+ *                   comment_text:
+ *                     type: string
+ *                   username:
+ *                     type: string
+ *                   profilePicture:
+ *                     type: string
+ *       500:
+ *         description: Error fetching comments
+ */
+
+/**
+ * @swagger
+ * /api/comments_add/{postId}:
+ *   post:
+ *     summary: Add a comment to a post
+ *     description: Adds a new comment to the specified post.
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the post to add a comment to.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 description: The ID of the user adding the comment.
+ *               comment_text:
+ *                 type: string
+ *                 description: The text of the comment.
+ *             required:
+ *               - user_id
+ *               - comment_text
+ *     responses:
+ *       201:
+ *         description: Comment added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Comment added successfully
+ *                 comment_id:
+ *                   type: integer
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Error adding comment
+ */
 
 app.post('/api/comments_add/:postId', (req, res) => {
   const { postId } = req.params; // Get the post_id (route_id) from the URL
@@ -1007,6 +1521,33 @@ app.post('/api/comments_add/:postId', (req, res) => {
 
 
 
+/**
+ * @swagger
+ * /api/user_delete:
+ *   delete:
+ *     summary: Delete user account
+ *     description: Deletes the authenticated user's account.
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Error deleting user
+ */
+
 
 app.delete('/api/user_delete', (req, res) => { 
   const userId = req.session.userId; 
@@ -1029,6 +1570,47 @@ app.delete('/api/user_delete', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/updateEmailNotifications:
+ *   post:
+ *     summary: Update email notifications preference
+ *     description: Updates the user's email notification settings.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 description: The ID of the user.
+ *               emailNotifications:
+ *                 type: boolean
+ *                 description: The new email notification preference.
+ *             required:
+ *               - userId
+ *               - emailNotifications
+ *     responses:
+ *       200:
+ *         description: Email notifications updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Email notifications updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Database error
+ */
 
 app.post('/api/updateEmailNotifications', (req, res) => {
   const { userId, emailNotifications } = req.body;
@@ -1057,6 +1639,48 @@ app.post('/api/updateEmailNotifications', (req, res) => {
   );
 });
 
+
+/**
+ * @swagger
+ * /api/updatePushNotifications:
+ *   post:
+ *     summary: Update push notifications preference
+ *     description: Updates the user's push notification settings.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 description: The ID of the user.
+ *               pushNotifications:
+ *                 type: boolean
+ *                 description: The new push notification preference.
+ *             required:
+ *               - userId
+ *               - pushNotifications
+ *     responses:
+ *       200:
+ *         description: Push notifications updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Push notifications updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Database error
+ */
 app.post('/api/updatePushNotifications', (req, res) => {
   const { userId, pushNotifications } = req.body;
 
@@ -1087,6 +1711,42 @@ app.post('/api/updatePushNotifications', (req, res) => {
 
 
 
+/**
+ * @swagger
+ * /api/send-otp:
+ *   post:
+ *     summary: Send OTP for password reset
+ *     description: Sends a one-time password (OTP) to the user's email for password reset.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email address of the user requesting the OTP.
+ *             required:
+ *               - email
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: OTP sent successfully
+ *       400:
+ *         description: Email is required
+ *       404:
+ *         description: Email not found
+ *       500:
+ *         description: Error sending OTP or database error
+ */
 app.post('/api/send-otp', (req, res) => {
   const { email } = req.body;
 
@@ -1144,6 +1804,50 @@ app.post('/api/send-otp', (req, res) => {
     );
   });
 });
+
+/**
+ * @swagger
+ * /api/reset_password:
+ *   post:
+ *     summary: Reset user password
+ *     description: Allows a user to reset their password using an OTP sent to their email.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               resetEmail:
+ *                 type: string
+ *                 description: The email address associated with the user account.
+ *               otp:
+ *                 type: string
+ *                 description: The one-time password received via email.
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password for the user account.
+ *             required:
+ *               - resetEmail
+ *               - otp
+ *               - newPassword
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset successfully
+ *       400:
+ *         description: Invalid OTP or expired OTP
+ *       500:
+ *         description: Error resetting password
+ */
+
 app.post('/api/reset_password', (req, res) => {
   const { resetEmail, otp, newPassword } = req.body;
 
@@ -1151,7 +1855,7 @@ app.post('/api/reset_password', (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  // Deklaracja zmiennej currentTime
+ 
   const currentTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Formatowanie bieżącego czasu
 
   console.log('Current Time:', currentTime); // Logowanie bieżącego czasu
@@ -1169,11 +1873,11 @@ app.post('/api/reset_password', (req, res) => {
       // Sprawdzenie, czy zapytanie zwróciło jakiekolwiek wyniki
       if (!results || results.length === 0) {
         console.log('No matching records found or OTP expired');
-        console.log('Query parameters: ', { resetEmail, otp, currentTime }); // Logowanie parametrów zapytania
+        console.log('Query parameters: ', { resetEmail, otp, currentTime }); 
         return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
       }
 
-      // Logowanie wyników
+    
       console.log('Results from database:', results);
 
       // Haszowanie nowego hasła

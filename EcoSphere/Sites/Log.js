@@ -3,6 +3,7 @@ import { View, TextInput, TouchableOpacity, Text, ActivityIndicator, Alert, Styl
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../src/UserContex';
+import tw from 'twrnc';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -40,21 +41,22 @@ const LoginScreen = () => {
     }
   };
 
+
   return (
-    <View style={styles.container}>
+    <View style={tw`flex-1 items-center justify-start bg-green-100 p-4`}>
       <Image
         source={require('../assets/images/mountain_biking.png')}
-        style={styles.image}
+        style={tw`w-50 h-50 mt-12 mb-5`}
       />
       <TextInput
-        style={styles.input}
+        style={tw`h-10 w-75 border border-green-400 rounded-lg mb-3 px-3`}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
       <TextInput
-        style={styles.input}
+        style={tw`h-10 w-75 border border-green-400 rounded-lg mb-3 px-3`}
         placeholder="Password"
         secureTextEntry
         value={password}
@@ -63,74 +65,28 @@ const LoginScreen = () => {
       />
 
       {loading ? (
-        <ActivityIndicator size="large" color="#84D49D" style={styles.loader} />
+        <ActivityIndicator size="large" color="#84D49D" style={tw`my-3`} />
       ) : (
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity style={tw`w-58 h-12 bg-green-400 rounded-xl flex items-center justify-center mt-5`} onPress={handleLogin}>
+          <Text style={tw`text-white text-lg font-bold`}>Login</Text>
         </TouchableOpacity>
       )}
 
       <Text
-        style={styles.registerText}
+        style={tw`mt-5 text-green-500 underline text-sm`}
         onPress={() => navigation.navigate('RegistrationOne')}
       >
         Don’t have an account? Sign up!
       </Text>
-      <Text style={styles.link} onPress={() => navigation.navigate('ForgotPassword')}>
-          Forgot Password?
-        </Text>
+      
+      <Text
+        style={tw`mt-2 text-green-500 underline text-sm`}
+        onPress={() => navigation.navigate('ForgotPassword')}
+      >
+        Forgot Password?
+      </Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start', 
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F1FCF3',
-  },
-  image: {
-    width: 200,
-    height: 200,
-    marginTop: 50,
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    width: 300,
-    borderColor: '#84D49D',
-    borderWidth: 1,
-    borderRadius: 8, 
-    marginBottom: 12,
-    paddingHorizontal: 10,
-  },
-  loginButton: {
-    height: 50,
-    width: 232,
-    borderWidth: 1,
-    borderColor: '#84D49D',
-    backgroundColor: '#84D49D',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 16,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  loader: {
-    marginVertical: 10,
-  },
-  registerText: {
-    marginTop: 20,
-    fontSize: 14,
-    color: '#84D49D',
-    textDecorationLine: 'underline', 
-  },
-});
 
 export default LoginScreen;

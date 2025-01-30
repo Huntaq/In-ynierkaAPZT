@@ -4,6 +4,7 @@ import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import axios from 'axios';
 import { UserContext } from '../src/UserContex'; // Ensure this is the correct path
 import NavBar from '../src/Navbar';
+import tw from 'twrnc';
 
 
 const transportModeDetails = {
@@ -277,7 +278,7 @@ const RoutesList = () => {
       try {
         const response = await axios.post(
           `http://192.168.56.1:5000/api/comments_add/${routeId}`,
-          { comment_text: newComment[routeId], user_id: user.id }, // Using user.id dynamically
+          { comment_text: newComment[routeId], user_id: user.id }, 
           { withCredentials: true }
         );
 
@@ -289,8 +290,8 @@ const RoutesList = () => {
               comment_id: response.data.comment_id,
               comment_text: newComment[routeId],
               comment_date: new Date().toISOString(),
-              username: user.username, // Include username for immediate UI update
-              profilePicture: user.profilePicture, // Include profile picture for immediate UI update
+              username: user.username, 
+              profilePicture: user.profilePicture, 
             },
           ],
         }));
